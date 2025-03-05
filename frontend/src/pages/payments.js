@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import PageLayout from '../components/layout/PageLayout';
 import ClientDashboard from '../components/payment/ClientDashboard';
@@ -9,12 +9,26 @@ import useStore from '../store';
 
 const PaymentsPage = () => {
   const { selectedClientId, setSelectedClientId, documentViewerOpen, setDocumentViewerOpen } = useStore();
+  const [apiHealthy, setApiHealthy] = useState(true);
+
+  useEffect(() => {
+    // Check API health when component mounts
+    const checkHealth = async () => {
+      const isHealthy = await api.health();
+      setApiHealthy(isHealthy);
+    };
+    checkHealth();
+  }, []);
   
   const { 
     data: clients = [], 
     isLoading,
     error,
-  } = useQuery(['clients'], () => api.getClients());
+  } = useQuery(['clients'], () => api.getClients(), {
+    enabled: apiHealthy, // Only run if API is healthy
+    retry: 2,
+    onError: () => setApiHealthy(false)
+  });
   
   // If no client is selected, select the first one automatically
   useEffect(() => {
@@ -28,6 +42,25 @@ const PaymentsPage = () => {
   };
   
   const renderContent = () => {
+    // Show API connectivity error if the backend is down
+    if (!apiHealthy) {
+      return (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-md">
+          <h3 className="text-lg font-medium mb-2">Cannot Connect to Server</h3>
+          <p className="mb-4">Unable to establish connection with the backend server. Please make sure the backend is running.</p>
+          <button 
+            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+            onClick={async () => {
+              const isHealthy = await api.health();
+              setApiHealthy(isHealthy);
+            }}
+          >
+            Retry Connection
+          </button>
+        </div>
+      );
+    }
+    
     if (error) {
       return (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">

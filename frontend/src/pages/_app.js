@@ -7,7 +7,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <QueryClientProvider client={queryClient}>
       <Component {...pageProps} />
-      {process.env.NODE_ENV === 'development' && <ReactQueryDevtools />}
+      {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   );
 }

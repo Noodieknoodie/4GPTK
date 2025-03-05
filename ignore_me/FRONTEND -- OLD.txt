@@ -1,0 +1,3955 @@
+########### FRONTEND -- OLD #############
+
+
+app\contacts\page.tsx
+```tsx
+"use client"
+import React from 'react'
+export default function ContactsPage() {
+  return (
+    <div className="flex flex-1 overflow-hidden">
+      <main className="flex-1 overflow-hidden p-6">
+        <h1 className="text-2xl font-bold mb-6">Contacts Management</h1>
+        <div className="bg-white rounded-lg shadow p-6">
+          <p className="text-gray-600 mb-4">This page will allow you to manage client and provider contacts.</p>
+          <div className="p-4 bg-gray-50 rounded border border-gray-200">
+            <p className="text-sm text-gray-500">This page is under development. Contact management features will be implemented in future iterations.</p>
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+} 
+```
+
+app\contracts\page.tsx
+```tsx
+"use client"
+import React from 'react'
+export default function ContractsPage() {
+  return (
+    <div className="flex flex-1 overflow-hidden">
+      <main className="flex-1 overflow-hidden p-6">
+        <h1 className="text-2xl font-bold mb-6">Contracts Management</h1>
+        <div className="bg-white rounded-lg shadow p-6">
+          <p className="text-gray-600 mb-4">This page will allow you to view and manage client contracts and agreements.</p>
+          <div className="p-4 bg-gray-50 rounded border border-gray-200">
+            <p className="text-sm text-gray-500">This page is under development. Contract management features will be implemented in future iterations.</p>
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+} 
+```
+
+app\export\page.tsx
+```tsx
+"use client"
+import React from 'react'
+export default function ExportPage() {
+  return (
+    <div className="flex flex-1 overflow-hidden">
+      <main className="flex-1 overflow-hidden p-6">
+        <h1 className="text-2xl font-bold mb-6">Export Data</h1>
+        <div className="bg-white rounded-lg shadow p-6">
+          <p className="text-gray-600 mb-4">This page will allow you to export payment data and reports in various formats.</p>
+          <div className="p-4 bg-gray-50 rounded border border-gray-200">
+            <p className="text-sm text-gray-500">This page is under development. Export features will be implemented in future iterations.</p>
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+} 
+```
+
+app\globals.css
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+```
+
+app\layout.tsx
+```tsx
+import type { Metadata } from 'next'
+import './globals.css'
+import { TopNavigation } from '@/components/top-navigation'
+import { Toaster } from '@/components/ui/toaster'
+export const metadata: Metadata = {
+  title: 'Investment Dashboard',
+  description: 'Payment Management for 401k Plans',
+}
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) {
+  return (
+    <html lang="en">
+      <body className="min-h-screen bg-gray-50">
+        <div className="flex flex-col h-screen">
+          <TopNavigation />
+          {children}
+          <Toaster />
+        </div>
+      </body>
+    </html>
+  )
+}
+```
+
+app\page.tsx
+```tsx
+"use client"
+import { redirect } from 'next/navigation'
+export default function Home() {
+  redirect('/payments')
+  return null
+}
+```
+
+app\payments\client-details.tsx
+```tsx
+import { CalendarClock, CreditCard, AlertTriangle, CheckCircle, Clock, FileText } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import type { Client } from "../../types"
+import { FeeSummary } from "@/lib/api"
+import { formatCurrency, formatPercentage, getNormalizedFees } from "@/lib/utils"
+interface ClientDetailsProps {
+  client: Client
+  feeSummary?: FeeSummary | null
+}
+export function ClientDetails({ client, feeSummary }: ClientDetailsProps) {
+    const fees = getNormalizedFees(client, feeSummary);
+      const expectedFee = fees.expectedFee;
+    const formatDate = (dateString: string) => {
+    if (!dateString) return "N/A";
+    try {
+      const date = new Date(dateString)
+      return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
+    } catch (e) {
+      return "Invalid date";
+    }
+  }
+    const calculateNextPaymentDate = () => {
+    if (!client.lastPayment) return new Date();
+    const lastPaymentDate = new Date(client.lastPayment)
+    if (client.paymentFrequency === "Monthly") {
+      return new Date(lastPaymentDate.setMonth(lastPaymentDate.getMonth() + 1))
+    } else {
+      return new Date(lastPaymentDate.setMonth(lastPaymentDate.getMonth() + 3))
+    }
+  }
+  const nextPaymentDate = calculateNextPaymentDate()
+    const isOverdue = nextPaymentDate < new Date()
+  return (
+    <>
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-bold text-gray-800">Contract Details</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <dl className="grid grid-cols-1 gap-1 text-sm">
+            <div className="flex justify-between py-1">
+              <dt className="text-gray-500">Contract Number</dt>
+              <dd className="font-medium text-gray-900">{client.contractNumber || "N/A"}</dd>
+            </div>
+            <div className="flex justify-between py-1">
+              <dt className="text-gray-500">Plan Provider</dt>
+              <dd className="font-medium text-gray-900">{client.planProvider}</dd>
+            </div>
+            <div className="flex justify-between py-1">
+              <dt className="text-gray-500">Payment Frequency</dt>
+              <dd className="font-medium text-gray-900">{client.paymentFrequency}</dd>
+            </div>
+            <div className="flex justify-between py-1">
+              <dt className="text-gray-500">Fee Structure</dt>
+              <dd className="font-medium text-gray-900">{client.feeStructure}</dd>
+            </div>
+            {client.feeStructure === "Flat Rate" ? (
+              <div className="flex justify-between py-1">
+                <dt className="text-gray-500">Fee Amount</dt>
+                <dd className="font-medium text-gray-900">{formatCurrency(client.feeAmount)}</dd>
+              </div>
+            ) : (
+              <div className="flex justify-between py-1">
+                <dt className="text-gray-500">Fee Percentage</dt>
+                <dd className="font-medium text-gray-900">
+                  <div className="inline-flex items-center bg-gray-100 rounded-lg overflow-hidden">
+                    {client.paymentFrequency === "Monthly" ? (
+                      <>
+                        <span className="px-2 py-1 text-xs border-r border-gray-200">
+                          M: {formatPercentage(fees.monthlyRate, 3)}
+                        </span>
+                        <span className="px-2 py-1 text-xs border-r border-gray-200">
+                          Q: {formatPercentage(fees.quarterlyRate, 3)}
+                        </span>
+                        <span className="px-2 py-1 text-xs">
+                          A: {formatPercentage(fees.annualRate, 3)}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="px-2 py-1 text-xs border-r border-gray-200">
+                          M: {formatPercentage(fees.monthlyRate, 3)}
+                        </span>
+                        <span className="px-2 py-1 text-xs border-r border-gray-200">
+                          Q: {formatPercentage(fees.quarterlyRate, 3)}
+                        </span>
+                        <span className="px-2 py-1 text-xs">
+                          A: {formatPercentage(fees.annualRate, 3)}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </dd>
+              </div>
+            )}
+          </dl>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-bold text-gray-800">Payment Information</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <dl className="grid grid-cols-1 gap-1 text-sm">
+            <div className="flex justify-between py-1">
+              <dt className="text-gray-500">AUM</dt>
+              <dd className="font-medium text-gray-900">
+                {fees.hasAum ? formatCurrency(client.aum) : "No AUM data available"}
+              </dd>
+            </div>
+            <div className="flex justify-between py-1">
+              <dt className="text-gray-500">Expected Fee</dt>
+              <dd className="font-medium text-gray-900">
+                {fees.expectedFee 
+                  ? formatCurrency(fees.expectedFee) + (client.lastPaymentAmount && !fees.isFlatRate && !fees.hasAum ? " (based on last payment)" : "")
+                  : "N/A"
+                }
+              </dd>
+            </div>
+            <div className="flex justify-between py-1">
+              <dt className="text-gray-500">Last Payment</dt>
+              <dd className="font-medium text-gray-900">{client.lastPayment ? formatDate(client.lastPayment) : "N/A"}</dd>
+            </div>
+            <div className="flex justify-between py-1">
+              <dt className="text-gray-500">Last Payment Amount</dt>
+              <dd className="font-medium text-gray-900">
+                {formatCurrency(client.lastPaymentAmount)}
+              </dd>
+            </div>
+            <div className="flex justify-between py-1">
+              <dt className="text-gray-500">Next Payment Due</dt>
+              <dd className={`font-medium ${isOverdue ? "text-red-600" : "text-gray-900"}`}>
+                {formatDate(nextPaymentDate.toISOString().split("T")[0])}
+                {isOverdue && <span className="ml-2 text-red-600">(Overdue)</span>}
+              </dd>
+            </div>
+          </dl>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-bold text-gray-800">Compliance Status</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {/* Two-column layout container */}
+          <div className="flex flex-col md:flex-row gap-4">
+            {/* Left column - status indicator and general info */}
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-4">
+                {client.complianceStatus === "Compliant" ? (
+                  <CheckCircle className="h-5 w-5 text-green-500" />
+                ) : client.complianceStatus === "Review Needed" ? (
+                  <Clock className="h-5 w-5 text-yellow-500" />
+                ) : (
+                  <AlertTriangle className="h-5 w-5 text-red-500" />
+                )}
+                <span
+                  className={`font-medium ${client.complianceStatus === "Compliant"
+                    ? "text-green-700"
+                    : client.complianceStatus === "Review Needed"
+                      ? "text-yellow-700"
+                      : "text-red-700"
+                    }`}
+                >
+                  {client.complianceStatus}
+                </span>
+              </div>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="flex items-center gap-2">
+                  <CalendarClock className="h-4 w-4 text-gray-400" />
+                  <span className="text-sm text-gray-600">
+                    {client.paymentFrequency === "Monthly" ? "Monthly" : "Quarterly"} payment schedule
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CreditCard className="h-4 w-4 text-gray-400" />
+                  <span className="text-sm text-gray-600">
+                    {fees.isFlatRate
+                      ? `Flat fee of ${formatCurrency(client.feeAmount)}`
+                      : fees.hasAum 
+                        ? `Annually: ${formatPercentage(fees.annualRate, 3)} (${formatCurrency(fees.annualAmount)})`
+                        : `Annually: ${formatPercentage(fees.annualRate, 3)} rate (no AUM data)`}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-gray-400" />
+                  <span className="text-sm text-gray-600">
+                    Contract
+                  </span>
+                </div>
+              </div>
+            </div>
+            {/* Right column - fee reference (stacked) */}
+            <div className="md:w-2/5">
+              <div className="bg-gray-50 rounded-md p-3">
+                <h4 className="text-xs font-medium text-gray-500 mb-2">Fee Reference</h4>
+                {/* Fee Reference Display */}
+                {fees.isFlatRate ? (
+                  fees.monthlyRate ? (
+                    <div className="grid grid-cols-1 gap-2 text-xs">
+                      {/* Monthly display */}
+                      <div>
+                        <span className="text-gray-500">Monthly:</span>
+                        <span className="font-medium ml-1">{formatCurrency(fees.monthlyRate)}</span>
+                      </div>
+                      {/* Quarterly display */}
+                      <div>
+                        <span className="text-gray-500">Quarterly:</span>
+                        <span className="font-medium ml-1">{formatCurrency(fees.quarterlyRate)}</span>
+                      </div>
+                      {/* Annual display */}
+                      <div>
+                        <span className="text-gray-500">Annually:</span>
+                        <span className="font-medium ml-1">{formatCurrency(fees.annualRate)}</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-xs text-gray-500">
+                      Flat fee information not available
+                    </div>
+                  )
+                ) : (
+                  <>
+                    {!fees.hasAum && (
+                      <div className="text-xs italic text-gray-500 mb-2">
+                        No AUM data available. Based on rate only.
+                      </div>
+                    )}
+                    <div className="grid grid-cols-1 gap-2 text-xs">
+                      {/* Monthly display */}
+                      <div>
+                        <span className="text-gray-500">Monthly:</span>
+                        {fees.hasAum ? (
+                          <span className="font-medium ml-1">
+                            {formatPercentage(fees.monthlyRate, 4)} ({formatCurrency(fees.monthlyAmount)})
+                          </span>
+                        ) : (
+                          <span className="font-medium ml-1">
+                            {formatPercentage(fees.monthlyRate, 4)}
+                          </span>
+                        )}
+                      </div>
+                      {/* Quarterly display */}
+                      <div>
+                        <span className="text-gray-500">Quarterly:</span>
+                        {fees.hasAum ? (
+                          <span className="font-medium ml-1">
+                            {formatPercentage(fees.quarterlyRate, 4)} ({formatCurrency(fees.quarterlyAmount)})
+                          </span>
+                        ) : (
+                          <span className="font-medium ml-1">
+                            {formatPercentage(fees.quarterlyRate, 4)} 
+                            {client.paymentFrequency === "Monthly" ? " × 3 months" : ""}
+                          </span>
+                        )}
+                      </div>
+                      {/* Annual display */}
+                      <div>
+                        <span className="text-gray-500">Annually:</span>
+                        {fees.hasAum ? (
+                          <span className="font-medium ml-1">
+                            {formatPercentage(fees.annualRate, 4)} ({formatCurrency(fees.annualAmount)})
+                          </span>
+                        ) : (
+                          <span className="font-medium ml-1">
+                            {formatPercentage(fees.annualRate, 4)} 
+                            {client.paymentFrequency === "Monthly" ? " × 12 months" : " × 4 quarters"}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </>
+  )
+}
+```
+
+app\payments\client-payment-page.tsx
+```tsx
+"use client"
+import { useState, useEffect } from "react"
+import { FileText, Loader2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { ClientDetails } from "./client-details"
+import { PaymentForm } from "./payment-form"
+import { PaymentHistory } from "./payment-history"
+import { DocumentViewer } from "@/components/document-viewer"
+import { useClientSnapshot } from "@/hooks/use-client-snapshot"
+import { usePayments, usePaymentDetails } from "@/hooks/use-payments"
+import { mapComplianceStatus } from "@/hooks/use-client-data"
+import { mapClientSnapshotToUI, mapPaymentToUI } from "@/lib/mappers"
+import { ComplianceStatus } from "@/lib/api"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { AlertCircle } from "lucide-react"
+import type { Payment } from "@/types"
+import { toast } from "@/components/ui/use-toast"
+interface ClientPaymentPageProps {
+  clientId: number
+  complianceStatus: ComplianceStatus
+  onViewDocument: (documentUrl: string) => void
+  toggleDocumentViewer: () => void
+  documentViewerOpen: boolean
+}
+export function ClientPaymentPage({
+  clientId,
+  complianceStatus,
+  onViewDocument,
+  toggleDocumentViewer,
+  documentViewerOpen,
+}: ClientPaymentPageProps) {
+    const {
+    clientSnapshot,
+    feeSummary,
+    isLoading: isClientLoading,
+    error: clientError
+  } = useClientSnapshot(clientId);
+    const {
+    payments,
+    isLoading: isPaymentsLoading,
+    error: paymentsError,
+    createPayment,
+    updatePayment,
+    deletePayment,
+    refreshPayments
+  } = usePayments(clientId);
+    const [editingPaymentId, setEditingPaymentId] = useState<number | null>(null);
+  const [currentDocumentUrl, setCurrentDocumentUrl] = useState<string | null>(null);
+    const {
+    payment: editingPayment,
+    isLoading: isPaymentDetailLoading,
+    error: paymentDetailError
+  } = usePaymentDetails(editingPaymentId);
+    const uiClient = clientSnapshot ? mapClientSnapshotToUI(clientSnapshot, complianceStatus) : null;
+  const uiPayments = payments.map(payment => mapPaymentToUI(payment));
+    const activeContract = clientSnapshot?.contracts?.[0] || null;
+    const hasValidContractData = clientSnapshot && activeContract;
+        useEffect(() => {
+    if (clientId) {
+      console.log(`🔄 [DEBUG] Client changed to: ${clientId}`);
+    }
+  }, [clientId]);
+  useEffect(() => {
+    if (activeContract) {
+      console.log(`🔄 [DEBUG] Contract changed to: ${activeContract.contract_id} (belongs to client ${activeContract.client_id})`);
+            if (activeContract.client_id !== clientId) {
+        console.error(`⚠️ [CRITICAL ERROR] Contract belongs to client ${activeContract.client_id} but we're in client ${clientId} context!`);
+      }
+    }
+  }, [activeContract, clientId]);
+  useEffect(() => {
+    if (clientSnapshot) {
+      console.log(`🔄 [DEBUG] Client snapshot loaded: ${clientSnapshot.client.client_id}`);
+      if (clientSnapshot.contracts && clientSnapshot.contracts.length > 0) {
+        console.log(`🔄 [DEBUG] Contracts available: ${clientSnapshot.contracts.map(c => c.contract_id).join(', ')}`);
+      } else {
+        console.warn(`⚠️ [WARNING] No contracts found for client ${clientSnapshot.client.client_id}`);
+      }
+    }
+  }, [clientSnapshot]);
+    useEffect(() => {
+    if (editingPaymentId) {
+      setEditingPaymentId(null);
+    }
+  }, [clientId]);
+    const handleEditPayment = (payment: Payment) => {
+    setEditingPaymentId(parseInt(payment.id, 10));
+        document.getElementById("payment-form-section")?.scrollIntoView({ behavior: "smooth" });
+  }
+  const handleCancelEdit = () => {
+    setEditingPaymentId(null);
+  }
+  const handleViewDocument = (documentUrl: string) => {
+    setCurrentDocumentUrl(documentUrl);
+    onViewDocument(documentUrl);
+  }
+    const handleDeletePayment = async (paymentId: string) => {
+    try {
+      const numericPaymentId = parseInt(paymentId, 10);
+      const success = await deletePayment(numericPaymentId);
+      return success;
+    } catch (error) {
+      console.error("Error deleting payment:", error);
+      return false;
+    }
+  };
+    const handleCreatePayment = async (formData: any) => {
+    try {
+      const isSplitPayment = formData.appliedPeriod === "multiple";
+      await createPayment({
+        client_id: clientId,
+        contract_id: activeContract?.contract_id as number,
+        received_date: formData.receivedDate,
+        total_assets: formData.aum ? parseInt(formData.aum, 10) : undefined,
+        actual_fee: parseFloat(formData.amount),
+        method: formData.method,
+        notes: formData.notes,
+        is_split_payment: isSplitPayment,
+        start_period: parseInt(formData.startPeriod?.split('-')[0] || "1", 10),
+        start_period_year: parseInt(formData.startPeriod?.split('-')[1] || new Date().getFullYear().toString(), 10),
+        end_period: isSplitPayment ? parseInt(formData.endPeriod?.split('-')[0], 10) : undefined,
+        end_period_year: isSplitPayment ? parseInt(formData.endPeriod?.split('-')[1], 10) : undefined
+      });
+            await refreshPayments();
+      return true;
+    } catch (error) {
+      console.error("Error creating payment:", error);
+      return false;
+    }
+  };
+  const handleUpdatePayment = async (formData: any) => {
+    if (!editingPaymentId) return false;
+        const isCurrentlySplit = editingPayment?.is_split_payment;
+    const wantsToBeSplit = formData.appliedPeriod === "multiple";
+        const currentStartPeriod = editingPayment?.applied_start_quarter 
+      ? `${editingPayment.applied_start_quarter}-${editingPayment.applied_start_quarter_year}`
+      : editingPayment?.applied_start_month 
+        ? `${editingPayment.applied_start_month}-${editingPayment.applied_start_month_year}` 
+        : "";
+    const currentEndPeriod = editingPayment?.applied_end_quarter 
+      ? `${editingPayment.applied_end_quarter}-${editingPayment.applied_end_quarter_year}` 
+      : editingPayment?.applied_end_month 
+        ? `${editingPayment.applied_end_month}-${editingPayment.applied_end_month_year}` 
+        : "";
+        if (isCurrentlySplit !== wantsToBeSplit || 
+        (isCurrentlySplit && wantsToBeSplit && 
+         (formData.startPeriod !== currentStartPeriod || formData.endPeriod !== currentEndPeriod)) ||
+        (!isCurrentlySplit && !wantsToBeSplit && formData.periodValue !== currentStartPeriod)) {
+      const confirmDelete = window.confirm(
+        "Changing payment periods requires deleting and recreating the payment. " +
+        "Would you like to delete this payment and create a new one with the updated periods?"
+      );
+      if (confirmDelete) {
+                const deleteSuccess = await deletePayment(editingPaymentId);
+        if (!deleteSuccess) {
+          toast({
+            title: "Error",
+            description: "Failed to delete the original payment. Please try again.",
+            variant: "destructive",
+          });
+          return false;
+        }
+                const createSuccess = await handleCreatePayment(formData);
+                setEditingPaymentId(null);
+        return createSuccess;
+      } else {
+        return false;
+      }
+    }
+    try {
+      await updatePayment(editingPaymentId, {
+        received_date: formData.receivedDate,
+        total_assets: formData.aum ? parseInt(formData.aum, 10) : undefined,
+        actual_fee: parseFloat(formData.amount),
+        method: formData.method,
+        notes: formData.notes
+      });
+            await refreshPayments();
+            setEditingPaymentId(null);
+      return true;
+    } catch (error) {
+      console.error("Error updating payment:", error);
+      return false;
+    }
+  };
+    if (isClientLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between mb-6">
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map(i => (
+            <Card key={i}>
+              <CardHeader className="pb-2">
+                <Skeleton className="h-5 w-32 mb-2" />
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {[1, 2, 3, 4].map(j => (
+                    <div key={j} className="flex justify-between">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-4 w-32" />
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-48" />
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+              <Skeleton className="h-20 w-full" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+    if (clientError || !clientSnapshot) {
+    return (
+      <Alert variant="destructive" className="mb-6">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          {(clientError as Error)?.message || "Failed to load client data. Please try again."}
+        </AlertDescription>
+      </Alert>
+    );
+  }
+  return (
+    <div className={`flex h-full ${documentViewerOpen ? "space-x-4" : ""}`}>
+      <div className={`flex flex-col overflow-hidden ${documentViewerOpen ? "w-3/5" : "w-full"}`}>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold text-gray-800">{clientSnapshot.client.display_name}</h1>
+          <Button variant="outline" onClick={toggleDocumentViewer} className="flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            {documentViewerOpen ? "Hide Documents" : "View Documents"}
+          </Button>
+        </div>
+        {clientError && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              {(clientError as Error)?.message || "Failed to load client data. Please try again."}
+            </AlertDescription>
+          </Alert>
+        )}
+        {paymentsError && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              {paymentsError.message || "Failed to load payment data. Please try again."}
+            </AlertDescription>
+          </Alert>
+        )}
+        <ScrollArea className="flex-grow">
+          <div className="space-y-6 pr-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {uiClient && (
+                <ClientDetails
+                  client={uiClient}
+                  feeSummary={feeSummary}
+                />
+              )}
+            </div>
+            <div id="payment-form-section" className={documentViewerOpen ? "" : "px-[20%]"}>
+              <Card className={`transition-all duration-300 ${editingPaymentId ? "border-amber-500 shadow-md" : ""}`}>
+                <CardHeader className={`${editingPaymentId ? "bg-amber-50" : ""}`}>
+                  <div className="flex items-center space-x-2">
+                    <h2 className="text-xl font-semibold text-gray-800">
+                      {editingPaymentId ? "Edit Payment" : "Add Payment"}
+                      <span className="ml-2 font-normal text-gray-600">- {clientSnapshot.client.display_name}</span>
+                    </h2>
+                  </div>
+                  {editingPayment && (
+                    <CardDescription>
+                      Payment from {new Date(editingPayment.received_date).toLocaleDateString()}
+                      {editingPayment.is_split_payment && (
+                        <span className="ml-2">(Split payment)</span>
+                      )}
+                    </CardDescription>
+                  )}
+                </CardHeader>
+                <CardContent>
+                  {!hasValidContractData ? (
+                    <div className="flex justify-center items-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                      <span className="ml-3 text-sm text-gray-500">
+                        {isClientLoading ? "Loading client data..." : "No valid contract found"}
+                      </span>
+                    </div>
+                  ) : (
+                    <PaymentForm
+                      key={`payment-form-${clientId}-${activeContract?.contract_id}`}
+                      clientId={clientId.toString()}
+                      contractId={String(activeContract?.contract_id)}
+                      initialData={
+                        editingPayment
+                          ? {
+                            receivedDate: editingPayment.received_date,
+                            appliedPeriod: editingPayment.is_split_payment ? "multiple" : "single",
+                            periodValue: editingPayment.applied_start_quarter
+                              ? `${editingPayment.applied_start_quarter}-${editingPayment.applied_start_quarter_year}`
+                              : editingPayment.applied_start_month
+                                ? `${editingPayment.applied_start_month}-${editingPayment.applied_start_month_year}`
+                                : "",
+                            startPeriod: editingPayment.applied_start_quarter
+                              ? `${editingPayment.applied_start_quarter}-${editingPayment.applied_start_quarter_year}`
+                              : editingPayment.applied_start_month
+                                ? `${editingPayment.applied_start_month}-${editingPayment.applied_start_month_year}`
+                                : "",
+                            endPeriod: editingPayment.applied_end_quarter
+                              ? `${editingPayment.applied_end_quarter}-${editingPayment.applied_end_quarter_year}`
+                              : editingPayment.applied_end_month
+                                ? `${editingPayment.applied_end_month}-${editingPayment.applied_end_month_year}`                              : "",
+                            aum: editingPayment.total_assets?.toString() || "",
+                            amount: editingPayment.actual_fee.toString(),
+                            method: editingPayment.method || "",
+                            notes: editingPayment.notes || "",
+                            attachmentUrl: "",                           }
+                          : undefined
+                      }
+                      onCancel={handleCancelEdit}
+                      onSubmit={editingPaymentId ? handleUpdatePayment : handleCreatePayment}
+                      isEditing={!!editingPaymentId}
+                      isLoading={isPaymentDetailLoading}
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">Payment History</h2>
+              <PaymentHistory
+                payments={uiPayments}
+                client={uiClient}
+                onEdit={handleEditPayment}
+                onDelete={handleDeletePayment}
+                onViewDocument={handleViewDocument}
+                isLoading={isPaymentsLoading}
+              />
+            </div>
+          </div>
+        </ScrollArea>
+      </div>
+      {documentViewerOpen && (
+        <div className="w-2/5">
+          <DocumentViewer documentUrl={currentDocumentUrl} onClose={toggleDocumentViewer} className="h-full" />
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+app\payments\client-sidebar.tsx
+```tsx
+"use client"
+import { useState, useMemo } from "react"
+import { Search, Building, UserCheck, UserX, UserCog } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Switch } from "@/components/ui/switch"
+import { Button } from "@/components/ui/button"
+import type { Client } from "../../types"
+interface ClientSidebarProps {
+  clients: Client[]
+  selectedClient: Client | null
+  onSelectClient: (client: Client) => void
+}
+export function ClientSidebar({ clients, selectedClient, onSelectClient }: ClientSidebarProps) {
+  const [searchQuery, setSearchQuery] = useState("")
+  const [isProviderView, setIsProviderView] = useState(false)
+  const [expandedProvider, setExpandedProvider] = useState<string | null>(null)
+  const filteredClients = useMemo(() =>
+    clients.filter((client) =>
+      client.name.toLowerCase().includes(searchQuery.toLowerCase())
+    ),
+    [clients, searchQuery]
+  );
+  const providers = useMemo(() =>
+    Array.from(new Set(clients.map((client) => client.planProvider))),
+    [clients]
+  );
+  const toggleProvider = (provider: string) => {
+    setExpandedProvider(expandedProvider === provider ? null : provider)
+  }
+  return (
+    <div className="w-80 border-r border-gray-200 bg-white flex flex-col h-full">
+      <div className="p-4 border-b border-gray-200">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Clients</h2>
+        <div className="relative mb-4">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            type="search"
+            placeholder="Search clients..."
+            className="pl-10 bg-gray-50"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-gray-700">View by Provider</span>
+          <Switch
+            checked={isProviderView}
+            onCheckedChange={(checked) => {
+              setIsProviderView(checked)
+              setExpandedProvider(null)
+            }}
+          />
+        </div>
+      </div>
+      <ScrollArea className="flex-1">
+        <div className="p-2">
+          {isProviderView
+            ? providers.map((provider) => (
+              <div key={provider} className="mb-2">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-between py-2 px-3 hover:bg-gray-100"
+                  onClick={() => toggleProvider(provider)}
+                >
+                  <span className="font-medium">{provider}</span>
+                  <Building className="h-4 w-4 text-gray-500" />
+                </Button>
+                {expandedProvider === provider && (
+                  <div className="ml-4 mt-1">
+                    {filteredClients
+                      .filter((client) => client.planProvider === provider)
+                      .map((client) => (
+                        <ClientButton
+                          key={client.id}
+                          client={client}
+                          isSelected={selectedClient?.id === client.id}
+                          onClick={() => onSelectClient(client)}
+                        />
+                      ))}
+                  </div>
+                )}
+              </div>
+            ))
+            : filteredClients.map((client) => (
+              <ClientButton
+                key={client.id}
+                client={client}
+                isSelected={selectedClient?.id === client.id}
+                onClick={() => onSelectClient(client)}
+              />
+            ))}
+        </div>
+      </ScrollArea>
+    </div>
+  )
+}
+interface ClientButtonProps {
+  client: Client
+  isSelected: boolean
+  onClick: () => void
+}
+function ClientButton({ client, isSelected, onClick }: ClientButtonProps) {
+  const getComplianceIcon = (status: string) => {
+    switch (status) {
+      case "Compliant":
+        return <UserCheck className="h-4 w-4 text-green-500" />
+      case "Review Needed":
+        return <UserCog className="h-4 w-4 text-yellow-500" />
+      case "Payment Overdue":
+        return <UserX className="h-4 w-4 text-red-500" />
+      default:
+        return <UserCheck className="h-4 w-4 text-gray-400" />
+    }
+  }
+  return (
+    <Button
+      variant="ghost"
+      className={`w-full justify-start py-2 px-3 mb-1 ${isSelected ? "bg-gray-100" : ""}`}
+      onClick={onClick}
+    >
+      <div className="flex items-center w-full">
+        <span className="mr-3">{getComplianceIcon(client.complianceStatus)}</span>
+        <span className="truncate flex-grow text-left">{client.name}</span>
+      </div>
+    </Button>
+  )
+}
+```
+
+app\payments\page.tsx
+```tsx
+"use client"
+import { useState, useEffect } from "react"
+import { ClientSidebar } from "./client-sidebar"
+import { ClientPaymentPage } from "./client-payment-page"
+import { useClientData, mapComplianceStatus } from "@/hooks/use-client-data"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { AlertCircle } from "lucide-react"
+export default function PaymentsPage() {
+    const {
+        clients,
+        clientsByProvider,
+        selectedClient,
+        complianceStatuses,
+        isLoading,
+        error,
+        selectClient
+    } = useClientData()
+    const [documentViewerOpen, setDocumentViewerOpen] = useState(false)
+    const [currentDocument, setCurrentDocument] = useState<string | null>(null)
+    const toggleDocumentViewer = () => {
+        setDocumentViewerOpen(!documentViewerOpen)
+    }
+    const viewDocument = (documentUrl: string) => {
+        setCurrentDocument(documentUrl)
+        if (!documentViewerOpen) {
+            setDocumentViewerOpen(true)
+        }
+    }
+    const mappedClients = clients.map(client => {
+        const complianceStatus = complianceStatuses[client.client_id] || { status: 'yellow', reason: 'Unknown status' };
+        return {
+            id: client.client_id.toString(),
+            name: client.display_name,
+            planProvider: clientsByProvider.find(g =>
+                g.clients.some(c => c.client_id === client.client_id)
+            )?.provider || "Unknown",
+            paymentFrequency: "Quarterly" as "Monthly" | "Quarterly",
+            feeStructure: "Flat Rate" as "Flat Rate" | "Percentage of AUM",
+            aum: 0, 
+            lastPayment: "", 
+            lastPaymentAmount: 0, 
+            complianceStatus: mapComplianceStatus(complianceStatus),
+            contractNumber: "" 
+        };
+    });
+    const handleSelectClient = (clientId: string) => {
+        selectClient(parseInt(clientId, 10));
+    };
+    return (
+        <div className="flex flex-1 overflow-hidden">
+            {isLoading ? (
+                <div className="w-80 border-r border-gray-200 bg-white">
+                    <div className="p-4 border-b border-gray-200">
+                        <div className="h-8 w-40 bg-gray-200 rounded mb-4"></div>
+                        <Skeleton className="h-10 w-full mb-4" />
+                        <div className="flex items-center justify-between">
+                            <Skeleton className="h-5 w-32" />
+                            <Skeleton className="h-5 w-10" />
+                        </div>
+                    </div>
+                    <div className="p-2">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                            <Skeleton key={i} className="h-10 w-full mb-1" />
+                        ))}
+                    </div>
+                </div>
+            ) : (
+                <ClientSidebar
+                    clients={mappedClients}
+                    selectedClient={selectedClient ? {
+                        id: selectedClient.client_id.toString(),
+                        name: selectedClient.display_name,
+                        planProvider: clientsByProvider.find(g =>
+                            g.clients.some(c => c.client_id === selectedClient.client_id)
+                        )?.provider || "Unknown",
+                        paymentFrequency: "Quarterly" as "Monthly" | "Quarterly",
+                        feeStructure: "Flat Rate" as "Flat Rate" | "Percentage of AUM",
+                        aum: 0, 
+                        lastPayment: "", 
+                        lastPaymentAmount: 0, 
+                        complianceStatus: mapComplianceStatus(
+                            complianceStatuses[selectedClient.client_id] || { status: 'yellow', reason: 'Unknown status' }
+                        ),
+                        contractNumber: "" 
+                    } : null}
+                    onSelectClient={(client) => handleSelectClient(client.id)}
+                />
+            )}
+            <main className="flex-1 overflow-hidden p-6">
+                {error ? (
+                    <Alert variant="destructive" className="mb-6">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>
+                            {error.message || "Failed to load client data. Please try again."}
+                        </AlertDescription>
+                    </Alert>
+                ) : null}
+                {selectedClient ? (
+                    <ClientPaymentPage
+                        clientId={selectedClient.client_id}
+                        complianceStatus={complianceStatuses[selectedClient.client_id] || { status: 'yellow', reason: 'Unknown status' }}
+                        onViewDocument={viewDocument}
+                        toggleDocumentViewer={toggleDocumentViewer}
+                        documentViewerOpen={documentViewerOpen}
+                    />
+                ) : (
+                    <div className="flex items-center justify-center h-full">
+                        <div className="text-center p-8 max-w-md">
+                            <h2 className="text-2xl font-semibold text-gray-700 mb-2">Welcome to the Payment Dashboard</h2>
+                            <p className="text-gray-500 mb-6">
+                                Select a client from the sidebar to view and manage their payment details.
+                            </p>
+                        </div>
+                    </div>
+                )}
+            </main>
+        </div>
+    )
+}
+```
+
+app\payments\payment-form.tsx
+```tsx
+"use client"
+import type React from "react"
+import { useState, useEffect } from "react"
+import { CalendarIcon, Paperclip, Loader2, AlertCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
+import { Switch } from "@/components/ui/switch"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { cn } from "@/lib/utils"
+import { format } from "date-fns"
+import { paymentApi, apiRequest } from "@/lib/api"
+import { useToast } from "@/hooks/use-toast"
+import { formatPeriod } from "@/lib/mappers"
+import type { PaymentFormData } from "../../types"
+interface PaymentFormProps {
+  clientId: string
+  contractId: string
+  initialData?: PaymentFormData
+  onCancel: () => void
+  onSubmit: (data: PaymentFormData) => Promise<boolean>
+  isEditing: boolean
+  isLoading?: boolean
+  previousPayments?: Array<{ amount: number, date: string }>
+}
+function useClientContractValidation(clientId: string, contractId: string) {
+  const [isValid, setIsValid] = useState<boolean | null>(null);
+  const [isChecking, setIsChecking] = useState<boolean>(false);
+  const [retries, setRetries] = useState<number>(0);
+  useEffect(() => {
+        setIsValid(null);
+    setIsChecking(true);     setRetries(0);     
+        if (!clientId || !contractId) {
+      setIsChecking(false);
+      return;
+    }
+    console.log(`🔎 [VALIDATION] Checking if contract ${contractId} belongs to client ${clientId}...`);
+    let isMounted = true;
+    let validationTimeout: NodeJS.Timeout;
+    const validateRelationship = async () => {
+      try {
+                        await new Promise(resolve => setTimeout(resolve, 200));
+        if (!isMounted) return;
+                const response = await fetch(`http://localhost:8000/clients/${clientId}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch client data: ${response.statusText}`);
+        }
+        if (!isMounted) return;
+        const data = await response.json();
+        if (!isMounted) return;
+                const isValidContract = data.contracts && 
+          Array.isArray(data.contracts) && 
+          data.contracts.some((c: { contract_id: number }) => c.contract_id === parseInt(contractId, 10));
+                if (isValidContract) {
+          console.log(`✅ [VALIDATION SUCCESS] Contract ${contractId} belongs to client ${clientId}`);
+          setIsValid(true);
+          setIsChecking(false);
+        } else {
+          console.error(`❌ [VALIDATION FAILED] Contract ${contractId} does NOT belong to client ${clientId}`);
+          console.error(`Valid contracts for client ${clientId}: `, 
+            data.contracts?.map((c: { contract_id: number }) => c.contract_id).join(', ') || 'None');
+                              if (retries < 3) {
+            console.log(`⏳ [VALIDATION] Retry ${retries + 1}/3 in 500ms...`);
+                        setRetries(prev => prev + 1);
+                        validationTimeout = setTimeout(() => {
+              if (isMounted) validateRelationship();
+            }, 500);
+          } else {
+            console.error(`❌ [VALIDATION] All retries failed for client ${clientId}, contract ${contractId}`);
+            setIsValid(false);
+            setIsChecking(false);
+          }
+        }
+      } catch (error) {
+        console.error('[VALIDATION ERROR]', error);
+                if (retries < 3) {
+          console.log(`⏳ [VALIDATION] Retry ${retries + 1}/3 after error...`);
+          setRetries(prev => prev + 1);
+          validationTimeout = setTimeout(() => {
+            if (isMounted) validateRelationship();
+          }, 500);
+        } else {
+          setIsValid(false);
+          setIsChecking(false);
+        }
+      }
+    };
+    validateRelationship();
+        return () => {
+      isMounted = false;
+      clearTimeout(validationTimeout);
+    };
+  }, [clientId, contractId, retries]);
+  return { isValid, isChecking };
+}
+export function PaymentForm({
+  clientId,
+  contractId,
+  initialData,
+  onCancel,
+  onSubmit,
+  isEditing,
+  isLoading = false,
+  previousPayments = []
+}: PaymentFormProps) {
+  const { toast } = useToast();
+  const [formData, setFormData] = useState<PaymentFormData>(
+    initialData || {
+      receivedDate: format(new Date(), "yyyy-MM-dd"),
+      appliedPeriod: "single",
+      periodValue: "",
+      startPeriod: "",
+      endPeriod: "",
+      aum: "",
+      amount: "",
+      method: "",
+      notes: "",
+      attachmentUrl: "",
+    },
+  )
+  const [date, setDate] = useState<Date | undefined>(
+    initialData?.receivedDate ? new Date(initialData.receivedDate) : new Date(),
+  )
+  const [isSplitPayment, setIsSplitPayment] = useState(initialData?.appliedPeriod === "multiple")
+  const [hasChanges, setHasChanges] = useState(false)
+  const [customMethod, setCustomMethod] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [availablePeriods, setAvailablePeriods] = useState<{ label: string, value: { quarter?: number, month?: number, year: number } }[]>([])
+  const [isMonthly, setIsMonthly] = useState(false)
+  const [isNotesOpen, setIsNotesOpen] = useState(!!initialData?.notes || !!initialData?.attachmentUrl)
+  const [validationError, setValidationError] = useState<string | null>(null)
+  const [expectedFee, setExpectedFee] = useState<number | null>(null)
+  const [periodsLoading, setPeriodsLoading] = useState(false)
+    const { isValid: isValidRelationship, isChecking: isValidating } = useClientContractValidation(clientId, contractId);
+    useEffect(() => {
+        if (!contractId || !clientId || isValidRelationship === false) {
+      return;
+    }
+        if (isValidating || isValidRelationship === null) {
+      console.log('Waiting for client/contract validation...');
+      return;
+    }
+        if (!isEditing) {
+      setFormData({
+        receivedDate: format(new Date(), "yyyy-MM-dd"),
+        appliedPeriod: "single",
+        periodValue: "",
+        startPeriod: "",
+        endPeriod: "",
+        aum: "",
+        amount: "",
+        method: "",
+        notes: "",
+        attachmentUrl: "",
+      });
+      setExpectedFee(null);
+    }
+    console.log(`✅ VALIDATED: Client ${clientId} owns Contract ${contractId} - Fetching periods...`);
+    setPeriodsLoading(true);
+    const fetchPeriods = async () => {
+      try {
+        const periodsData = await paymentApi.getAvailablePeriods(parseInt(clientId, 10), parseInt(contractId, 10));
+        console.log(`Successfully fetched periods for client=${clientId} contract=${contractId}`);
+        setAvailablePeriods(periodsData.periods);
+        setIsMonthly(periodsData.is_monthly);
+      } catch (error) {
+        console.error(`Error fetching periods:`, error);
+        toast({
+          title: "Error loading periods",
+          description: "Could not load available payment periods",
+          variant: "destructive",
+        });
+      } finally {
+        setPeriodsLoading(false);
+      }
+    };
+    fetchPeriods();
+  }, [clientId, contractId, isEditing, toast, isValidRelationship, isValidating]);
+    useEffect(() => {
+    const calculateExpectedFee = async () => {
+      if (!contractId || (!formData.aum && !formData.periodValue)) return;
+      try {
+                if (formData.periodValue) {
+          const [periodValue, periodYear] = formData.periodValue.split('-');
+                    console.log("💰 FEE CALCULATION REQUEST:", {
+            client_id: parseInt(clientId, 10),
+            contract_id: parseInt(contractId, 10),
+            total_assets: formData.aum ? parseInt(formData.aum, 10) : undefined,
+            period_type: isMonthly ? 'month' : 'quarter',
+            period: parseInt(periodValue, 10),
+            year: parseInt(periodYear, 10)
+          });
+          const feeData = await paymentApi.calculateExpectedFee({
+            client_id: parseInt(clientId, 10),
+            contract_id: parseInt(contractId, 10),
+            total_assets: formData.aum ? parseInt(formData.aum, 10) : undefined,
+            period_type: isMonthly ? 'month' : 'quarter',
+            period: parseInt(periodValue, 10),
+            year: parseInt(periodYear, 10)
+          });
+                    console.log("💰 FEE CALCULATION RESPONSE:", feeData);
+                    setExpectedFee(feeData.expected_fee !== undefined && feeData.expected_fee !== null ?
+            Number(feeData.expected_fee) : null);
+                    console.log("💰 EXPECTED FEE SET TO:", feeData.expected_fee);
+        }
+      } catch (error) {
+        console.error("❌ Error calculating expected fee:", error);
+        setExpectedFee(null);
+      }
+    };
+        calculateExpectedFee();
+  }, [clientId, contractId, formData.aum, formData.periodValue, isMonthly]);
+    useEffect(() => {
+    if (isSplitPayment && formData.startPeriod && formData.endPeriod) {
+      const [startPeriod, startYear] = formData.startPeriod.split('-').map(val => parseInt(val, 10));
+      const [endPeriod, endYear] = formData.endPeriod.split('-').map(val => parseInt(val, 10));
+      const startTotal = startYear * (isMonthly ? 12 : 4) + startPeriod;
+      const endTotal = endYear * (isMonthly ? 12 : 4) + endPeriod;
+      if (endTotal < startTotal) {
+        setValidationError("End period cannot be before start period");
+      } else {
+        setValidationError(null);
+      }
+    } else {
+      setValidationError(null);
+    }
+  }, [formData.startPeriod, formData.endPeriod, isSplitPayment, isMonthly]);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+    setHasChanges(true)
+  }
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }))
+    setHasChanges(true)
+        if (name === "periodValue") {
+      setFormData((prev) => ({
+        ...prev,
+        startPeriod: value,
+        endPeriod: value
+      }));
+    }
+  }
+  const handleDateChange = (newDate: Date | undefined) => {
+    setDate(newDate)
+    if (newDate) {
+      setFormData((prev) => ({ ...prev, receivedDate: format(newDate, "yyyy-MM-dd") }))
+      setHasChanges(true)
+    }
+  }
+  const handleSplitPaymentToggle = (checked: boolean) => {
+    setIsSplitPayment(checked)
+    setFormData((prev) => ({
+      ...prev,
+      appliedPeriod: checked ? "multiple" : "single",
+            ...(checked ? {} : { 
+        startPeriod: prev.periodValue || prev.startPeriod, 
+        endPeriod: prev.periodValue || prev.startPeriod 
+      })
+    }))
+        if (!checked && formData.startPeriod) {
+      setFormData((prev) => ({
+        ...prev,
+        periodValue: prev.startPeriod
+      }));
+    }
+    setHasChanges(true)
+  }
+  const handleAttachFile = () => {
+        toast({
+      title: "Document Upload Coming Soon",
+      description: "Document management will be available in a future update.",
+    });
+    setHasChanges(true)
+  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (isSubmitting) return;
+        if (validationError) {
+      toast({
+        title: "Validation Error",
+        description: validationError,
+        variant: "destructive",
+      });
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+            if (!formData.amount) {
+        toast({
+          title: "Validation Error",
+          description: "Payment amount is required.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+      if (isSplitPayment && (!formData.startPeriod || !formData.endPeriod)) {
+        toast({
+          title: "Validation Error",
+          description: "Start and end periods are required for split payments.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+      if (!isSplitPayment && !formData.periodValue) {
+        toast({
+          title: "Validation Error",
+          description: "Applied period is required.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+            const newAmount = parseFloat(formData.amount as string);
+      const previousPayment = previousPayments.length > 0 ? previousPayments[0].amount : null;
+      if (previousPayment && !isEditing) {
+        const percentChange = Math.abs((newAmount - previousPayment) / previousPayment);
+        if (percentChange > 0.5) {           const confirmProceed = window.confirm(
+            `This payment amount ($${newAmount.toFixed(2)}) is significantly different (${(percentChange * 100).toFixed(0)}% change) from the previous payment ($${previousPayment.toFixed(2)}). Are you sure this is correct?`
+          );
+          if (!confirmProceed) {
+            setIsSubmitting(false);
+            return;
+          }
+        }
+      }
+            const submissionData = {
+        ...formData,
+        contractId: contractId
+      };
+      const success = await onSubmit(submissionData);
+      if (success) {
+        toast({
+          title: isEditing ? "Payment Updated" : "Payment Created",
+          description: isEditing
+            ? "The payment has been successfully updated."
+            : "A new payment has been successfully created.",
+        });
+                if (!isEditing) {
+          handleClear(true);
+        }
+      } else {
+        toast({
+          title: "Error",
+          description: isEditing
+            ? "Failed to update payment. Please try again."
+            : "Failed to create payment. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+  const handleCancel = () => {
+    if (hasChanges) {
+      const confirmCancel = window.confirm("You have unsaved changes. Are you sure you want to cancel?");
+      if (!confirmCancel) return;
+    }
+    onCancel();
+  }
+  const handleClear = (skipConfirmationOrEvent: boolean | React.MouseEvent = false) => {
+        const skipConfirmation = typeof skipConfirmationOrEvent === 'boolean' ? skipConfirmationOrEvent : false;
+    if (hasChanges && !skipConfirmation) {
+      const confirmClear = window.confirm("This will clear all entered data. Continue?");
+      if (!confirmClear) return;
+    }
+    setFormData({
+      receivedDate: format(new Date(), "yyyy-MM-dd"),
+      appliedPeriod: "single",
+      periodValue: "",
+      startPeriod: "",
+      endPeriod: "",
+      aum: "",
+      amount: "",
+      method: "",
+      notes: "",
+      attachmentUrl: "",
+    });
+    setHasChanges(false);
+    setDate(new Date());
+    setIsSplitPayment(false);
+    setExpectedFee(null);
+        setCustomMethod("");
+    setValidationError(null);
+  }
+  if (isLoading || periodsLoading) {
+    return (
+      <div className="flex justify-center items-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+    const formattedPeriods = availablePeriods.map(period => ({
+    ...period,
+    formattedLabel: period.label
+  }));
+    if (!contractId) {
+    return (
+      <Alert variant="destructive" className="mb-4">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          No valid contract found for this client. Please make sure the client has an active contract.
+        </AlertDescription>
+      </Alert>
+    );
+  }
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {validationError && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{validationError}</AlertDescription>
+        </Alert>
+      )}
+      {isEditing && (
+        <Alert className="bg-amber-50 border-amber-200">
+          <AlertCircle className="h-4 w-4 text-amber-600" />
+          <AlertDescription className="text-amber-800">
+            Note: To change payment periods, you'll need to delete this payment and create a new one.
+          </AlertDescription>
+        </Alert>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="space-y-1.5">
+          <Label htmlFor="receivedDate" className="text-sm font-medium">
+            Received Date
+          </Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn("w-full h-10 justify-start text-left font-normal", !date && "text-muted-foreground")}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {date ? format(date, "PPP") : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar mode="single" selected={date} onSelect={handleDateChange} initialFocus />
+            </PopoverContent>
+          </Popover>
+        </div>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="appliedPeriod" className="text-sm font-medium">
+              Applied Period
+            </Label>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-muted-foreground">Single</span>
+              <Switch checked={isSplitPayment} onCheckedChange={handleSplitPaymentToggle} disabled={isEditing} />
+              <span className="text-sm text-muted-foreground">Split</span>
+            </div>
+          </div>
+          <div className="flex space-x-2">
+            {isSplitPayment ? (
+              <>
+                <Select
+                  value={formData.startPeriod}
+                  onValueChange={(value) => handleSelectChange("startPeriod", value)}
+                  disabled={isEditing}
+                >
+                  <SelectTrigger className={`h-10 flex-1 ${isEditing ? "opacity-60" : ""}`}>
+                    <SelectValue placeholder="Start period (required)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {formattedPeriods.map((period) => (
+                      <SelectItem key={`start-${period.label}`} value={period.value.quarter
+                        ? `${period.value.quarter}-${period.value.year}`
+                        : `${period.value.month}-${period.value.year}`}
+                      >
+                        {period.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={formData.endPeriod} onValueChange={(value) => handleSelectChange("endPeriod", value)} disabled={isEditing}>
+                  <SelectTrigger className={`h-10 flex-1 ${isEditing ? "opacity-60" : ""}`}>
+                    <SelectValue placeholder="End period (required)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {formattedPeriods.map((period) => (
+                      <SelectItem key={`end-${period.label}`} value={period.value.quarter
+                        ? `${period.value.quarter}-${period.value.year}`
+                        : `${period.value.month}-${period.value.year}`}
+                      >
+                        {period.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </>
+            ) : (
+              <Select value={formData.periodValue} onValueChange={(value) => handleSelectChange("periodValue", value)} disabled={isEditing}>
+                <SelectTrigger className={`w-full h-10 ${isEditing ? "opacity-60" : ""}`}>
+                  <SelectValue placeholder="Select period (required)" />
+                </SelectTrigger>
+                <SelectContent>
+                  {formattedPeriods.map((period) => (
+                    <SelectItem key={`period-${period.label}`} value={period.value.quarter
+                      ? `${period.value.quarter}-${period.value.year}`
+                      : `${period.value.month}-${period.value.year}`}
+                    >
+                      {period.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="space-y-2">
+          <Label htmlFor="aum" className="text-sm font-medium">
+            Assets Under Management <span className="text-xs text-muted-foreground">(optional)</span>
+          </Label>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">$</span>
+            <Input
+              id="aum"
+              name="aum"
+              type="number"
+              value={formData.aum}
+              onChange={handleInputChange}
+              placeholder="Optional - improves fee calculations"
+              className="pl-8 h-10"
+            />
+          </div>
+          {expectedFee !== null && (
+            <div className="text-xs text-muted-foreground mt-1">
+              Expected Fee: ${expectedFee.toFixed(2)}
+            </div>
+          )}
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="amount" className="text-sm font-medium">
+            Payment Amount
+          </Label>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">$</span>
+            <Input
+              id="amount"
+              name="amount"
+              type="number"
+              value={formData.amount}
+              onChange={handleInputChange}
+              placeholder="Enter payment amount (required)"
+              required
+              className="pl-8 h-10"
+            />
+          </div>
+          {expectedFee !== null && formData.amount && (
+            <div className={`text-xs ${Math.abs(parseFloat(formData.amount as string) - expectedFee) <= expectedFee * 0.05
+              ? 'text-green-600'
+              : Math.abs(parseFloat(formData.amount as string) - expectedFee) <= expectedFee * 0.15
+                ? 'text-yellow-600'
+                : 'text-red-600'
+              }`}>
+              {parseFloat(formData.amount as string) > expectedFee
+                ? `+${(parseFloat(formData.amount as string) - expectedFee).toFixed(2)} (${((parseFloat(formData.amount as string) - expectedFee) / expectedFee * 100).toFixed(1)}%)`
+                : parseFloat(formData.amount as string) < expectedFee
+                  ? `-${(expectedFee - parseFloat(formData.amount as string)).toFixed(2)} (${((expectedFee - parseFloat(formData.amount as string)) / expectedFee * 100).toFixed(1)}%)`
+                  : 'Matches expected fee'
+              }
+            </div>
+          )}
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="method" className="text-sm font-medium">
+            Payment Method <span className="text-xs text-muted-foreground">(optional)</span>
+          </Label>
+          <Select
+            name="method"
+            value={formData.method}
+            onValueChange={(value) => handleSelectChange("method", value)}
+          >
+            <SelectTrigger className="w-full h-10">
+              <SelectValue placeholder="Select method (optional)" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Check">Check</SelectItem>
+              <SelectItem value="Wire Transfer">Wire Transfer</SelectItem>
+              <SelectItem value="ACH">ACH</SelectItem>
+              <SelectItem value="Auto - Check">Auto - Check</SelectItem>
+              <SelectItem value="Auto - ACH">Auto - ACH</SelectItem>
+              <SelectItem value="Invoice - Check">Invoice - Check</SelectItem>
+              <SelectItem value="None Specified">None Specified</SelectItem>
+              <SelectItem value="Other">Other</SelectItem>
+            </SelectContent>
+          </Select>
+          {formData.method === "Other" && (
+            <Input
+              name="customMethod"
+              value={customMethod}
+              onChange={(e) => setCustomMethod(e.target.value)}
+              placeholder="Specify method"
+              className="mt-2 h-10"
+            />
+          )}
+        </div>
+      </div>
+      {/* Period summary */}
+      {(isSplitPayment && formData.startPeriod && formData.endPeriod) && (
+        <div className="bg-gray-50 p-3 rounded-md text-sm">
+          <h4 className="font-medium mb-1">Payment Summary</h4>
+          <div className="text-gray-600">
+            {formData.amount && (
+              <div>
+                {(() => {
+                                    const [startPeriod, startYear] = formData.startPeriod.split('-').map(val => parseInt(val, 10));
+                  const [endPeriod, endYear] = formData.endPeriod.split('-').map(val => parseInt(val, 10));
+                  const startTotal = startYear * (isMonthly ? 12 : 4) + startPeriod;
+                  const endTotal = endYear * (isMonthly ? 12 : 4) + endPeriod;
+                  if (endTotal < startTotal) return "Invalid period range";
+                  const periodCount = endTotal - startTotal + 1;
+                  const amountPerPeriod = parseFloat(formData.amount as string) / periodCount;
+                  return (
+                    <>
+                      <span>
+                        {formatPeriod(formData.startPeriod)} to {formatPeriod(formData.endPeriod)}
+                      </span>
+                      <div>
+                        {periodCount} {isMonthly ? 'months' : 'quarters'} × ${amountPerPeriod.toFixed(2)} = ${parseFloat(formData.amount as string).toFixed(2)}
+                      </div>
+                    </>
+                  );
+                })()}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {/* Modified layout to position buttons next to the notes section in a horizontal arrangement */}
+      <div className="flex flex-col md:flex-row gap-5">
+        {/* Notes & Attachments section - takes up more space */}
+        <div className="flex-1">
+          <details className="group" open={isNotesOpen} onToggle={() => setIsNotesOpen(!isNotesOpen)}>
+            <summary className="flex items-center cursor-pointer list-none">
+              <Label htmlFor="notes" className="text-sm font-medium">
+                Notes & Attachments <span className="text-xs text-muted-foreground">(optional)</span>
+              </Label>
+              <svg
+                className="ml-2 h-4 w-4 group-open:rotate-180 transition-transform"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </summary>
+            <div className="pt-2 pb-1">
+              <div className="relative">
+                <Textarea
+                  id="notes"
+                  name="notes"
+                  value={formData.notes}
+                  onChange={handleInputChange}
+                  placeholder="Add any additional notes here"
+                  rows={3}
+                  className="resize-none min-h-[80px]"
+                />
+                {/* IMPROVED: Document Feature Button with Message */}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-2 bottom-2 opacity-80 hover:opacity-100"
+                  onClick={handleAttachFile}
+                  title="Attach a file (coming soon)"
+                >
+                  <Paperclip className="h-4 w-4" />
+                  <span className="sr-only">Attach file (coming soon)</span>
+                </Button>
+              </div>
+              {formData.attachmentUrl && <div className="text-sm text-blue-600 mt-1">1 attachment</div>}
+            </div>
+          </details>
+        </div>
+        {/* Buttons section - horizontal layout */}
+        <div className="md:flex md:items-end md:space-x-3 space-y-3 md:space-y-0">
+          {isEditing && (
+            <Button type="button" variant="outline" onClick={handleCancel}>
+              Cancel
+            </Button>
+          )}
+          <Button type="button" variant="outline" onClick={handleClear}>
+            Clear
+          </Button>
+          <Button type="submit" disabled={isSubmitting || !!validationError}>
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {isEditing ? "Updating..." : "Submitting..."}
+              </>
+            ) : (
+              isEditing ? "Update" : "Submit"
+            )}
+          </Button>
+        </div>
+      </div>
+    </form>
+  )
+}
+```
+
+app\payments\payment-history.tsx
+```tsx
+"use client"
+import React, { useState } from "react"
+import { ChevronDown, ChevronRight, Edit, FileText, MoreHorizontal, Trash2, Loader2, AlertCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { useToast } from "@/hooks/use-toast"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Badge } from "@/components/ui/badge"
+import { formatCurrency, formatPercentage } from "@/lib/utils"
+import type { Client, Payment, PaymentPeriod } from "@/types"
+interface PaymentHistoryProps {
+  payments: Payment[]
+  client: Client | null
+  onEdit: (payment: Payment) => void
+  onDelete: (paymentId: string) => Promise<boolean>
+  onViewDocument: (documentUrl: string) => void
+  isLoading?: boolean
+}
+export function PaymentHistory({
+  payments,
+  client,
+  onEdit,
+  onDelete,
+  onViewDocument,
+  isLoading = false
+}: PaymentHistoryProps) {
+  const { toast } = useToast();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [paymentToDelete, setPaymentToDelete] = useState<Payment | null>(null)
+  const [expandedPayments, setExpandedPayments] = useState<string[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [deletingSplitGroup, setDeletingSplitGroup] = useState(false)
+  const [splitGroupToDelete, setSplitGroupToDelete] = useState<string | null>(null)
+  const [splitGroupPaymentCount, setSplitGroupPaymentCount] = useState(0)
+  const rowsPerPage = 20
+    const totalPages = Math.ceil(payments.length / rowsPerPage)
+  const paginatedPayments = payments.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  )
+  const handleDeleteClick = (payment: Payment) => {
+    if (payment.isSplitPayment) {
+      setSplitGroupToDelete(payment.id || null);
+      setSplitGroupPaymentCount(payment.appliedPeriods?.length || 0);
+      setDeletingSplitGroup(true);
+    } else {
+      setPaymentToDelete(payment);
+      setDeletingSplitGroup(false);
+    }
+    setDeleteDialogOpen(true);
+  }
+  const handleConfirmDelete = async () => {
+    setIsDeleting(true);
+    try {
+      let success = false;
+      if (deletingSplitGroup && splitGroupToDelete) {
+                success = await onDelete(splitGroupToDelete);
+      } else if (paymentToDelete) {
+        success = await onDelete(paymentToDelete.id);
+      }
+      if (success) {
+        toast({
+          title: "Payment Deleted",
+          description: deletingSplitGroup
+            ? `All ${splitGroupPaymentCount} payments in this group have been deleted.`
+            : "The payment has been successfully deleted.",
+        });
+      } else {
+        toast({
+          title: "Deletion Failed",
+          description: "Failed to delete the payment. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting payment:", error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleteDialogOpen(false);
+      setPaymentToDelete(null);
+      setSplitGroupToDelete(null);
+      setDeletingSplitGroup(false);
+      setIsDeleting(false);
+    }
+  }
+  const toggleExpand = (paymentId: string) => {
+    setExpandedPayments(prev =>
+      prev.includes(paymentId)
+        ? prev.filter(id => id !== paymentId)
+        : [...prev, paymentId]
+    )
+  }
+    const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
+  }
+  if (isLoading) {
+    return (
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-8"></TableHead>
+              <TableHead>Received Date</TableHead>
+              <TableHead>Provider</TableHead>
+              <TableHead>Applied Period</TableHead>
+              <TableHead>AUM</TableHead>
+              <TableHead>Payment Schedule</TableHead>
+              <TableHead>Fee Structure</TableHead>
+              <TableHead>Expected Fee</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Remainder</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {[1, 2, 3, 4, 5].map((i) => (
+              <TableRow key={i}>
+                <TableCell className="p-2"></TableCell>
+                <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                <TableCell><Skeleton className="h-5 w-20" /></TableCell>
+                <TableCell><Skeleton className="h-5 w-24" /></TableCell>
+                <TableCell className="text-right"><Skeleton className="h-8 w-8 rounded-full ml-auto" /></TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    );
+  }
+  return (
+    <>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-8"></TableHead>
+              <TableHead>Received Date</TableHead>
+              <TableHead>Provider</TableHead>
+              <TableHead>Applied Period</TableHead>
+              <TableHead>AUM</TableHead>
+              <TableHead>Payment Schedule</TableHead>
+              <TableHead>Fee Structure</TableHead>
+              <TableHead>Expected Fee</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Remainder</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {paginatedPayments.length > 0 ? (
+              paginatedPayments.map((payment) => {
+                const isSplitPayment = payment.isSplitPayment && payment.appliedPeriods && payment.appliedPeriods.length > 0;
+                const isExpanded = expandedPayments.includes(payment.id);
+                return (
+                  <React.Fragment key={payment.id}>
+                    <TableRow className={isExpanded ? "bg-gray-50" : ""}>
+                      <TableCell className="p-2">
+                        {isSplitPayment && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6"
+                            onClick={() => toggleExpand(payment.id)}
+                          >
+                            {isExpanded ?
+                              <ChevronDown className="h-4 w-4" /> :
+                              <ChevronRight className="h-4 w-4" />
+                            }
+                          </Button>
+                        )}
+                      </TableCell>
+                      <TableCell>{formatDate(payment.date)}</TableCell>
+                      <TableCell>{client?.planProvider || "N/A"}</TableCell>
+                      <TableCell>
+                        {isSplitPayment ? (
+                          <div className="flex items-center">
+                            <Badge variant="outline" className="font-normal">
+                              Split
+                            </Badge>
+                            <span className="ml-2">
+                              {payment.appliedPeriods?.length || 0} periods
+                            </span>
+                          </div>
+                        ) : (
+                          payment.period || "N/A"
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {payment.aum ? formatCurrency(payment.aum) : "No AUM data"}
+                      </TableCell>
+                      <TableCell>{client?.paymentFrequency || "N/A"}</TableCell>
+                      <TableCell>
+                        {client?.feeStructure === "Flat Rate"
+                          ? "Flat Rate"
+                          : client?.feePercentage
+                            ? `${formatPercentage(client.feePercentage, 3).replace('%', '')}% of AUM`
+                            : "N/A"
+                        }
+                      </TableCell>
+                      <TableCell>
+                        {payment.expectedFee ? formatCurrency(payment.expectedFee) :
+                          payment.aum && client?.feePercentage
+                            ? formatCurrency(payment.aum * client.feePercentage)
+                            : (
+                              <span className="text-muted-foreground">
+                                ~{formatCurrency(payment.amount)}
+                                <span className="text-xs block">(based on payment)</span>
+                              </span>
+                            )
+                        }
+                      </TableCell>
+                      <TableCell>
+                        {formatCurrency(payment.amount)}
+                        {isSplitPayment && !isExpanded && (
+                          <div className="text-xs text-muted-foreground">
+                            Click to view details
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {(() => {
+                                                    const effectiveExpectedFee = payment.expectedFee !== undefined && payment.expectedFee !== null
+                            ? payment.expectedFee
+                            : payment.aum && client?.feePercentage
+                              ? payment.aum * client.feePercentage
+                              : null;
+                          if (effectiveExpectedFee === null) {
+                            return (
+                              <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                Cannot calculate
+                              </span>
+                            );
+                          }
+                          const difference = payment.amount - effectiveExpectedFee;
+                          const percentDifference = (difference / effectiveExpectedFee) * 100;
+                          const absPercentDifference = Math.abs(percentDifference);
+                                                    const badgeClass = payment.amount === effectiveExpectedFee
+                            ? "bg-blue-100 text-blue-800"
+                            : absPercentDifference <= 5
+                              ? "bg-green-100 text-green-800"
+                              : absPercentDifference <= 15
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-red-100 text-red-800";
+                          return (
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${badgeClass}`}>
+                              {payment.amount === effectiveExpectedFee
+                                ? "Exact Match"
+                                : payment.amount > effectiveExpectedFee
+                                  ? `+${formatCurrency(difference)}`
+                                  : `-${formatCurrency(Math.abs(difference))}`
+                              }
+                              {effectiveExpectedFee > 0 && payment.amount !== effectiveExpectedFee && (
+                                <span className="ml-1">
+                                  ({absPercentDifference.toFixed(1)}%)
+                                  {absPercentDifference <= 5 && payment.amount !== effectiveExpectedFee && " ✓"}
+                                </span>
+                              )}
+                            </span>
+                          );
+                        })()}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreHorizontal className="h-4 w-4" />
+                              <span className="sr-only">Actions</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => onEdit(payment)}>
+                              <Edit className="mr-2 h-4 w-4" />
+                              Edit
+                            </DropdownMenuItem>
+                            {payment.documentUrl && (
+                              <DropdownMenuItem onClick={() => onViewDocument(payment.documentUrl!)}>
+                                <FileText className="mr-2 h-4 w-4" />
+                                View Document
+                              </DropdownMenuItem>
+                            )}
+                            <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteClick(payment)}>
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              {isSplitPayment ? "Delete Split Payment" : "Delete"}
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                    {/* Expandable detail rows for split payments */}
+                    {isExpanded && isSplitPayment && payment.appliedPeriods?.map((periodData: PaymentPeriod, index: number) => (
+                      <TableRow key={`${payment.id}-period-${index}`} className="bg-gray-50 border-t border-gray-100">
+                        <TableCell></TableCell>
+                        <TableCell></TableCell>
+                        <TableCell></TableCell>
+                        <TableCell className="pl-8 text-sm text-gray-600">
+                          {periodData.period}
+                        </TableCell>
+                        <TableCell></TableCell>
+                        <TableCell></TableCell>
+                        <TableCell></TableCell>
+                        <TableCell></TableCell>
+                        <TableCell className="text-sm font-medium text-gray-700">
+                          {periodData.amount !== undefined ? formatCurrency(periodData.amount) : '-'}
+                        </TableCell>
+                        <TableCell>
+                          {/* No remainder calculation needed for individual split payment periods */}
+                          <span className="text-xs text-gray-500">Part of split</span>
+                        </TableCell>
+                        <TableCell></TableCell>
+                      </TableRow>
+                    ))}
+                  </React.Fragment>
+                );
+              })
+            ) : (
+              <TableRow>
+                <TableCell colSpan={11} className="text-center py-6 text-gray-500">
+                  No payment history available
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      {/* Pagination controls */}
+      {payments.length > rowsPerPage && (
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(1)}
+            disabled={currentPage === 1}
+          >
+            &lt;&lt;
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            &lt;
+          </Button>
+          <span className="text-sm text-gray-600">
+            Page {currentPage} of {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            &gt;
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(totalPages)}
+            disabled={currentPage === totalPages}
+          >
+            &gt;&gt;
+          </Button>
+        </div>
+      )}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {deletingSplitGroup
+                ? "Delete Split Payment Group?"
+                : "Delete Payment?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {deletingSplitGroup ? (
+                <div>
+                  <p>
+                    This will permanently delete all {splitGroupPaymentCount} payments in this split payment group.
+                    This action cannot be undone.
+                  </p>
+                </div>
+              ) : (
+                <p>
+                  This will permanently delete the payment record from{" "}
+                  {paymentToDelete ? formatDate(paymentToDelete.date) : ""}
+                  for {paymentToDelete ? formatCurrency(paymentToDelete.amount) : "$0.00"}. This action cannot be undone.
+                </p>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              className="bg-red-600 hover:bg-red-700"
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                deletingSplitGroup ? "Delete All" : "Delete"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  )
+}
+```
+
+app\summary\page.tsx
+```tsx
+"use client"
+import React from 'react'
+export default function SummaryPage() {
+  return (
+    <div className="flex flex-1 overflow-hidden">
+      <main className="flex-1 overflow-hidden p-6">
+        <h1 className="text-2xl font-bold mb-6">Summary Dashboard</h1>
+        <div className="bg-white rounded-lg shadow p-6">
+          <p className="text-gray-600 mb-4">The Summary Dashboard will display overview statistics and reports.</p>
+          <div className="p-4 bg-gray-50 rounded border border-gray-200">
+            <p className="text-sm text-gray-500">This page is under development. Summary features will be implemented in future iterations.</p>
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+} 
+```
+
+components\document-viewer.tsx
+```tsx
+"use client"
+import { useState } from "react"
+import { X, FileText, Maximize2, Minimize2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+interface DocumentViewerProps {
+  documentUrl: string | null
+  onClose: () => void
+  className?: string
+}
+export function DocumentViewer({ documentUrl, onClose, className = "" }: DocumentViewerProps) {
+  const [isFullScreen, setIsFullScreen] = useState(false)
+  const toggleFullScreen = () => {
+    setIsFullScreen(!isFullScreen)
+  }
+  return (
+    <div
+      className={`border-l border-gray-200 bg-white flex flex-col h-full ${className} ${
+        isFullScreen ? "fixed inset-0 z-50" : ""
+      }`}
+    >
+      <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        <h2 className="text-lg font-medium text-gray-800">Document Preview</h2>
+        <div className="flex items-center space-x-2">
+          <Button variant="ghost" size="icon" onClick={toggleFullScreen}>
+            {isFullScreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+          </Button>
+          <Button variant="ghost" size="icon" onClick={onClose}>
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+      <div className="flex-grow p-4">
+        <div className="bg-gray-100 rounded-md p-4 h-full flex items-center justify-center">
+          {documentUrl ? (
+            <div className="text-center">
+              <FileText className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+              <p className="text-sm text-gray-500 mb-4">Document Preview</p>
+              <p className="text-xs text-gray-400 mb-4">In a real application, the PDF would be rendered here</p>
+              <p className="text-sm font-medium text-gray-700 mb-4">{documentUrl.split("/").pop()}</p>
+              <Button size="sm" variant="outline" onClick={toggleFullScreen}>
+                {isFullScreen ? "Exit Full Screen" : "View Full Screen"}
+              </Button>
+            </div>
+          ) : (
+            <p className="text-gray-500">No document selected</p>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+components\theme-provider.tsx
+```tsx
+'use client'
+import * as React from 'react'
+import {
+  ThemeProvider as NextThemesProvider,
+  type ThemeProviderProps,
+} from 'next-themes'
+export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>
+}
+```
+
+components\top-navigation.tsx
+```tsx
+"use client"
+import { useState, useEffect } from "react"
+import { usePathname, useRouter } from "next/navigation"
+import { Bell, ChevronDown, Search, User } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+export function TopNavigation() {
+  const pathname = usePathname()
+  const router = useRouter()
+  const [activeTab, setActiveTab] = useState("payments")
+    useEffect(() => {
+    const path = pathname.split("/")[1] || "payments"
+    setActiveTab(path)
+  }, [pathname])
+  const tabs = [
+    { id: "payments", label: "PAYMENTS", path: "/payments" },
+    { id: "summary", label: "SUMMARY", path: "/summary" },
+    { id: "contacts", label: "CONTACTS", path: "/contacts" },
+    { id: "contracts", label: "CONTRACTS", path: "/contracts" },
+    { id: "export", label: "EXPORT DATA", path: "/export" },
+  ]
+  const handleTabClick = (path: string) => {
+    router.push(path)
+  }
+  return (
+    <header className="border-b border-gray-200 bg-white">
+      <div className="flex h-16 items-center justify-between px-6">
+        <div className="flex items-center">
+          <h1 className="text-xl font-semibold text-gray-800 mr-8">InvestTrack</h1>
+          <nav className="hidden md:flex space-x-1">
+            {tabs.map((tab) => (
+              <Button
+                key={tab.id}
+                variant={activeTab === tab.id ? "default" : "ghost"}
+                className={`rounded-none px-4 py-2 h-16 ${
+                  activeTab === tab.id
+                    ? "bg-primary text-primary-foreground"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                }`}
+                onClick={() => handleTabClick(tab.path)}
+              >
+                {tab.label}
+              </Button>
+            ))}
+          </nav>
+        </div>
+        <div className="flex items-center space-x-4">
+          <Button variant="ghost" size="icon" className="text-gray-500">
+            <Search className="h-5 w-5" />
+          </Button>
+          <Button variant="ghost" size="icon" className="text-gray-500 relative">
+            <Bell className="h-5 w-5" />
+            <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500"></span>
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="flex items-center gap-2">
+                <User className="h-5 w-5 text-gray-500" />
+                <span className="hidden sm:inline-block text-sm font-medium">Admin User</span>
+                <ChevronDown className="h-4 w-4 text-gray-500" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Log out</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+      <div className="md:hidden overflow-x-auto">
+        <nav className="flex">
+          {tabs.map((tab) => (
+            <Button
+              key={tab.id}
+              variant="ghost"
+              className={`rounded-none px-4 py-2 ${
+                activeTab === tab.id ? "border-b-2 border-primary text-primary" : "text-gray-600"
+              }`}
+              onClick={() => handleTabClick(tab.path)}
+            >
+              {tab.label}
+            </Button>
+          ))}
+        </nav>
+      </div>
+    </header>
+  )
+}
+```
+
+dashboard-layout.tsx
+```tsx
+"use client"
+import { useState } from "react"
+import { ClientSidebar } from "./app/payments/client-sidebar"
+import { TopNavigation } from "./components/top-navigation"
+import { ClientPaymentPage } from "./app/payments/client-payment-page"
+import type { Client } from "./types"
+const sampleClients: Client[] = [
+  {
+    id: "1",
+    name: "Acme Corporation",
+    planProvider: "John Hancock",
+    paymentFrequency: "Quarterly",
+    feeStructure: "Flat Rate",
+    feeAmount: 2500,
+    aum: 2250000,
+    lastPayment: "2023-12-15",
+    lastPaymentAmount: 2500,
+    complianceStatus: "Compliant",
+    contractNumber: "JH-2023-1045"
+  },
+  {
+    id: "2",
+    name: "Globex Industries",
+    planProvider: "Voya",
+    paymentFrequency: "Monthly",
+    feeStructure: "Percentage of AUM",
+    feePercentage: 0.75,
+    aum: 1250000,
+    lastPayment: "2024-02-01",
+    lastPaymentAmount: 781.25,
+    complianceStatus: "Review Needed",
+    contractNumber: "VOYA-2024-0312"
+  },
+  {
+    id: "3",
+    name: "Initech LLC",
+    planProvider: "John Hancock",
+    paymentFrequency: "Quarterly",
+    feeStructure: "Flat Rate",
+    feeAmount: 3750,
+    aum: 6250000,
+    lastPayment: "2024-01-10",
+    lastPaymentAmount: 3750,
+    complianceStatus: "Compliant",
+    contractNumber: "JH-2023-1107"
+  },
+  {
+    id: "4",
+    name: "Massive Dynamic",
+    planProvider: "Voya",
+    paymentFrequency: "Monthly",
+    feeStructure: "Percentage of AUM",
+    feePercentage: 0.65,
+    aum: 3450000,
+    lastPayment: "2024-02-05",
+    lastPaymentAmount: 1871.25,
+    complianceStatus: "Compliant",
+    contractNumber: "VOYA-2023-0845"
+  },
+  {
+    id: "5",
+    name: "Stark Industries",
+    planProvider: "Fidelity",
+    paymentFrequency: "Quarterly",
+    feeStructure: "Flat Rate",
+    feeAmount: 5000,
+    aum: 9250000,
+    lastPayment: "2023-11-20",
+    lastPaymentAmount: 5000,
+    complianceStatus: "Payment Overdue",
+    contractNumber: "FID-2022-3257"
+  },
+]
+export default function DashboardLayout() {
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null)
+  const [documentViewerOpen, setDocumentViewerOpen] = useState(false)
+  const [currentDocument, setCurrentDocument] = useState<string | null>(null)
+  const toggleDocumentViewer = () => {
+    setDocumentViewerOpen(!documentViewerOpen)
+  }
+  const viewDocument = (documentUrl: string) => {
+    setCurrentDocument(documentUrl)
+    if (!documentViewerOpen) {
+      setDocumentViewerOpen(true)
+    }
+  }
+  return (
+    <div className="flex flex-col h-screen bg-gray-50">
+      <TopNavigation />
+      <div className="flex flex-1 overflow-hidden">
+        <ClientSidebar clients={sampleClients} selectedClient={selectedClient} onSelectClient={setSelectedClient} />
+        <main className="flex-1 overflow-hidden p-6">
+          {selectedClient ? (
+            <ClientPaymentPage
+              clientId={selectedClient.id ? parseInt(selectedClient.id) : 0}
+              complianceStatus={{ 
+                status: selectedClient.complianceStatus === "Compliant" ? "green" : 
+                         selectedClient.complianceStatus === "Review Needed" ? "yellow" : "red", 
+                reason: "" 
+              }}
+              onViewDocument={viewDocument}
+              toggleDocumentViewer={toggleDocumentViewer}
+              documentViewerOpen={documentViewerOpen}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center p-8 max-w-md">
+                <h2 className="text-2xl font-semibold text-gray-700 mb-2">Welcome to the Payment Dashboard</h2>
+                <p className="text-gray-500 mb-6">
+                  Select a client from the sidebar to view and manage their payment details.
+                </p>
+              </div>
+            </div>
+          )}
+        </main>
+      </div>
+    </div>
+  )
+}
+```
+
+hooks\use-client-data.ts
+```ts
+import { useState, useEffect } from 'react';
+import { clientApi, Client, ProviderClientGroup, ComplianceStatus } from '@/lib/api';
+interface UseClientDataReturn {
+  clients: Client[];
+  clientsByProvider: ProviderClientGroup[];
+  selectedClient: Client | null;
+  complianceStatuses: Record<number, ComplianceStatus>;
+  isLoading: boolean;
+  error: Error | null;
+  selectClient: (clientId: number) => void;
+  refreshData: () => void;
+}
+export function useClientData(): UseClientDataReturn {
+  const [clients, setClients] = useState<Client[]>([]);
+  const [clientsByProvider, setClientsByProvider] = useState<ProviderClientGroup[]>([]);
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [complianceStatuses, setComplianceStatuses] = useState<Record<number, ComplianceStatus>>({});
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
+    const loadData = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+            const clientsData = await clientApi.getAllClients();
+      setClients(clientsData);
+            const providerData = await clientApi.getClientsByProvider();
+      setClientsByProvider(providerData);
+            const statuses: Record<number, ComplianceStatus> = {};
+            await Promise.all(
+        clientsData.map(async (client) => {
+          try {
+            const status = await clientApi.getClientComplianceStatus(client.client_id);
+            statuses[client.client_id] = status;
+          } catch (e) {
+            console.error(`Failed to fetch compliance status for client ${client.client_id}:`, e);
+                        statuses[client.client_id] = {
+              status: 'yellow',
+              reason: 'Unable to determine compliance status'
+            };
+          }
+        })
+      );
+      setComplianceStatuses(statuses);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to load client data'));
+      console.error('Error loading client data:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+    useEffect(() => {
+    loadData();
+  }, []);
+    const selectClient = (clientId: number) => {
+    const client = clients.find(c => c.client_id === clientId) || null;
+    setSelectedClient(client);
+  };
+  return {
+    clients,
+    clientsByProvider,
+    selectedClient,
+    complianceStatuses,
+    isLoading,
+    error,
+    selectClient,
+    refreshData: loadData
+  };
+}
+export const mapComplianceStatus = (status: ComplianceStatus): 'Compliant' | 'Review Needed' | 'Payment Overdue' => {
+  switch (status.status) {
+    case 'green':
+      return 'Compliant';
+    case 'yellow':
+      return 'Review Needed';
+    case 'red':
+      return 'Payment Overdue';
+    default:
+      return 'Review Needed';
+  }
+};
+```
+
+hooks\use-client-snapshot.ts
+```ts
+import { useState, useEffect } from 'react';
+import { clientApi, ClientSnapshot, FeeSummary } from '@/lib/api';
+interface UseClientSnapshotReturn {
+  clientSnapshot: ClientSnapshot | null;
+  feeSummary: FeeSummary | null;
+  isLoading: boolean;
+  error: Error | null;
+  refreshData: () => Promise<void>;
+}
+export function useClientSnapshot(clientId: number | null): UseClientSnapshotReturn {
+  const [clientSnapshot, setClientSnapshot] = useState<ClientSnapshot | null>(null);
+  const [feeSummary, setFeeSummary] = useState<FeeSummary | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
+    const loadData = async () => {
+    if (!clientId) {
+      setClientSnapshot(null);
+      setFeeSummary(null);
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+    try {
+            const snapshot = await clientApi.getClientDetails(clientId);
+      setClientSnapshot(snapshot);
+            const fees = await clientApi.getClientFeeSummary(clientId);
+      setFeeSummary(fees);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to load client details'));
+      console.error('Error loading client details:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+    useEffect(() => {
+    loadData();
+  }, [clientId]);
+  return {
+    clientSnapshot,
+    feeSummary,
+    isLoading,
+    error,
+    refreshData: loadData
+  };
+}
+```
+
+hooks\use-mobile.tsx
+```tsx
+import * as React from "react"
+const MOBILE_BREAKPOINT = 768
+export function useIsMobile() {
+  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
+  React.useEffect(() => {
+    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
+    const onChange = () => {
+      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+    }
+    mql.addEventListener("change", onChange)
+    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+    return () => mql.removeEventListener("change", onChange)
+  }, [])
+  return !!isMobile
+}
+```
+
+hooks\use-payments.ts
+```ts
+import { useState, useEffect } from 'react';
+import { paymentApi, Payment, PaymentWithDetails, PaymentCreate, PaymentUpdate } from '@/lib/api';
+interface UsePaymentsReturn {
+  payments: Payment[];
+  isLoading: boolean;
+  error: Error | null;
+  createPayment: (data: PaymentCreate) => Promise<Payment>;
+  updatePayment: (paymentId: number, data: PaymentUpdate) => Promise<Payment>;
+  deletePayment: (paymentId: number) => Promise<boolean>;
+  refreshPayments: () => Promise<void>;
+}
+export function usePayments(clientId: number | null): UsePaymentsReturn {
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
+  const loadPayments = async () => {
+    if (!clientId) {
+      setPayments([]);
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+    try {
+      const paymentsData = await paymentApi.getClientPayments(clientId);
+      setPayments(paymentsData);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to load payments'));
+      console.error('Error loading payments:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+    useEffect(() => {
+    loadPayments();
+  }, [clientId]);
+    const createPayment = async (data: PaymentCreate): Promise<Payment> => {
+    try {
+      const newPayment = await paymentApi.createPayment(data);
+      await loadPayments();       return newPayment;
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Failed to create payment');
+      setError(error);
+      throw error;
+    }
+  };
+    const updatePayment = async (paymentId: number, data: PaymentUpdate): Promise<Payment> => {
+    try {
+      const updatedPayment = await paymentApi.updatePayment(paymentId, data);
+      await loadPayments();       return updatedPayment;
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Failed to update payment');
+      setError(error);
+      throw error;
+    }
+  };
+    const deletePayment = async (paymentId: number): Promise<boolean> => {
+    try {
+      const result = await paymentApi.deletePayment(paymentId);
+      if (result.success) {
+        await loadPayments();       }
+      return result.success;
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Failed to delete payment');
+      setError(error);
+      throw error;
+    }
+  };
+  return {
+    payments,
+    isLoading,
+    error,
+    createPayment,
+    updatePayment,
+    deletePayment,
+    refreshPayments: loadPayments
+  };
+}
+interface UsePaymentDetailsReturn {
+  payment: PaymentWithDetails | null;
+  isLoading: boolean;
+  error: Error | null;
+  refreshPayment: () => Promise<void>;
+}
+export function usePaymentDetails(paymentId: number | null): UsePaymentDetailsReturn {
+  const [payment, setPayment] = useState<PaymentWithDetails | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
+  const loadPayment = async () => {
+    if (!paymentId) {
+      setPayment(null);
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+    try {
+      const paymentData = await paymentApi.getPaymentDetails(paymentId);
+      setPayment(paymentData);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to load payment details'));
+      console.error('Error loading payment details:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+    useEffect(() => {
+    loadPayment();
+  }, [paymentId]);
+  return {
+    payment,
+    isLoading,
+    error,
+    refreshPayment: loadPayment
+  };
+}
+interface UseExpectedFeeReturn {
+  expectedFee: number | null;
+  isLoading: boolean;
+  error: Error | null;
+  calculateFee: (params: {
+    clientId: number;
+    contractId: number;
+    assets?: number;
+    periodType: 'month' | 'quarter';
+    period: number;
+    year: number;
+  }) => Promise<number | null>;
+}
+export function useExpectedFee(): UseExpectedFeeReturn {
+  const [expectedFee, setExpectedFee] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
+  const calculateFee = async (params: {
+    clientId: number;
+    contractId: number;
+    assets?: number;
+    periodType: 'month' | 'quarter';
+    period: number;
+    year: number;
+  }): Promise<number | null> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const result = await paymentApi.calculateExpectedFee({
+        client_id: params.clientId,
+        contract_id: params.contractId,
+        total_assets: params.assets,
+        period_type: params.periodType,
+        period: params.period,
+        year: params.year
+      });
+      const fee = result.expected_fee ? Number(result.expected_fee) : null;
+      setExpectedFee(fee);
+      return fee;
+    } catch (err) {
+      const errorObj = err instanceof Error ? err : new Error('Failed to calculate expected fee');
+      setError(errorObj);
+      console.error('Error calculating expected fee:', err);
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  return {
+    expectedFee,
+    isLoading,
+    error,
+    calculateFee
+  };
+}
+```
+
+hooks\use-toast.ts
+```ts
+"use client"
+import * as React from "react"
+import type {
+  ToastActionElement,
+  ToastProps,
+} from "@/components/ui/toast"
+const TOAST_LIMIT = 1
+const TOAST_REMOVE_DELAY = 1000000
+type ToasterToast = ToastProps & {
+  id: string
+  title?: React.ReactNode
+  description?: React.ReactNode
+  action?: ToastActionElement
+}
+const actionTypes = {
+  ADD_TOAST: "ADD_TOAST",
+  UPDATE_TOAST: "UPDATE_TOAST",
+  DISMISS_TOAST: "DISMISS_TOAST",
+  REMOVE_TOAST: "REMOVE_TOAST",
+} as const
+let count = 0
+function genId() {
+  count = (count + 1) % Number.MAX_SAFE_INTEGER
+  return count.toString()
+}
+type ActionType = typeof actionTypes
+type Action =
+  | {
+      type: ActionType["ADD_TOAST"]
+      toast: ToasterToast
+    }
+  | {
+      type: ActionType["UPDATE_TOAST"]
+      toast: Partial<ToasterToast>
+    }
+  | {
+      type: ActionType["DISMISS_TOAST"]
+      toastId?: ToasterToast["id"]
+    }
+  | {
+      type: ActionType["REMOVE_TOAST"]
+      toastId?: ToasterToast["id"]
+    }
+interface State {
+  toasts: ToasterToast[]
+}
+const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
+const addToRemoveQueue = (toastId: string) => {
+  if (toastTimeouts.has(toastId)) {
+    return
+  }
+  const timeout = setTimeout(() => {
+    toastTimeouts.delete(toastId)
+    dispatch({
+      type: "REMOVE_TOAST",
+      toastId: toastId,
+    })
+  }, TOAST_REMOVE_DELAY)
+  toastTimeouts.set(toastId, timeout)
+}
+export const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case "ADD_TOAST":
+      return {
+        ...state,
+        toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),
+      }
+    case "UPDATE_TOAST":
+      return {
+        ...state,
+        toasts: state.toasts.map((t) =>
+          t.id === action.toast.id ? { ...t, ...action.toast } : t
+        ),
+      }
+    case "DISMISS_TOAST": {
+      const { toastId } = action
+      if (toastId) {
+        addToRemoveQueue(toastId)
+      } else {
+        state.toasts.forEach((toast) => {
+          addToRemoveQueue(toast.id)
+        })
+      }
+      return {
+        ...state,
+        toasts: state.toasts.map((t) =>
+          t.id === toastId || toastId === undefined
+            ? {
+                ...t,
+                open: false,
+              }
+            : t
+        ),
+      }
+    }
+    case "REMOVE_TOAST":
+      if (action.toastId === undefined) {
+        return {
+          ...state,
+          toasts: [],
+        }
+      }
+      return {
+        ...state,
+        toasts: state.toasts.filter((t) => t.id !== action.toastId),
+      }
+  }
+}
+const listeners: Array<(state: State) => void> = []
+let memoryState: State = { toasts: [] }
+function dispatch(action: Action) {
+  memoryState = reducer(memoryState, action)
+  listeners.forEach((listener) => {
+    listener(memoryState)
+  })
+}
+type Toast = Omit<ToasterToast, "id">
+function toast({ ...props }: Toast) {
+  const id = genId()
+  const update = (props: ToasterToast) =>
+    dispatch({
+      type: "UPDATE_TOAST",
+      toast: { ...props, id },
+    })
+  const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id })
+  dispatch({
+    type: "ADD_TOAST",
+    toast: {
+      ...props,
+      id,
+      open: true,
+      onOpenChange: (open) => {
+        if (!open) dismiss()
+      },
+    },
+  })
+  return {
+    id: id,
+    dismiss,
+    update,
+  }
+}
+function useToast() {
+  const [state, setState] = React.useState<State>(memoryState)
+  React.useEffect(() => {
+    listeners.push(setState)
+    return () => {
+      const index = listeners.indexOf(setState)
+      if (index > -1) {
+        listeners.splice(index, 1)
+      }
+    }
+  }, [state])
+  return {
+    ...state,
+    toast,
+    dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
+  }
+}
+export { useToast, toast }
+```
+
+lib\api.ts
+```ts
+/**
+ * API client for backend communication
+ * Handles all API requests to the backend
+ */
+const API_BASE_URL = 'http://localhost:8000';
+/**
+ * Generic request handler with error management
+ */
+export async function apiRequest<T>(
+  endpoint: string, 
+  options: RequestInit = {}
+): Promise<T> {
+  try {
+    const url = `${API_BASE_URL}${endpoint}`;
+    if (!options.headers) {
+      options.headers = {
+        'Content-Type': 'application/json',
+      };
+    }
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        errorData.detail || `API request failed with status ${response.status}`
+      );
+    }
+    const data = await response.json().catch(() => ({}));
+    return data as T;
+  } catch (error) {
+    console.error('API request failed:', error);
+    throw error;
+  }
+}
+/**
+ * Client-related API requests
+ */
+export const clientApi = {
+  getAllClients: async () => {
+    return apiRequest<Client[]>('/clients/');
+  },
+  getClientsByProvider: async () => {
+    return apiRequest<ProviderClientGroup[]>('/clients/by-provider');
+  },
+  getClientDetails: async (clientId: number) => {
+    return apiRequest<ClientSnapshot>(`/clients/${clientId}`);
+  },
+  getClientComplianceStatus: async (clientId: number) => {
+    return apiRequest<ComplianceStatus>(`/clients/${clientId}/compliance-status`);
+  },
+  getClientFeeSummary: async (clientId: number) => {
+    return apiRequest<FeeSummary>(`/clients/${clientId}/fee-summary`);
+  },
+  updateClientFolderPath: async (clientId: number, folderPath: string) => {
+    const formData = new FormData();
+    formData.append('folder_path', folderPath);
+    return apiRequest<UpdateResult>(`/clients/${clientId}/folder-path`, {
+      method: 'PUT',
+      body: formData,
+      headers: {}, 
+    });
+  }
+};
+/**
+ * Payment-related API requests
+ */
+export const paymentApi = {
+  getClientPayments: async (clientId: number) => {
+    const response = await apiRequest<{
+      total: number;
+      page: number;
+      page_size: number;
+      items: Payment[];
+    }>(`/payments/client/${clientId}`);
+    return response.items;
+  },
+  getPaymentDetails: async (paymentId: number) => {
+    return apiRequest<PaymentWithDetails>(`/payments/${paymentId}`);
+  },
+  createPayment: async (paymentData: PaymentCreate) => {
+    return apiRequest<Payment>('/payments/', {
+      method: 'POST',
+      body: JSON.stringify(paymentData),
+    });
+  },
+  updatePayment: async (paymentId: number, paymentData: PaymentUpdate) => {
+    return apiRequest<Payment>(`/payments/${paymentId}`, {
+      method: 'PUT',
+      body: JSON.stringify(paymentData),
+    });
+  },
+  deletePayment: async (paymentId: number) => {
+    return apiRequest<{ success: boolean }>(`/payments/${paymentId}`, {
+      method: 'DELETE',
+    });
+  },
+  getAvailablePeriods: async (clientId: number, contractId: number) => {
+    return apiRequest<{
+      is_monthly: boolean;
+      periods: { label: string; value: { quarter?: number; month?: number; year: number } }[];
+    }>(`/payments/available-periods/${clientId}/${contractId}`);
+  },
+  calculateExpectedFee: async (feeRequest: ExpectedFeeRequest) => {
+    return apiRequest<ExpectedFeeResponse>('/payments/expected-fee', {
+      method: 'POST',
+      body: JSON.stringify(feeRequest),
+    });
+  }
+};
+/**
+ * File-related API requests
+ */
+export const fileApi = {
+  getClientFiles: async (clientId: number) => {
+    return apiRequest<ClientFile[]>(`/files/client/${clientId}`);
+  },
+  getPaymentFiles: async (paymentId: number) => {
+    return apiRequest<ClientFile[]>(`/files/payment/${paymentId}`);
+  },
+  uploadFile: async (clientId: number, file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return apiRequest<FileUpload>(`/files/upload/${clientId}`, {
+      method: 'POST',
+      body: formData,
+      headers: {}, 
+    });
+  },
+  linkFileToPayment: async (paymentId: number, fileId: number) => {
+    return apiRequest<{ success: boolean }>(`/files/link/${paymentId}/${fileId}`, {
+      method: 'POST',
+    });
+  },
+  unlinkFileFromPayment: async (paymentId: number, fileId: number) => {
+    return apiRequest<{ success: boolean }>(`/files/unlink/${paymentId}/${fileId}`, {
+      method: 'DELETE',
+    });
+  }
+};
+export interface Client {
+  client_id: number;
+  display_name: string;
+  full_name?: string;
+  ima_signed_date?: string;
+  onedrive_folder_path?: string;
+}
+export interface Contact {
+  contact_id?: number;
+  client_id: number;
+  contact_type: string;
+  contact_name?: string;
+  phone?: string;
+  email?: string;
+  fax?: string;
+  physical_address?: string;
+  mailing_address?: string;
+}
+export interface Contract {
+  contract_id?: number;
+  client_id: number;
+  contract_number?: string;
+  provider_name?: string;
+  contract_start_date?: string;
+  fee_type?: string;
+  percent_rate?: number;
+  flat_rate?: number;
+  payment_schedule?: string;
+  num_people?: number;
+  notes?: string;
+}
+export interface ClientMetrics {
+  client_id: number;
+  last_payment_date?: string;
+  last_payment_amount?: number;
+  last_payment_quarter?: number;
+  last_payment_year?: number;
+  total_ytd_payments?: number;
+  avg_quarterly_payment?: number;
+  last_recorded_assets?: number;
+}
+export interface ClientSnapshot {
+  client: Client;
+  contracts: Contract[];
+  metrics?: ClientMetrics;
+}
+export interface ComplianceStatus {
+  status: 'green' | 'yellow' | 'red';
+  reason: string;
+}
+export interface FeeSummary {
+  monthly?: number;
+  quarterly?: number;
+  annual?: number;
+  fee_type?: string;
+  rate?: number;
+}
+export interface Payment {
+  payment_id?: number;
+  contract_id: number;
+  client_id: number;
+  received_date: string;
+  total_assets?: number;
+  expected_fee?: number;
+  actual_fee: number;
+  method?: string;
+  notes?: string;
+  split_group_id?: string;
+  applied_start_month?: number;
+  applied_start_month_year?: number;
+  applied_end_month?: number;
+  applied_end_month_year?: number;
+  applied_start_quarter?: number;
+  applied_start_quarter_year?: number;
+  applied_end_quarter?: number;
+  applied_end_quarter_year?: number;
+}
+export interface PaymentWithDetails extends Payment {
+  client_name: string;
+  provider_name?: string;
+  fee_type?: string;
+  percent_rate?: number;
+  flat_rate?: number;
+  payment_schedule?: string;
+  files: ClientFile[];
+}
+export interface PaymentCreate {
+  contract_id: number;
+  client_id: number;
+  received_date: string;
+  total_assets?: number;
+  expected_fee?: number;
+  actual_fee: number;
+  method?: string;
+  notes?: string;
+  is_split_payment: boolean;
+  start_period: number;
+  start_period_year: number;
+  end_period?: number;
+  end_period_year?: number;
+}
+export interface PaymentUpdate {
+  received_date?: string;
+  total_assets?: number;
+  actual_fee?: number;
+  method?: string;
+  notes?: string;
+}
+export interface ClientFile {
+  file_id?: number;
+  client_id: number;
+  file_name: string;
+  onedrive_path: string;
+  uploaded_at?: string;
+}
+export interface FileUpload {
+  file_id: number;
+  client_id: number;
+  file_name: string;
+  onedrive_path: string;
+}
+export interface ExpectedFeeRequest {
+  client_id: number;
+  contract_id: number;
+  total_assets?: number;
+  period_type: 'month' | 'quarter';
+  period: number;
+  year: number;
+}
+export interface ExpectedFeeResponse {
+  expected_fee?: number;
+  fee_type?: string;
+  calculation_method: string;
+}
+export interface ProviderClientGroup {
+  provider: string;
+  clients: Client[];
+}
+export interface UpdateResult {
+  success: boolean;
+  client_id?: number;
+  folder_path?: string;
+  message?: string;
+}
+```
+
+lib\mappers.ts
+```ts
+/**
+ * Mapping functions for converting between backend and frontend data formats
+ */
+import { 
+    Client as ApiClient, 
+    ComplianceStatus, 
+    Contract, 
+    Payment as ApiPayment,
+    ClientMetrics,
+    ClientSnapshot
+  } from './api';
+  import { Client as UIClient, Payment as UIPayment, PaymentPeriod } from '@/types';
+  /**
+   * Map a backend client object to the frontend client format
+   */
+  export function mapClientToUI(
+    client: ApiClient, 
+    contracts: Contract[],
+    complianceStatus: ComplianceStatus,
+    metrics?: ClientMetrics
+  ): UIClient {
+    const activeContract = contracts.length > 0 ? contracts[0] : null;
+    const mappedStatus = mapComplianceStatus(complianceStatus);
+    return {
+      id: client.client_id.toString(),
+      name: client.display_name,
+      planProvider: activeContract?.provider_name || 'No Provider',
+      paymentFrequency: (activeContract?.payment_schedule === 'monthly' ? 'Monthly' : 'Quarterly') as 'Monthly' | 'Quarterly',
+      feeStructure: activeContract?.fee_type === 'flat' 
+        ? 'Flat Rate' 
+        : 'Percentage of AUM' as 'Flat Rate' | 'Percentage of AUM',
+      feeAmount: activeContract?.flat_rate ? Number(activeContract.flat_rate) : undefined,
+      feePercentage: activeContract?.percent_rate ? Number(activeContract.percent_rate) : undefined,
+      aum: metrics?.last_recorded_assets ? Number(metrics.last_recorded_assets) : undefined,
+      lastPayment: metrics?.last_payment_date || '',
+      lastPaymentAmount: metrics?.last_payment_amount ? Number(metrics.last_payment_amount) : 0,
+      complianceStatus: mappedStatus,
+      contractNumber: activeContract?.contract_number || undefined,
+    };
+  }
+  /**
+   * Map a client snapshot from the API into a UI client
+   */
+  export function mapClientSnapshotToUI(
+    snapshot: ClientSnapshot, 
+    complianceStatus: ComplianceStatus
+  ): UIClient {
+    return mapClientToUI(
+      snapshot.client, 
+      snapshot.contracts, 
+      complianceStatus,
+      snapshot.metrics || undefined
+    );
+  }
+  /**
+   * Map compliance status from backend to frontend format
+   */
+  export function mapComplianceStatus(
+    status: ComplianceStatus
+  ): 'Compliant' | 'Review Needed' | 'Payment Overdue' {
+    switch (status.status) {
+      case 'green':
+        return 'Compliant';
+      case 'yellow':
+        return 'Review Needed';
+      case 'red':
+        return 'Payment Overdue';
+      default:
+        return 'Review Needed';
+    }
+  }
+  /**
+   * Map backend payment to frontend payment format
+   */
+  export function mapPaymentToUI(payment: ApiPayment): UIPayment {
+    const isSplitPayment = !!payment.split_group_id;
+    let period = '';
+    let appliedPeriods: PaymentPeriod[] | undefined = undefined;
+    if (payment.applied_start_quarter !== undefined && payment.applied_start_quarter !== null && 
+        payment.applied_start_quarter_year !== undefined && payment.applied_start_quarter_year !== null) {
+      period = `Q${payment.applied_start_quarter} ${payment.applied_start_quarter_year}`;
+      if (isSplitPayment && 
+          payment.applied_end_quarter !== undefined && payment.applied_end_quarter !== null && 
+          payment.applied_end_quarter_year !== undefined && payment.applied_end_quarter_year !== null) {
+        const startQuarter = payment.applied_start_quarter;
+        const startYear = payment.applied_start_quarter_year;
+        const endQuarter = payment.applied_end_quarter;
+        const endYear = payment.applied_end_quarter_year;
+        const totalPeriods = (endYear - startYear) * 4 + (endQuarter - startQuarter) + 1;
+        const amountPerPeriod = Number(payment.actual_fee) / totalPeriods;
+        appliedPeriods = [];
+        let currentQuarter = startQuarter;
+        let currentYear = startYear;
+        for (let i = 0; i < totalPeriods; i++) {
+          appliedPeriods.push({
+            period: `Q${currentQuarter} ${currentYear}`,
+            amount: amountPerPeriod
+          });
+          currentQuarter++;
+          if (currentQuarter > 4) {
+            currentQuarter = 1;
+            currentYear++;
+          }
+        }
+      }
+    } else if (payment.applied_start_month !== undefined && payment.applied_start_month !== null && 
+               payment.applied_start_month_year !== undefined && payment.applied_start_month_year !== null) {
+      const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+      period = `${monthNames[payment.applied_start_month - 1]} ${payment.applied_start_month_year}`;
+      if (isSplitPayment && 
+          payment.applied_end_month !== undefined && payment.applied_end_month !== null && 
+          payment.applied_end_month_year !== undefined && payment.applied_end_month_year !== null) {
+        const startMonth = payment.applied_start_month;
+        const startYear = payment.applied_start_month_year;
+        const endMonth = payment.applied_end_month;
+        const endYear = payment.applied_end_month_year;
+        const totalPeriods = (endYear - startYear) * 12 + (endMonth - startMonth) + 1;
+        const amountPerPeriod = Number(payment.actual_fee) / totalPeriods;
+        appliedPeriods = [];
+        let currentMonth = startMonth;
+        let currentYear = startYear;
+        for (let i = 0; i < totalPeriods; i++) {
+          appliedPeriods.push({
+            period: `${monthNames[currentMonth - 1]} ${currentYear}`,
+            amount: amountPerPeriod
+          });
+          currentMonth++;
+          if (currentMonth > 12) {
+            currentMonth = 1;
+            currentYear++;
+          }
+        }
+      }
+    } else {
+      if (payment.received_date) {
+        try {
+          const receivedDate = new Date(payment.received_date);
+          const year = receivedDate.getFullYear();
+          const month = receivedDate.getMonth();
+          const quarter = Math.floor(month / 3) + 1;
+          period = `Q${quarter} ${year} (est.)`;
+        } catch (e) {
+          period = '';
+        }
+      }
+    }
+    return {
+      id: payment.payment_id ? payment.payment_id.toString() : '',
+      clientId: payment.client_id.toString(),
+      amount: Number(payment.actual_fee),
+      date: payment.received_date,
+      status: 'Processed', 
+      method: payment.method,
+      notes: payment.notes,
+      period,
+      appliedPeriods,
+      expectedFee: payment.expected_fee ? Number(payment.expected_fee) : undefined,
+      isSplitPayment,
+      aum: payment.total_assets
+    };
+  }
+  export function formatPeriod(periodStr: string, isMonthly: boolean = false): string {
+    const parts = periodStr.split('-');
+    if (parts.length !== 2) return periodStr;
+    const periodNum = parseInt(parts[0], 10);
+    const year = parts[1];
+    if (isNaN(periodNum)) return periodStr;
+    if (isMonthly) {
+      const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+      if (periodNum >= 1 && periodNum <= 12) {
+        return `${monthNames[periodNum - 1]} ${year}`;
+      } else {
+        return periodStr;
+      }
+    } else {
+      return `Q${periodNum} ${year}`;
+    }
+  }
+  
+```
+
+lib\utils.ts
+```ts
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+import { Client } from "../types"
+import { FeeSummary } from "@/lib/api"
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+/**
+ * Formats a number as currency
+ */
+export function formatCurrency(amount: number | null | undefined): string {
+  if (amount == null) return "N/A";
+  return `$${amount.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })}`;
+}
+/**
+ * Formats a number as a percentage
+ */
+export function formatPercentage(value: number | null | undefined, decimals: number = 3): string {
+  if (value == null) return "N/A";
+  return `${(value * 100).toFixed(decimals)}%`;
+}
+interface NormalizedFees {
+  monthlyRate: number | null;
+  quarterlyRate: number | null;
+  annualRate: number | null;
+  monthlyAmount: number | null;
+  quarterlyAmount: number | null;
+  annualAmount: number | null;
+  hasAum: boolean;
+  isFlatRate: boolean;
+  rateLabel: string; 
+  expectedFee: number | null;
+}
+/**
+ * Normalizes fee calculations for a client to provide consistent values
+ * for monthly, quarterly, and annual fees in both rate and dollar amount formats.
+ */
+export function getNormalizedFees(client: Client, feeSummary?: FeeSummary | null): NormalizedFees {
+  const isFlatRate = client.feeStructure === "Flat Rate";
+  const isMonthly = client.paymentFrequency === "Monthly";
+  const hasAum = !!client.aum;
+  const result: NormalizedFees = {
+    monthlyRate: null,
+    quarterlyRate: null,
+    annualRate: null,
+    monthlyAmount: null,
+    quarterlyAmount: null,
+    annualAmount: null,
+    hasAum,
+    isFlatRate,
+    rateLabel: isFlatRate ? "$" : "%",
+    expectedFee: null
+  };
+  if (feeSummary) {
+    const feeValue = isMonthly ? feeSummary.monthly : feeSummary.quarterly;
+    result.expectedFee = feeValue !== undefined ? feeValue : null;
+  } else if (isFlatRate && client.feeAmount) {
+    result.expectedFee = client.feeAmount;
+  } else if (hasAum && client.feePercentage) {
+    result.expectedFee = client.aum! * client.feePercentage;
+  } else if (client.lastPaymentAmount) {
+    result.expectedFee = client.lastPaymentAmount;
+  }
+  if (isFlatRate) {
+    if (client.feeAmount) {
+      if (isMonthly) {
+        result.monthlyRate = client.feeAmount;
+        result.quarterlyRate = client.feeAmount * 3;
+        result.annualRate = client.feeAmount * 12;
+      } else {
+        result.monthlyRate = client.feeAmount / 3;
+        result.quarterlyRate = client.feeAmount;
+        result.annualRate = client.feeAmount * 4;
+      }
+      result.monthlyAmount = result.monthlyRate;
+      result.quarterlyAmount = result.quarterlyRate;
+      result.annualAmount = result.annualRate;
+    }
+  } else {
+    if (client.feePercentage) {
+      if (isMonthly) {
+        result.monthlyRate = client.feePercentage;
+        result.quarterlyRate = client.feePercentage * 3;
+        result.annualRate = client.feePercentage * 12;
+      } else {
+        result.monthlyRate = client.feePercentage / 3;
+        result.quarterlyRate = client.feePercentage;
+        result.annualRate = client.feePercentage * 4;
+      }
+      if (hasAum) {
+        result.monthlyAmount = client.aum! * result.monthlyRate!;
+        result.quarterlyAmount = client.aum! * result.quarterlyRate!;
+        result.annualAmount = client.aum! * result.annualRate!;
+      }
+    }
+  }
+  return result;
+}
+```
+
+next.config.mjs
+```mjs
+let userConfig = undefined
+try {
+  userConfig = await import('./v0-user-next.config')
+} catch (e) {
+}
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  images: {
+    unoptimized: true,
+  },
+  experimental: {
+    webpackBuildWorker: true,
+    parallelServerBuildTraces: true,
+    parallelServerCompiles: true,
+  },
+}
+mergeConfig(nextConfig, userConfig)
+function mergeConfig(nextConfig, userConfig) {
+  if (!userConfig) {
+    return
+  }
+  for (const key in userConfig) {
+    if (
+      typeof nextConfig[key] === 'object' &&
+      !Array.isArray(nextConfig[key])
+    ) {
+      nextConfig[key] = {
+        ...nextConfig[key],
+        ...userConfig[key],
+      }
+    } else {
+      nextConfig[key] = userConfig[key]
+    }
+  }
+}
+export default nextConfig
+```
+
+styles\globals.css
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+```
+
+tailwind.config.ts
+```ts
+import type { Config } from "tailwindcss";
+const config: Config = {
+	darkMode: ["class"],
+	content: [
+		"./pages/**/*.{js,ts,jsx,tsx,mdx}",
+		"./components/**/*.{js,ts,jsx,tsx,mdx}",
+		"./app/**/*.{js,ts,jsx,tsx,mdx}",
+		"*.{js,ts,jsx,tsx,mdx}"
+	],
+	theme: {
+		extend: {
+			colors: {
+				background: 'hsl(var(--background))',
+				foreground: 'hsl(var(--foreground))',
+				card: {
+					DEFAULT: 'hsl(var(--card))',
+					foreground: 'hsl(var(--card-foreground))'
+				},
+				popover: {
+					DEFAULT: 'hsl(var(--popover))',
+					foreground: 'hsl(var(--popover-foreground))'
+				},
+				primary: {
+					DEFAULT: 'hsl(var(--primary))',
+					foreground: 'hsl(var(--primary-foreground))'
+				},
+				secondary: {
+					DEFAULT: 'hsl(var(--secondary))',
+					foreground: 'hsl(var(--secondary-foreground))'
+				},
+				muted: {
+					DEFAULT: 'hsl(var(--muted))',
+					foreground: 'hsl(var(--muted-foreground))'
+				},
+				accent: {
+					DEFAULT: 'hsl(var(--accent))',
+					foreground: 'hsl(var(--accent-foreground))'
+				},
+				destructive: {
+					DEFAULT: 'hsl(var(--destructive))',
+					foreground: 'hsl(var(--destructive-foreground))'
+				},
+				border: 'hsl(var(--border))',
+				input: 'hsl(var(--input))',
+				ring: 'hsl(var(--ring))',
+				chart: {
+					'1': 'hsl(var(--chart-1))',
+					'2': 'hsl(var(--chart-2))',
+					'3': 'hsl(var(--chart-3))',
+					'4': 'hsl(var(--chart-4))',
+					'5': 'hsl(var(--chart-5))'
+				},
+				sidebar: {
+					DEFAULT: 'hsl(var(--sidebar-background))',
+					foreground: 'hsl(var(--sidebar-foreground))',
+					primary: 'hsl(var(--sidebar-primary))',
+					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+					accent: 'hsl(var(--sidebar-accent))',
+					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+					border: 'hsl(var(--sidebar-border))',
+					ring: 'hsl(var(--sidebar-ring))'
+				}
+			},
+			borderRadius: {
+				lg: 'var(--radius)',
+				md: 'calc(var(--radius) - 2px)',
+				sm: 'calc(var(--radius) - 4px)'
+			},
+			keyframes: {
+				'accordion-down': {
+					from: {
+						height: '0'
+					},
+					to: {
+						height: 'var(--radix-accordion-content-height)'
+					}
+				},
+				'accordion-up': {
+					from: {
+						height: 'var(--radix-accordion-content-height)'
+					},
+					to: {
+						height: '0'
+					}
+				}
+			},
+			animation: {
+				'accordion-down': 'accordion-down 0.2s ease-out',
+				'accordion-up': 'accordion-up 0.2s ease-out'
+			}
+		}
+	},
+	plugins: [require("tailwindcss-animate")],
+};
+export default config;
+```
+
+types.ts
+```ts
+export interface Client {
+  id: string
+  name: string
+  email?: string
+  phone?: string
+  planProvider: string
+  paymentFrequency: "Monthly" | "Quarterly"
+  feeStructure: "Flat Rate" | "Percentage of AUM"
+  feeAmount?: number
+  feePercentage?: number
+  aum?: number
+  lastPayment: string
+  lastPaymentAmount: number
+  complianceStatus: "Compliant" | "Review Needed" | "Payment Overdue"
+  contractNumber?: string
+}
+export type PaymentMethodType = "Check" | "ACH" | "Wire" | "Credit Card"
+export type PaymentPeriod = {
+  period: string;
+  amount?: number;
+}
+export interface Payment {
+  id: string
+  clientId: string
+  amount: number
+  date: string
+  status: 'Processed' | 'Pending'
+  description?: string
+  method?: PaymentMethodType | string
+  notes?: string
+  documentUrl?: string
+  period?: string
+  appliedPeriods?: PaymentPeriod[]
+  expectedFee?: number
+  isSplitPayment?: boolean
+  aum?: number
+}
+export interface PaymentFormData {
+  receivedDate: string
+  amount: number | string
+  method: PaymentMethodType | string
+  notes: string
+  documentUrl?: string
+  attachmentUrl?: string
+  appliedPeriod: string
+  periodValue: string
+  startPeriod: string
+  endPeriod: string
+  aum: string
+}
+```

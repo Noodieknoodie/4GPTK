@@ -1,0 +1,2768 @@
+######### BACKEND CODE -- OLD ###########
+
+__init__.py
+```py
+# Package initialization
+```
+
+app.py
+```py
+# backend/app.py
+# Main entry point, FastAPI setup, CORS
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+import traceback
+import sqlite3
+import os
+from routers import clients, payments, files
+from database.connection import test_connection
+# Create FastAPI application
+app = FastAPI(
+    title="401(k) Payment Tracking System",
+    description="Backend API for 401(k) payment management application",
+    version="1.0.0"
+)
+# Add CORS middleware to allow local frontend development
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # For local development only
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+# Include routers
+app.include_router(clients.router)
+app.include_router(payments.router)
+app.include_router(files.router)
+# Exception handlers
+@app.exception_handler(sqlite3.Error)
+async def sqlite_exception_handler(request: Request, exc: sqlite3.Error):
+    """Handle SQLite exceptions"""
+    return JSONResponse(
+        status_code=500,
+        content={"message": f"Database error: {str(exc)}"},
+    )
+@app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception):
+    """Handle general exceptions"""
+    error_detail = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
+    print(f"Unhandled exception: {error_detail}")
+    return JSONResponse(
+        status_code=500,
+        content={"message": f"An unexpected error occurred: {str(exc)}"},
+    )
+# Create temp OneDrive directory for development
+@app.on_event("startup")
+async def startup_event():
+    """Run startup tasks"""
+    # Ensure temp directory exists for development
+    temp_dir = os.path.join(os.path.dirname(__file__), "temp_onedrive")
+    if not os.path.exists(temp_dir):
+        os.makedirs(temp_dir)
+    # Test database connection
+    if not test_connection():
+        print("WARNING: Could not connect to database!")
+@app.get("/")
+async def root():
+    """Root endpoint"""
+    return {
+        "message": "401(k) Payment Tracking System API",
+        "docs": "/docs",
+        "status": "running"
+    }
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    # Test database connection
+    db_connection = test_connection()
+    return {
+        "status": "healthy" if db_connection else "unhealthy",
+        "database": "connected" if db_connection else "disconnected"
+    }
+# Run with: uvicorn app:app --reload
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)
+```
+
+database\__init__.py
+```py
+from .connection import get_db_connection, get_db_cursor
+from .connection import execute_query, execute_single_query, execute_insert, execute_update, execute_delete, test_connection
+```
+
+database\connection.py
+```py
+# backend/database/connection.py
+# SQLite connection handling
+import sqlite3
+import os
+from contextlib import contextmanager
+from typing import Optional, Generator, Any
+# Path to SQLite database file
+DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'db', '401KDB.db')
+def get_db_connection() -> sqlite3.Connection:
+    """
+    Creates and returns a new SQLite database connection.
+    Connection has row factory set to return results as dictionaries.
+    """
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        # Enable foreign keys support
+        conn.execute("PRAGMA foreign_keys = ON")
+        return conn
+    except sqlite3.Error as e:
+        # Log the error (would be better with a proper logging setup)
+        print(f"Database connection error: {e}")
+        raise
+@contextmanager
+def get_db_cursor() -> Generator[sqlite3.Cursor, None, None]:
+    """
+    Context manager for database operations.
+    Provides a cursor and handles connection/transaction management.
+    """
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        yield cursor
+        conn.commit()
+    except sqlite3.Error as e:
+        if conn:
+            conn.rollback()
+        print(f"Database error: {e}")
+        raise
+    finally:
+        if conn:
+            conn.close()
+def execute_query(query: str, params: Optional[tuple] = None) -> list:
+    """
+    Execute a SELECT query and return all results.
+    Args:
+        query: SQL query string
+        params: Query parameters as tuple
+    Returns:
+        List of rows as dictionaries
+    """
+    with get_db_cursor() as cursor:
+        if params:
+            cursor.execute(query, params)
+        else:
+            cursor.execute(query)
+        return [dict(row) for row in cursor.fetchall()]
+def execute_single_query(query: str, params: Optional[tuple] = None) -> Optional[dict]:
+    """
+    Execute a SELECT query and return a single result or None.
+    Args:
+        query: SQL query string
+        params: Query parameters as tuple
+    Returns:
+        Single row as dictionary or None if no result
+    """
+    with get_db_cursor() as cursor:
+        if params:
+            cursor.execute(query, params)
+        else:
+            cursor.execute(query)
+        row = cursor.fetchone()
+        return dict(row) if row else None
+def execute_insert(query: str, params: tuple) -> int:
+    """
+    Execute an INSERT query and return the ID of the inserted row.
+    Args:
+        query: SQL query string
+        params: Query parameters as tuple
+    Returns:
+        ID of the last inserted row
+    """
+    with get_db_cursor() as cursor:
+        cursor.execute(query, params)
+        return cursor.lastrowid
+def execute_update(query: str, params: tuple) -> int:
+    """
+    Execute an UPDATE query and return the number of affected rows.
+    Args:
+        query: SQL query string
+        params: Query parameters as tuple
+    Returns:
+        Number of affected rows
+    """
+    with get_db_cursor() as cursor:
+        cursor.execute(query, params)
+        return cursor.rowcount
+def execute_delete(query: str, params: tuple) -> int:
+    """
+    Execute a DELETE query and return the number of affected rows.
+    Args:
+        query: SQL query string
+        params: Query parameters as tuple
+    Returns:
+        Number of affected rows
+    """
+    with get_db_cursor() as cursor:
+        cursor.execute(query, params)
+        return cursor.rowcount
+def test_connection() -> bool:
+    """
+    Test database connection and return success status.
+    Returns:
+        True if connection successful, False otherwise
+    """
+    try:
+        with get_db_connection() as conn:
+            conn.execute("SELECT 1")
+        return True
+    except sqlite3.Error:
+        return False
+```
+
+database\queries\__init__.py
+```py
+# Database queries package initialization
+from .clients import get_all_clients, get_client_by_id, get_client_with_contracts, get_client_metrics
+from .clients import get_client_compliance_status, get_clients_by_provider
+from .clients import get_quarterly_summary, get_yearly_summary
+from .payments import get_client_payments, get_payment_by_id, create_payment, update_payment, delete_payment
+from .payments import calculate_expected_fee, get_payment_files
+from .files import get_client_files, get_file_by_id, create_file, delete_file
+from .files import link_file_to_payment, unlink_file_from_payment, get_payment_count_for_file
+from .files import get_file_exists, search_client_files
+# Import new functions
+from .clients import validate_client_contract, get_client_contracts
+```
+
+database\queries\clients.py
+```py
+# Client-related queries
+from database.connection import execute_query, execute_single_query
+from typing import List, Dict, Any, Optional
+import datetime
+def get_all_clients() -> List[Dict[str, Any]]:
+    query = """
+        SELECT client_id, display_name, full_name, ima_signed_date, onedrive_folder_path
+        FROM clients
+        WHERE valid_to IS NULL
+        ORDER BY display_name
+    """
+    return execute_query(query)
+def get_client_by_id(client_id: int) -> Optional[Dict[str, Any]]:
+    query = """
+        SELECT client_id, display_name, full_name, ima_signed_date, onedrive_folder_path
+        FROM clients
+        WHERE client_id = ? AND valid_to IS NULL
+    """
+    return execute_single_query(query, (client_id,))
+def get_client_with_contracts(client_id: int) -> Optional[Dict[str, Any]]:
+    client = get_client_by_id(client_id)
+    if not client:
+        return None
+    query = """
+        SELECT 
+            contract_id, client_id, contract_number, provider_name,
+            contract_start_date, fee_type, percent_rate, flat_rate,
+            payment_schedule, num_people, notes
+        FROM contracts
+        WHERE client_id = ? AND valid_to IS NULL
+        ORDER BY contract_start_date DESC
+    """
+    contracts = execute_query(query, (client_id,))
+    client['contracts'] = contracts
+    return client
+def get_clients_by_provider() -> List[Dict[str, Any]]:
+    query = """
+        SELECT 
+            c.client_id, 
+            c.display_name, 
+            c.full_name, 
+            con.provider_name
+        FROM clients c
+        LEFT JOIN contracts con ON c.client_id = con.client_id AND con.valid_to IS NULL
+        WHERE c.valid_to IS NULL
+        ORDER BY con.provider_name, c.display_name
+    """
+    return execute_query(query)
+def get_client_metrics(client_id: int) -> Optional[Dict[str, Any]]:
+    query = """
+        SELECT 
+            client_id, last_payment_date, last_payment_amount,
+            last_payment_quarter, last_payment_year, total_ytd_payments,
+            avg_quarterly_payment, last_recorded_assets
+        FROM client_metrics
+        WHERE client_id = ?
+    """
+    return execute_single_query(query, (client_id,))
+def get_client_compliance_status(client_id: int) -> Dict[str, str]:
+    query = """
+        SELECT 
+            received_date, 
+            payment_schedule,
+            CASE 
+                WHEN applied_start_quarter IS NOT NULL THEN applied_start_quarter
+                ELSE applied_start_month
+            END as applied_period,
+            CASE 
+                WHEN applied_start_quarter_year IS NOT NULL THEN applied_start_quarter_year
+                ELSE applied_start_month_year
+            END as applied_period_year
+        FROM payments p
+        JOIN contracts c ON p.contract_id = c.contract_id
+        WHERE p.client_id = ? AND p.valid_to IS NULL
+        ORDER BY p.received_date DESC
+        LIMIT 1
+    """
+    last_payment = execute_single_query(query, (client_id,))
+    if not last_payment:
+        return {
+            "status": "red",
+            "reason": "No payment records found"
+        }
+    try:
+        last_payment_date = datetime.datetime.strptime(
+            last_payment['received_date'], '%Y-%m-%d'
+        ).date()
+    except ValueError:
+        return {
+            "status": "red",
+            "reason": "Invalid payment date format"
+        }
+    today = datetime.date.today()
+    days_since_payment = (today - last_payment_date).days
+    is_monthly = last_payment['payment_schedule'] == 'monthly'
+    if is_monthly:
+        if days_since_payment <= 45: 
+            return {
+                "status": "green",
+                "reason": "Recent payment within acceptable timeframe"
+            }
+        elif days_since_payment <= 75: 
+            return {
+                "status": "yellow",
+                "reason": "Payment approaching due date"
+            }
+        else:
+            return {
+                "status": "red",
+                "reason": "Payment overdue"
+            }
+    else: 
+        if days_since_payment <= 135: 
+            return {
+                "status": "green",
+                "reason": "Recent payment within acceptable timeframe"
+            }
+        elif days_since_payment <= 195: 
+            return {
+                "status": "yellow",
+                "reason": "Payment approaching due date"
+            }
+        else:
+            return {
+                "status": "red",
+                "reason": "Payment overdue"
+            }
+def get_quarterly_summary(client_id: int, year: int, quarter: int) -> Optional[Dict[str, Any]]:
+    query = """
+        SELECT 
+            id, client_id, year, quarter, total_payments, 
+            total_assets, payment_count, avg_payment, 
+            expected_total, last_updated
+        FROM quarterly_summaries
+        WHERE client_id = ? AND year = ? AND quarter = ?
+    """
+    return execute_single_query(query, (client_id, year, quarter))
+def get_yearly_summary(client_id: int, year: int) -> Optional[Dict[str, Any]]:
+    query = """
+        SELECT 
+            id, client_id, year, total_payments, total_assets, 
+            payment_count, avg_payment, yoy_growth, last_updated
+        FROM yearly_summaries
+        WHERE client_id = ? AND year = ?
+    """
+    return execute_single_query(query, (client_id, year))
+def update_client_folder_path(client_id: int, folder_path: str) -> bool:
+    from database.connection import execute_update
+    normalized_path = folder_path.replace('/', '\\')
+    query = """
+        UPDATE clients
+        SET onedrive_folder_path = ?
+        WHERE client_id = ? AND valid_to IS NULL
+    """
+    rows_updated = execute_update(query, (normalized_path, client_id))
+    return rows_updated > 0
+def validate_client_contract(client_id: int, contract_id: int) -> bool:
+    """
+    Validate that a contract belongs to a client.
+    Args:
+        client_id: Client ID
+        contract_id: Contract ID
+    Returns:
+        True if contract belongs to client, False otherwise
+    """
+    query = """
+    SELECT contract_id FROM contracts 
+    WHERE client_id = ? AND contract_id = ? AND valid_to IS NULL
+    """
+    result = execute_single_query(query, (client_id, contract_id))
+    return result is not None
+def get_client_contracts(client_id: int) -> List[Dict[str, Any]]:
+    """
+    Get all valid contracts for a specific client.
+    Args:
+        client_id: Client ID
+    Returns:
+        List of contract dictionaries
+    """
+    query = """
+    SELECT 
+        contract_id, client_id, contract_number, provider_name,
+        contract_start_date, fee_type, percent_rate, flat_rate,
+        payment_schedule, num_people, notes
+    FROM contracts
+    WHERE client_id = ? AND valid_to IS NULL
+    ORDER BY contract_start_date DESC
+    """
+    return execute_query(query, (client_id,))
+```
+
+database\queries\files.py
+```py
+# backend/database/queries/files.py
+# Document/file-related queries
+from database.connection import execute_query, execute_single_query, execute_insert, execute_update, execute_delete
+from typing import List, Dict, Any, Optional
+def get_client_files(client_id: int) -> List[Dict[str, Any]]:
+    query = """
+    SELECT 
+        file_id,
+        client_id,
+        file_name,
+        onedrive_path,
+        uploaded_at
+    FROM 
+        client_files
+    WHERE 
+        client_id = ?
+    ORDER BY 
+        uploaded_at DESC
+    """
+    return execute_query(query, (client_id,))
+def get_file_by_id(file_id: int) -> Optional[Dict[str, Any]]:
+    query = """
+    SELECT 
+        file_id,
+        client_id,
+        file_name,
+        onedrive_path,
+        uploaded_at
+    FROM 
+        client_files
+    WHERE 
+        file_id = ?
+    """
+    return execute_single_query(query, (file_id,))
+def create_file(client_id: int, file_name: str, onedrive_path: str) -> int:
+    query = """
+    INSERT INTO client_files (
+        client_id,
+        file_name,
+        onedrive_path
+    ) VALUES (?, ?, ?)
+    """
+    return execute_insert(query, (client_id, file_name, onedrive_path))
+def delete_file(file_id: int) -> bool:
+    query = """
+    DELETE FROM client_files
+    WHERE file_id = ?
+    """
+    rows_deleted = execute_delete(query, (file_id,))
+    return rows_deleted > 0
+def link_file_to_payment(payment_id: int, file_id: int) -> bool:
+    query = """
+    INSERT OR IGNORE INTO payment_files (
+        payment_id,
+        file_id
+    ) VALUES (?, ?)
+    """
+    try:
+        execute_insert(query, (payment_id, file_id))
+        return True
+    except Exception:
+        return False
+def unlink_file_from_payment(payment_id: int, file_id: int) -> bool:
+    query = """
+    DELETE FROM payment_files
+    WHERE payment_id = ? AND file_id = ?
+    """
+    rows_deleted = execute_delete(query, (payment_id, file_id))
+    return rows_deleted > 0
+def get_payment_count_for_file(file_id: int) -> int:
+    query = """
+    SELECT COUNT(*) as count
+    FROM payment_files
+    WHERE file_id = ?
+    """
+    result = execute_single_query(query, (file_id,))
+    return result['count'] if result else 0
+def get_file_exists(client_id: int, file_name: str) -> bool:
+    query = """
+    SELECT COUNT(*) as count
+    FROM client_files
+    WHERE client_id = ? AND file_name = ?
+    """
+    result = execute_single_query(query, (client_id, file_name))
+    return result['count'] > 0 if result else False
+def find_file_by_path(client_id: int, onedrive_path: str) -> Optional[Dict[str, Any]]:
+    # Normalize path (replace backslashes with forward slashes)
+    normalized_path = onedrive_path.replace('\\', '/')
+    query = """
+    SELECT 
+        file_id,
+        client_id,
+        file_name,
+        onedrive_path,
+        uploaded_at
+    FROM 
+        client_files
+    WHERE 
+        client_id = ? AND
+        onedrive_path = ?
+    """
+    return execute_single_query(query, (client_id, normalized_path))
+def search_client_files(client_id: int, search_term: str) -> List[Dict[str, Any]]:
+    query = """
+    SELECT 
+        file_id,
+        client_id,
+        file_name,
+        onedrive_path,
+        uploaded_at
+    FROM 
+        client_files
+    WHERE 
+        client_id = ? AND
+        (file_name LIKE ? OR onedrive_path LIKE ?)
+    ORDER BY 
+        uploaded_at DESC
+    """
+    search_pattern = f"%{search_term}%"
+    return execute_query(query, (client_id, search_pattern, search_pattern))
+```
+
+database\queries\payments.py
+```py
+# backend/database/queries/payments.py
+# Payment-related queries
+from database.connection import execute_query, execute_single_query, execute_insert, execute_update, execute_delete
+from typing import List, Dict, Any, Optional, Tuple
+from datetime import datetime
+import uuid
+def get_client_payments(client_id: int, limit: int = 20, offset: int = 0) -> Tuple[List[Dict[str, Any]], int]:
+    """
+    Fetch payments for a client with pagination.
+    Args:
+        client_id: Client ID to fetch payments for
+        limit: Number of records to return
+        offset: Offset for pagination
+    Returns:
+        Tuple of (list of payment dictionaries, total count)
+    """
+    # First check if client exists
+    client_check_query = """
+    SELECT client_id FROM clients WHERE client_id = ? AND valid_to IS NULL
+    """
+    client = execute_single_query(client_check_query, (client_id,))
+    if not client:
+        return [], 0
+    count_query = """
+    SELECT COUNT(*) as total
+    FROM payments
+    WHERE client_id = ? AND valid_to IS NULL
+    """
+    query = """
+    SELECT 
+        p.payment_id,
+        p.contract_id,
+        p.client_id,
+        p.received_date,
+        p.total_assets,
+        p.expected_fee,
+        p.actual_fee,
+        p.method,
+        p.notes,
+        p.applied_start_month,
+        p.applied_start_month_year,
+        p.applied_end_month,
+        p.applied_end_month_year,
+        p.applied_start_quarter,
+        p.applied_start_quarter_year,
+        p.applied_end_quarter,
+        p.applied_end_quarter_year,
+        c.display_name as client_name,
+        co.provider_name,
+        co.fee_type,
+        co.percent_rate,
+        co.flat_rate,
+        co.payment_schedule,
+        (SELECT COUNT(*) FROM payment_files pf WHERE pf.payment_id = p.payment_id) as file_count
+    FROM 
+        payments p
+    JOIN 
+        clients c ON p.client_id = c.client_id
+    LEFT JOIN 
+        contracts co ON p.contract_id = co.contract_id
+    WHERE 
+        p.client_id = ? AND
+        p.valid_to IS NULL
+    ORDER BY 
+        p.received_date DESC
+    LIMIT ? OFFSET ?
+    """
+    total_result = execute_single_query(count_query, (client_id,))
+    total = total_result['total'] if total_result else 0
+    payments = execute_query(query, (client_id, limit, offset))
+    return payments, total
+def get_payment_by_id(payment_id: int) -> Optional[Dict[str, Any]]:
+    """
+    Fetch a single payment by ID with client and contract details.
+    Args:
+        payment_id: Payment ID to fetch
+    Returns:
+        Payment dictionary or None if not found
+    """
+    query = """
+    SELECT 
+        p.payment_id,
+        p.contract_id,
+        p.client_id,
+        p.received_date,
+        p.total_assets,
+        p.expected_fee,
+        p.actual_fee,
+        p.method,
+        p.notes,
+        p.applied_start_month,
+        p.applied_start_month_year,
+        p.applied_end_month,
+        p.applied_end_month_year,
+        p.applied_start_quarter,
+        p.applied_start_quarter_year,
+        p.applied_end_quarter,
+        p.applied_end_quarter_year,
+        c.display_name as client_name,
+        co.provider_name,
+        co.fee_type,
+        co.percent_rate,
+        co.flat_rate,
+        co.payment_schedule
+    FROM 
+        payments p
+    JOIN 
+        clients c ON p.client_id = c.client_id
+    LEFT JOIN 
+        contracts co ON p.contract_id = co.contract_id
+    WHERE 
+        p.payment_id = ? AND
+        p.valid_to IS NULL
+    """
+    return execute_single_query(query, (payment_id,))
+def create_payment(
+    contract_id: int,
+    client_id: int,
+    received_date: str,
+    total_assets: Optional[int],
+    expected_fee: Optional[float],
+    actual_fee: float,
+    method: Optional[str],
+    notes: Optional[str],
+    applied_start_month: Optional[int],
+    applied_start_month_year: Optional[int],
+    applied_end_month: Optional[int],
+    applied_end_month_year: Optional[int],
+    applied_start_quarter: Optional[int],
+    applied_start_quarter_year: Optional[int],
+    applied_end_quarter: Optional[int],
+    applied_end_quarter_year: Optional[int]
+) -> int:
+    """
+    Create a new payment record.
+    For split payments, start and end period fields differ.
+    Args:
+        All payment fields
+    Returns:
+        ID of the newly created payment
+    """
+    query = """
+    INSERT INTO payments (
+        contract_id,
+        client_id,
+        received_date,
+        total_assets,
+        expected_fee,
+        actual_fee,
+        method,
+        notes,
+        applied_start_month,
+        applied_start_month_year,
+        applied_end_month,
+        applied_end_month_year,
+        applied_start_quarter,
+        applied_start_quarter_year,
+        applied_end_quarter,
+        applied_end_quarter_year
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """
+    params = (
+        contract_id,
+        client_id,
+        received_date,
+        total_assets,
+        expected_fee,
+        actual_fee,
+        method,
+        notes,
+        applied_start_month,
+        applied_start_month_year,
+        applied_end_month,
+        applied_end_month_year,
+        applied_start_quarter,
+        applied_start_quarter_year,
+        applied_end_quarter,
+        applied_end_quarter_year
+    )
+    return execute_insert(query, params)
+def update_payment(
+    payment_id: int,
+    received_date: Optional[str] = None,
+    total_assets: Optional[int] = None,
+    actual_fee: Optional[float] = None,
+    method: Optional[str] = None,
+    notes: Optional[str] = None
+) -> bool:
+    """
+    Update an existing payment record.
+    Only updates fields that are provided (not None).
+    Args:
+        payment_id: ID of payment to update
+        Other fields optional
+    Returns:
+        True if update successful, False otherwise
+    """
+    # Build dynamic query based on which fields are provided
+    update_fields = []
+    params = []
+    if received_date is not None:
+        update_fields.append("received_date = ?")
+        params.append(received_date)
+    if total_assets is not None:
+        update_fields.append("total_assets = ?")
+        params.append(total_assets)
+    if actual_fee is not None:
+        update_fields.append("actual_fee = ?")
+        params.append(actual_fee)
+    if method is not None:
+        update_fields.append("method = ?")
+        params.append(method)
+    if notes is not None:
+        update_fields.append("notes = ?")
+        params.append(notes)
+    # If no fields to update, return early
+    if not update_fields:
+        return False
+    # Add payment_id to params
+    params.append(payment_id)
+    query = f"""
+    UPDATE payments
+    SET {", ".join(update_fields)}
+    WHERE payment_id = ? AND valid_to IS NULL
+    """
+    rows_updated = execute_update(query, tuple(params))
+    return rows_updated > 0
+def update_expected_fee(payment_id: int, expected_fee: float) -> bool:
+    """
+    Update the expected fee for a payment.
+    Args:
+        payment_id: ID of payment to update
+        expected_fee: New expected fee
+    Returns:
+        True if update successful, False otherwise
+    """
+    query = """
+    UPDATE payments
+    SET expected_fee = ?
+    WHERE payment_id = ? AND valid_to IS NULL
+    """
+    rows_updated = execute_update(query, (expected_fee, payment_id))
+    return rows_updated > 0
+def delete_payment(payment_id: int) -> bool:
+    """
+    Soft delete a payment by setting valid_to timestamp.
+    Args:
+        payment_id: ID of payment to delete
+    Returns:
+        True if deletion successful, False otherwise
+    """
+    query = """
+    UPDATE payments
+    SET valid_to = datetime('now')
+    WHERE payment_id = ? AND valid_to IS NULL
+    """
+    rows_updated = execute_update(query, (payment_id,))
+    return rows_updated > 0
+def calculate_expected_fee(contract_id: int, total_assets: Optional[int], period_type: str) -> Optional[float]:
+    """
+    Calculate expected fee based on contract and assets.
+    Args:
+        contract_id: Contract ID
+        total_assets: Total assets amount (can be None for flat fee)
+        period_type: 'month' or 'quarter'
+    Returns:
+        Expected fee amount or None if not enough information
+    """
+    query = """
+    SELECT 
+        fee_type,
+        percent_rate,
+        flat_rate,
+        payment_schedule
+    FROM 
+        contracts
+    WHERE 
+        contract_id = ? AND
+        valid_to IS NULL
+    """
+    contract = execute_single_query(query, (contract_id,))
+    if not contract:
+        return None
+    fee_type = contract['fee_type'].lower() if contract['fee_type'] else None
+    # Handle flat fee
+    if fee_type == 'flat':
+        flat_rate = contract['flat_rate']
+        if flat_rate is None:
+            return None
+        # Return the flat rate directly
+        return flat_rate
+    # Handle percentage fee
+    elif fee_type in ('percentage', 'percent'):
+        percent_rate = contract['percent_rate']
+        if percent_rate is None or total_assets is None:
+            return None
+        # Simply apply the stored percentage rate directly to the assets
+        # No period adjustments needed - the rate is already in the correct form
+        return total_assets * float(percent_rate)
+    # Default case if calculation not possible
+    return None
+def get_payment_files(payment_id: int) -> List[Dict[str, Any]]:
+    """
+    Get files associated with a payment.
+    Args:
+        payment_id: Payment ID
+    Returns:
+        List of file dictionaries
+    """
+    query = """
+    SELECT 
+        f.file_id,
+        f.client_id,
+        f.file_name,
+        f.onedrive_path,
+        f.uploaded_at
+    FROM 
+        client_files f
+    JOIN 
+        payment_files pf ON f.file_id = pf.file_id
+    WHERE 
+        pf.payment_id = ?
+    """
+    return execute_query(query, (payment_id,))
+def associate_file_with_payment(payment_id: int, file_id: int) -> bool:
+    """
+    Associate a file with a payment.
+    Args:
+        payment_id: Payment ID
+        file_id: File ID
+    Returns:
+        True if association successful, False otherwise
+    """
+    # Check if already associated
+    check_query = """
+    SELECT payment_id FROM payment_files WHERE payment_id = ? AND file_id = ?
+    """
+    existing = execute_single_query(check_query, (payment_id, file_id))
+    if existing:
+        return True  # Already associated
+    query = """
+    INSERT INTO payment_files (payment_id, file_id) VALUES (?, ?)
+    """
+    try:
+        execute_insert(query, (payment_id, file_id))
+        return True
+    except Exception:
+        return False
+def disassociate_file_from_payment(payment_id: int, file_id: int) -> bool:
+    """
+    Remove association between a file and a payment.
+    Args:
+        payment_id: Payment ID
+        file_id: File ID
+    Returns:
+        True if disassociation successful, False otherwise
+    """
+    query = """
+    DELETE FROM payment_files WHERE payment_id = ? AND file_id = ?
+    """
+    rows_deleted = execute_delete(query, (payment_id, file_id))
+    return rows_deleted > 0
+def get_payments_by_period(
+    client_id: int, 
+    is_monthly: bool, 
+    period: int, 
+    year: int
+) -> List[Dict[str, Any]]:
+    """
+    Get all payments for a specific period (month or quarter).
+    Args:
+        client_id: Client ID
+        is_monthly: True for monthly, False for quarterly
+        period: Month or quarter number
+        year: Year
+    Returns:
+        List of payment dictionaries
+    """
+    if is_monthly:
+        query = """
+        SELECT 
+            payment_id,
+            contract_id,
+            received_date,
+            total_assets,
+            expected_fee,
+            actual_fee,
+            method,
+            notes,
+            applied_start_month,
+            applied_start_month_year,
+            applied_end_month,
+            applied_end_month_year
+        FROM 
+            payments
+        WHERE 
+            client_id = ? AND
+            ((applied_start_month <= ? AND applied_end_month >= ? AND
+              applied_start_month_year = ? AND applied_end_month_year = ?)
+             OR
+             (applied_start_month_year < ? AND applied_end_month_year > ?)
+             OR
+             (applied_start_month_year = ? AND applied_end_month_year > ? AND
+              applied_start_month <= ?)
+             OR
+             (applied_start_month_year < ? AND applied_end_month_year = ? AND
+              applied_end_month >= ?)) AND
+            valid_to IS NULL
+        """
+        params = (
+            client_id, 
+            period, period, year, year,
+            year, year,
+            year, year, period,
+            year, year, period
+        )
+    else:
+        query = """
+        SELECT 
+            payment_id,
+            contract_id,
+            received_date,
+            total_assets,
+            expected_fee,
+            actual_fee,
+            method,
+            notes,
+            applied_start_quarter,
+            applied_start_quarter_year,
+            applied_end_quarter,
+            applied_end_quarter_year
+        FROM 
+            payments
+        WHERE 
+            client_id = ? AND
+            ((applied_start_quarter <= ? AND applied_end_quarter >= ? AND
+              applied_start_quarter_year = ? AND applied_end_quarter_year = ?)
+             OR
+             (applied_start_quarter_year < ? AND applied_end_quarter_year > ?)
+             OR
+             (applied_start_quarter_year = ? AND applied_end_quarter_year > ? AND
+              applied_start_quarter <= ?)
+             OR
+             (applied_start_quarter_year < ? AND applied_end_quarter_year = ? AND
+              applied_end_quarter >= ?)) AND
+            valid_to IS NULL
+        """
+        params = (
+            client_id, 
+            period, period, year, year,
+            year, year,
+            year, year, period,
+            year, year, period
+        )
+    return execute_query(query, params)
+```
+
+models\__init__.py
+```py
+from .schemas import Client, Contact, Contract, ClientWithContract, Payment
+from .schemas import PaymentCreate, PaymentUpdate, ClientMetrics, PaymentWithDetails
+from .schemas import ClientFile, PaymentFile, FileUpload
+from .schemas import ExpectedFeeRequest, ExpectedFeeResponse, ClientSnapshot, PaginatedResponse
+```
+
+models\schemas.py
+```py
+# backend/models/schemas.py
+# All data schemas in one file (keeps it simple)
+from pydantic import BaseModel, Field, field_validator, ConfigDict
+from typing import Optional, List, Union, Literal
+from datetime import datetime, date
+from decimal import Decimal
+class Client(BaseModel):
+    """Basic client information model"""
+    client_id: Optional[int] = None
+    display_name: str
+    full_name: Optional[str] = None
+    ima_signed_date: Optional[str] = None
+    onedrive_folder_path: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)
+class Contact(BaseModel):
+    """Client contact model"""
+    contact_id: Optional[int] = None
+    client_id: int
+    contact_type: str
+    contact_name: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    fax: Optional[str] = None
+    physical_address: Optional[str] = None
+    mailing_address: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)
+class Contract(BaseModel):
+    """Client contract model"""
+    contract_id: Optional[int] = None
+    client_id: int
+    contract_number: Optional[str] = None
+    provider_name: Optional[str] = None
+    contract_start_date: Optional[str] = None
+    fee_type: Optional[str] = None
+    percent_rate: Optional[Decimal] = None
+    flat_rate: Optional[Decimal] = None
+    payment_schedule: Optional[str] = None
+    num_people: Optional[int] = None
+    notes: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)
+class ClientWithContract(Client):
+    """Client with associated contract information"""
+    contracts: List[Contract] = []
+    model_config = ConfigDict(from_attributes=True)
+class Payment(BaseModel):
+    """Payment model with validation"""
+    payment_id: Optional[int] = None
+    contract_id: int
+    client_id: int
+    received_date: str
+    total_assets: Optional[int] = None
+    expected_fee: Optional[Decimal] = None
+    actual_fee: Decimal
+    method: Optional[str] = None
+    notes: Optional[str] = None
+    # split_group_id removed as part of revised split payment implementation
+    # Period fields
+    applied_start_month: Optional[int] = None
+    applied_start_month_year: Optional[int] = None
+    applied_end_month: Optional[int] = None
+    applied_end_month_year: Optional[int] = None
+    applied_start_quarter: Optional[int] = None
+    applied_start_quarter_year: Optional[int] = None
+    applied_end_quarter: Optional[int] = None
+    applied_end_quarter_year: Optional[int] = None
+    @field_validator('received_date')
+    @classmethod
+    def validate_received_date(cls, v):
+        try:
+            # Check if date is valid
+            datetime.strptime(v, '%Y-%m-%d')
+            return v
+        except ValueError:
+            raise ValueError('received_date must be in YYYY-MM-DD format')
+    @field_validator('actual_fee')
+    @classmethod
+    def validate_actual_fee(cls, v):
+        if v <= 0:
+            raise ValueError('actual_fee must be greater than zero')
+        return v
+    model_config = ConfigDict(from_attributes=True)
+class PaymentCreate(BaseModel):
+    """Model for creating a new payment"""
+    contract_id: int
+    client_id: int
+    received_date: str
+    total_assets: Optional[int] = None
+    expected_fee: Optional[Decimal] = None
+    actual_fee: Decimal
+    method: Optional[str] = None
+    notes: Optional[str] = None
+    is_split_payment: bool = False
+    # Period fields - monthly or quarterly based on contract
+    start_period: int  # month or quarter number
+    start_period_year: int
+    end_period: Optional[int] = None  # Required only for split payments
+    end_period_year: Optional[int] = None  # Required only for split payments
+    @field_validator('received_date')
+    @classmethod
+    def validate_received_date(cls, v):
+        try:
+            # Check if date is valid and not in the future
+            date_obj = datetime.strptime(v, '%Y-%m-%d').date()
+            if date_obj > date.today():
+                raise ValueError('received_date cannot be in the future')
+            return v
+        except ValueError as e:
+            if 'format' in str(e):
+                raise ValueError('received_date must be in YYYY-MM-DD format')
+            raise
+    @field_validator('actual_fee')
+    @classmethod
+    def validate_actual_fee(cls, v):
+        if v <= 0:
+            raise ValueError('actual_fee must be greater than zero')
+        return v
+    @field_validator('end_period', 'end_period_year')
+    @classmethod
+    def validate_end_period(cls, v, info):
+        values = info.data
+        if values.get('is_split_payment') and v is None:
+            raise ValueError('end_period and end_period_year are required for split payments')
+        return v
+    model_config = ConfigDict(from_attributes=True)
+class PaymentUpdate(BaseModel):
+    """Model for updating an existing payment"""
+    received_date: Optional[str] = None
+    total_assets: Optional[int] = None
+    actual_fee: Optional[Decimal] = None
+    method: Optional[str] = None
+    notes: Optional[str] = None
+    # We don't allow updating period fields to avoid complex data integrity issues
+    # If a period needs to change, the payment should be deleted and recreated
+    @field_validator('received_date')
+    @classmethod
+    def validate_received_date(cls, v):
+        if v is not None:
+            try:
+                # Check if date is valid and not in the future
+                date_obj = datetime.strptime(v, '%Y-%m-%d').date()
+                if date_obj > date.today():
+                    raise ValueError('received_date cannot be in the future')
+                return v
+            except ValueError as e:
+                if 'format' in str(e):
+                    raise ValueError('received_date must be in YYYY-MM-DD format')
+                raise
+        return v
+    @field_validator('actual_fee')
+    @classmethod
+    def validate_actual_fee(cls, v):
+        if v is not None and v <= 0:
+            raise ValueError('actual_fee must be greater than zero')
+        return v
+    model_config = ConfigDict(from_attributes=True)
+class ClientMetrics(BaseModel):
+    """Client metrics model for dashboard display"""
+    client_id: int
+    last_payment_date: Optional[str] = None
+    last_payment_amount: Optional[Decimal] = None
+    last_payment_quarter: Optional[int] = None
+    last_payment_year: Optional[int] = None
+    total_ytd_payments: Optional[Decimal] = None
+    avg_quarterly_payment: Optional[Decimal] = None
+    last_recorded_assets: Optional[Decimal] = None
+    model_config = ConfigDict(from_attributes=True)
+class PaymentWithDetails(Payment):
+    """Payment with additional details for display"""
+    client_name: str  # client.display_name
+    provider_name: Optional[str] = None  # contract.provider_name
+    fee_type: Optional[str] = None  # contract.fee_type
+    percent_rate: Optional[Decimal] = None  # contract.percent_rate
+    flat_rate: Optional[Decimal] = None  # contract.flat_rate
+    payment_schedule: Optional[str] = None  # contract.payment_schedule
+    files: List[dict] = []  # Associated files
+    model_config = ConfigDict(from_attributes=True)
+class ClientFile(BaseModel):
+    """Client file model"""
+    file_id: Optional[int] = None
+    client_id: int
+    file_name: str
+    onedrive_path: str
+    uploaded_at: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)
+class PaymentFile(BaseModel):
+    """Payment-file association model"""
+    payment_id: int
+    file_id: int
+    linked_at: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)
+class FileUpload(BaseModel):
+    """File upload response model"""
+    file_id: int
+    client_id: int
+    file_name: str
+    onedrive_path: str
+    model_config = ConfigDict(from_attributes=True)
+class ExpectedFeeRequest(BaseModel):
+    """Request model for calculating expected fee"""
+    client_id: int
+    contract_id: int
+    total_assets: Optional[int] = None
+    period_type: Literal["month", "quarter"]
+    period: int  # Month or quarter number
+    year: int
+    model_config = ConfigDict(from_attributes=True)
+class ExpectedFeeResponse(BaseModel):
+    """Response model for expected fee calculation"""
+    expected_fee: Optional[Decimal] = None
+    fee_type: Optional[str] = None
+    calculation_method: str  # How the fee was calculated
+    model_config = ConfigDict(from_attributes=True)
+class ClientSnapshot(BaseModel):
+    """Comprehensive client snapshot for dashboard display"""
+    client: Client
+    contracts: List[Contract] = []
+    metrics: Optional[ClientMetrics] = None
+    model_config = ConfigDict(from_attributes=True)
+class PaginatedResponse(BaseModel):
+    """Generic paginated response model"""
+    total: int
+    page: int
+    page_size: int
+    items: List[dict]
+    model_config = ConfigDict(from_attributes=True)
+```
+
+routers\__init__.py
+```py
+from .clients import router as client_router
+from .payments import router as payment_router 
+from .files import router as file_router
+```
+
+routers\clients.py
+```py
+# Client endpoints
+from fastapi import APIRouter, HTTPException, Query, Form
+from typing import List, Optional, Dict, Any
+from services import client_service
+from models.schemas import Client, ClientSnapshot, Contract
+from database.queries import get_client_by_id, get_client_contracts
+router = APIRouter(
+    prefix="/clients",
+    tags=["clients"],
+    responses={404: {"description": "Not found"}}
+)
+@router.get("/", response_model=List[Client])
+async def get_all_clients():
+    """Get a list of all clients"""
+    return client_service.get_all_clients()
+@router.get("/by-provider")
+async def get_clients_by_provider():
+    """Get clients grouped by provider"""
+    return client_service.get_clients_by_provider()
+@router.get("/{client_id}", response_model=ClientSnapshot)
+async def get_client_details(client_id: int):
+    """Get detailed information for a specific client"""
+    client = client_service.get_client_snapshot(client_id)
+    if not client:
+        raise HTTPException(status_code=404, detail="Client not found")
+    return client
+@router.get("/{client_id}/compliance-status")
+async def get_client_compliance_status(client_id: int):
+    """Get compliance status for a client"""
+    try:
+        return client_service.get_client_compliance_status(client_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.get("/{client_id}/fee-summary")
+async def get_client_fee_summary(client_id: int):
+    """Get fee summary information for a client"""
+    try:
+        return client_service.calculate_fee_summary(client_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.put("/{client_id}/folder-path")
+async def update_client_folder_path(client_id: int, folder_path: str = Form(...)):
+    """Update a client's OneDrive folder path"""
+    try:
+        result = client_service.update_client_folder_path(client_id, folder_path)
+        if not result["success"]:
+            raise HTTPException(status_code=404, detail=result["message"])
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.get("/{client_id}/contracts", response_model=List[Contract])
+async def get_contracts_for_client(client_id: int):
+    """
+    Get all valid contracts for a specific client.
+    This helps the frontend select only valid contract-client combinations.
+    """
+    client = get_client_by_id(client_id)
+    if not client:
+        raise HTTPException(status_code=404, detail=f"Client not found with id {client_id}")
+    contracts = get_client_contracts(client_id)
+    return contracts
+```
+
+routers\files.py
+```py
+# backend/routers/files.py
+# File handling endpoints
+from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Query, Depends
+from fastapi.responses import FileResponse
+from typing import List, Optional
+from services import file_service
+import os
+router = APIRouter(
+    prefix="/files",
+    tags=["files"],
+    responses={404: {"description": "Not found"}}
+)
+@router.get("/{client_id}")
+async def get_client_files(client_id: int):
+    """Get all files for a client"""
+    try:
+        return file_service.get_client_files(client_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.get("/payment/{payment_id}")
+async def get_payment_files(payment_id: int):
+    """Get files linked to a payment"""
+    try:
+        return file_service.get_payment_files(payment_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.post("/upload/{client_id}")
+async def upload_file(
+    client_id: int,
+    file: UploadFile = File(...),
+    for_payment: bool = Form(False),
+    year: Optional[int] = Form(None)
+):
+    """Upload a file for a client"""
+    try:
+        # Check if file is empty
+        if not file.filename:
+            raise HTTPException(status_code=400, detail="No file uploaded")
+        # Save the file
+        result = file_service.save_file(
+            client_id=client_id,
+            file_obj=file.file,
+            filename=file.filename,
+            for_payment=for_payment,
+            year=year
+        )
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.post("/link/{payment_id}/{file_id}")
+async def link_file_to_payment(payment_id: int, file_id: int):
+    """Link a file to a payment"""
+    try:
+        result = file_service.link_file_to_payment(payment_id, file_id)
+        if not result["success"]:
+            raise HTTPException(status_code=500, detail="Failed to link file")
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.delete("/link/{payment_id}/{file_id}")
+async def unlink_file_from_payment(payment_id: int, file_id: int):
+    """Unlink a file from a payment"""
+    try:
+        result = file_service.unlink_file_from_payment(payment_id, file_id)
+        if not result["success"]:
+            raise HTTPException(status_code=500, detail="Failed to unlink file")
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.delete("/{file_id}")
+async def delete_file(file_id: int, delete_physical: bool = Query(False)):
+    """Delete a file"""
+    try:
+        result = file_service.delete_file(file_id, delete_physical)
+        if not result["success"]:
+            raise HTTPException(status_code=400, detail=result["message"])
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.get("/content/{file_id}")
+async def get_file_content(file_id: int):
+    """Get file content and metadata"""
+    try:
+        result = file_service.get_file_content(file_id)
+        if not result["success"]:
+            raise HTTPException(status_code=404, detail=result["message"])
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.get("/download/{file_id}")
+async def download_file(file_id: int):
+    """Download a file"""
+    try:
+        # Get file information
+        file_info = file_service.get_file_content(file_id)
+        if not file_info["success"]:
+            raise HTTPException(status_code=404, detail=file_info["message"])
+        # Return file as download
+        return FileResponse(
+            path=file_info["file_path"],
+            filename=file_info["file_name"],
+            media_type=file_info["mime_type"]
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.get("/search/{client_id}")
+async def search_client_files(client_id: int, search: str = Query(...)):
+    """Search for client files by name"""
+    try:
+        return file_service.search_client_files(client_id, search)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.get("/scan-directory/{client_id}")
+async def scan_client_directory(
+    client_id: int, 
+    register: bool = Query(False, description="Whether to register found files in the database")
+):
+    """
+    Scan a client's directory structure and optionally register files
+    """
+    try:
+        return file_service.scan_client_directory(client_id, register)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.post("/register-existing/{client_id}")
+async def register_existing_file(
+    client_id: int,
+    file_path: str = Form(..., description="Path to the file (absolute or relative to shared folder)")
+):
+    """
+    Register an existing file in the database
+    """
+    try:
+        return file_service.register_existing_file(client_id, file_path)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.post("/configure-paths")
+async def configure_shared_folder_path(
+    path: str = Form(..., description="Path to the shared folder")
+):
+    """
+    Configure the shared folder path
+    """
+    try:
+        success = file_service.save_shared_folder_config(path)
+        if not success:
+            raise HTTPException(status_code=500, detail="Failed to save configuration")
+        return {"success": True, "path": path}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+```
+
+routers\payments.py
+```py
+# backend/routers/payments.py
+# Payment endpoints
+from fastapi import APIRouter, HTTPException, Query, Path, Depends
+from typing import List, Optional, Dict, Any
+from services import payment_service
+from models.schemas import PaymentCreate, PaymentUpdate, PaymentWithDetails, ExpectedFeeRequest, ExpectedFeeResponse, PaginatedResponse
+from database.queries import get_client_by_id, validate_client_contract
+router = APIRouter(
+    prefix="/payments",
+    tags=["payments"],
+    responses={404: {"description": "Not found"}}
+)
+@router.get("/client/{client_id}")
+async def get_client_payments(
+    client_id: int = Path(..., description="Client ID"),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100)
+):
+    """Get paginated payment history for a client"""
+    try:
+        return payment_service.get_client_payments(client_id, page, page_size)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.get("/detail/{payment_id}", response_model=PaymentWithDetails)
+async def get_payment_details(payment_id: int):
+    """Get detailed information for a specific payment"""
+    payment = payment_service.get_payment_by_id(payment_id)
+    if not payment:
+        raise HTTPException(status_code=404, detail="Payment not found")
+    return payment
+@router.post("/")
+async def create_payment(payment: PaymentCreate):
+    """Create a new payment or split payment"""
+    try:
+        result = payment_service.create_payment(payment)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.put("/{payment_id}")
+async def update_payment(payment_id: int, payment: PaymentUpdate):
+    """Update an existing payment"""
+    try:
+        result = payment_service.update_payment(payment_id, payment)
+        if not result["success"]:
+            raise HTTPException(status_code=404, detail=result["message"])
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.delete("/{payment_id}")
+async def delete_payment(payment_id: int):
+    """Delete a payment"""
+    try:
+        result = payment_service.delete_payment(payment_id)
+        if not result["success"]:
+            raise HTTPException(status_code=404, detail=result["message"])
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.post("/expected-fee", response_model=ExpectedFeeResponse)
+async def calculate_expected_fee(request: ExpectedFeeRequest):
+    """Calculate expected fee based on contract and assets"""
+    try:
+        return payment_service.calculate_expected_fee(
+            client_id=request.client_id,
+            contract_id=request.contract_id,
+            total_assets=request.total_assets,
+            period_type=request.period_type,
+            period=request.period,
+            year=request.year
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.get("/available-periods/{client_id}/{contract_id}", response_model=Dict[str, Any])
+async def get_available_periods(client_id: int, contract_id: int):
+    """
+    Get available payment periods for a client and contract.
+    Retrieves available periods for payment entry based on contract schedule.
+    """
+    try:
+        # Validate client exists
+        client = get_client_by_id(client_id)
+        if not client:
+            raise HTTPException(status_code=404, detail=f"Client not found with id {client_id}")
+        # Validate that contract belongs to client
+        if not validate_client_contract(client_id, contract_id):
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Contract {contract_id} not found for client {client_id}"
+            )
+        # Get available periods using the payment service
+        return payment_service.get_available_periods(client_id, contract_id)
+    except HTTPException:
+        # Re-raise HTTP exceptions (they already have status codes)
+        raise
+    except ValueError as e:
+        # For validation errors
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        # Log unexpected errors
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+```
+
+services\__init__.py
+```py
+# Services package initialization
+# Import all service modules to make their functions available at the package level
+from .client_service import get_all_clients, get_clients_by_provider, get_client_snapshot
+from .client_service import get_client_compliance_status, calculate_fee_summary
+from .payment_service import get_client_payments, get_payment_by_id, create_payment
+from .payment_service import update_payment, delete_payment
+from .payment_service import calculate_expected_fee, get_available_periods
+from .file_service import get_client_files, get_payment_files, save_file
+from .file_service import link_file_to_payment, unlink_file_from_payment, delete_file
+from .file_service import get_file_content, search_client_files
+```
+
+services\client_service.py
+```py
+# backend/services/client_service.py
+# Client-related business logic
+from database.queries import clients as client_queries
+from typing import List, Dict, Any, Optional
+from models.schemas import Client, ClientSnapshot, Contract, ClientMetrics
+def get_all_clients() -> List[Client]:
+    client_data = client_queries.get_all_clients()
+    return [Client(**client) for client in client_data]
+def get_clients_by_provider() -> List[Dict[str, Any]]:
+    clients = client_queries.get_clients_by_provider()
+    # Group clients by provider
+    grouped = {}
+    for client in clients:
+        provider = client.get('provider_name') or 'No Provider'
+        if provider not in grouped:
+            grouped[provider] = []
+        grouped[provider].append({
+            'client_id': client['client_id'],
+            'display_name': client['display_name'],
+            'full_name': client['full_name']
+        })
+    # Convert to list format for frontend
+    result = []
+    for provider, provider_clients in grouped.items():
+        result.append({
+            'provider': provider,
+            'clients': provider_clients
+        })
+    return result
+def get_client_snapshot(client_id: int) -> Optional[ClientSnapshot]:
+    try:
+        # Get client and contract data
+        client_data = client_queries.get_client_with_contracts(client_id)
+        if not client_data:
+            print(f"No client found with ID: {client_id}")
+            return None
+        # Get metrics data
+        metrics_data = client_queries.get_client_metrics(client_id)
+        # Extract client and contracts
+        client = Client(
+            client_id=client_data['client_id'],
+            display_name=client_data['display_name'],
+            full_name=client_data['full_name'],
+            ima_signed_date=client_data['ima_signed_date'],
+            onedrive_folder_path=client_data['onedrive_folder_path']
+        )
+        # Handle the case where there are no contracts
+        if not client_data.get('contracts'):
+            print(f"No contracts found for client ID: {client_id}")
+            contracts = []
+        else:
+            contracts = [Contract(**contract) for contract in client_data['contracts']]
+        # Create metrics if available
+        metrics = ClientMetrics(**metrics_data) if metrics_data else None
+        # Create and return snapshot
+        return ClientSnapshot(
+            client=client,
+            contracts=contracts,
+            metrics=metrics
+        )
+    except Exception as e:
+        print(f"Error getting client snapshot for client ID {client_id}: {str(e)}")
+        # Return a minimal valid snapshot instead of None to avoid frontend errors
+        return ClientSnapshot(
+            client=Client(
+                client_id=client_id,
+                display_name="Client data error",
+                full_name="Error loading client data",
+                ima_signed_date=None,
+                onedrive_folder_path=None
+            ),
+            contracts=[],
+            metrics=None
+        )
+def get_client_compliance_status(client_id: int) -> Dict[str, str]:
+    return client_queries.get_client_compliance_status(client_id)
+def calculate_fee_summary(client_id: int) -> Dict[str, Any]:
+    # Get client contracts
+    client_data = client_queries.get_client_with_contracts(client_id)
+    if not client_data or not client_data['contracts']:
+        return {
+            'monthly': None,
+            'quarterly': None,
+            'annual': None,
+            'fee_type': None,
+            'rate': None
+        }
+    # Use first active contract
+    contract = client_data['contracts'][0]
+    fee_type = contract['fee_type'].lower() if contract['fee_type'] else None
+    # Calculate fees based on type
+    if fee_type == 'flat':
+        flat_rate = contract['flat_rate']
+        if flat_rate is None:
+            return {
+                'monthly': None,
+                'quarterly': None,
+                'annual': None,
+                'fee_type': 'flat',
+                'rate': None
+            }
+        # The flat_rate IS the payment amount for the specified schedule
+        payment = flat_rate
+        # For display purposes only, convert to other payment schedules
+        if contract['payment_schedule'] == 'monthly':
+            monthly = payment
+            quarterly = monthly * 3
+            annual = monthly * 12
+        else:  # quarterly
+            quarterly = payment
+            monthly = quarterly / 3
+            annual = quarterly * 4
+    elif fee_type in ('percentage', 'percent'):
+        percent_rate = contract['percent_rate']
+        if percent_rate is None:
+            return {
+                'monthly': None,
+                'quarterly': None,
+                'annual': None,
+                'fee_type': 'percentage',
+                'rate': percent_rate
+            }
+        # Get most recent AUM
+        metrics_data = client_queries.get_client_metrics(client_id)
+        if not metrics_data or metrics_data['last_recorded_assets'] is None:
+            return {
+                'monthly': None,
+                'quarterly': None,
+                'annual': None,
+                'fee_type': 'percentage',
+                'rate': percent_rate
+            }
+        last_assets = metrics_data['last_recorded_assets']
+        # Calculate the actual payment amount based on assets and rate
+        # The percent_rate is already in the correct format, no adjustments needed
+        payment = last_assets * float(percent_rate)
+        # For display purposes only, convert to other payment frequencies
+        if contract['payment_schedule'] == 'monthly':
+            monthly = payment
+            quarterly = monthly * 3
+            annual = monthly * 12
+        else:  # quarterly
+            quarterly = payment
+            monthly = quarterly / 3
+            annual = quarterly * 4
+    else:
+        # Unknown fee type
+        return {
+            'monthly': None,
+            'quarterly': None,
+            'annual': None,
+            'fee_type': fee_type,
+            'rate': None
+        }
+    return {
+        'monthly': round(monthly, 2) if 'monthly' in locals() else None,
+        'quarterly': round(quarterly, 2) if 'quarterly' in locals() else None,
+        'annual': round(annual, 2) if 'annual' in locals() else None,
+        'fee_type': fee_type,
+        'rate': contract['percent_rate'] if fee_type in ('percentage', 'percent') else contract['flat_rate']
+    }
+def update_client_folder_path(client_id: int, folder_path: str) -> Dict[str, Any]:
+    """
+    Update a client's OneDrive folder path.
+    Args:
+        client_id: ID of the client
+        folder_path: New folder path to use
+    Returns:
+        Dictionary with update status
+    """
+    # Check if client exists
+    client = client_queries.get_client_by_id(client_id)
+    if not client:
+        return {
+            "success": False,
+            "message": "Client not found"
+        }
+    # Update folder path
+    success = client_queries.update_client_folder_path(client_id, folder_path)
+    if not success:
+        return {
+            "success": False,
+            "message": "Failed to update client folder path"
+        }
+    return {
+        "success": True,
+        "client_id": client_id,
+        "folder_path": folder_path
+    }
+```
+
+services\file_service.py
+```py
+# backend/services/file_service.py
+# File system operations for handling documents in shared OneDrive
+from database.queries import files as file_queries
+from database.queries import clients as client_queries
+from typing import List, Dict, Any, Optional, BinaryIO, Tuple
+from pathlib import Path
+import os
+import sys
+import json
+import shutil
+from datetime import datetime
+import mimetypes
+# Supported file extensions
+SUPPORTED_EXTENSIONS = [
+    '.pdf', '.png', '.jpeg', '.jpg', '.tiff', '.webp',
+    '.docx', '.doc', '.csv', '.xls', '.xlsx', '.txt'
+]
+# Config file path for shared folder settings
+CONFIG_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", "file_paths.json")
+def get_client_files(client_id: int) -> List[Dict[str, Any]]:
+    """
+    Get all files for a client from the database.
+    Args:
+        client_id: Client ID
+    Returns:
+        List of file dictionaries
+    """
+    return file_queries.get_client_files(client_id)
+def get_payment_files(payment_id: int) -> List[Dict[str, Any]]:
+    """
+    Get files linked to a payment.
+    Args:
+        payment_id: Payment ID
+    Returns:
+        List of file dictionaries
+    """
+    from database.queries import payments as payment_queries
+    return payment_queries.get_payment_files(payment_id)
+def get_shared_folder_path() -> Tuple[Path, str]:
+    """
+    Get the path to the shared team folder where documents are stored.
+    Adapts to different user environments.
+    Returns:
+        Tuple of (full path to shared folder, base path used)
+    """
+    # Default path components
+    default_shared_path = "Hohimer Wealth Management\\Hohimer Company Portal - Company\\Hohimer Team Shared 4-15-19"
+    # Try to load from config if it exists
+    config_path = default_shared_path
+    if os.path.exists(CONFIG_FILE):
+        try:
+            with open(CONFIG_FILE, 'r') as f:
+                config = json.load(f)
+                if 'shared_folder_path' in config:
+                    config_path = config['shared_folder_path']
+        except Exception as e:
+            print(f"Error loading config: {e}")
+    # Determine user home directory
+    user_home = os.path.expanduser("~")
+    # List of possible path patterns to try
+    possible_paths = [
+        # Standard Windows OneDrive path
+        os.path.join(user_home, config_path),
+        # Alternate path structure
+        os.path.join(user_home, "OneDrive - Hohimer Wealth Management", config_path.split("Hohimer Wealth Management\\")[1]) 
+        if "\\" in config_path else "",
+        # Possible Linux path
+        os.path.join(user_home, config_path.replace("\\", "/")),
+    ]
+    # Try each path
+    for path in possible_paths:
+        if path and os.path.exists(path):
+            return Path(path), config_path
+    # If no paths work, create a temp directory for development
+    temp_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "temp_onedrive")
+    os.makedirs(temp_dir, exist_ok=True)
+    print(f"WARNING: Could not find shared folder. Using temp dir: {temp_dir}")
+    return Path(temp_dir), "temp_onedrive"
+def save_shared_folder_config(path: str) -> bool:
+    """
+    Save the shared folder path to config.
+    Args:
+        path: Path to save
+    Returns:
+        Success status
+    """
+    try:
+        # Ensure config directory exists
+        os.makedirs(os.path.dirname(CONFIG_FILE), exist_ok=True)
+        # Load existing config or create new
+        config = {}
+        if os.path.exists(CONFIG_FILE):
+            with open(CONFIG_FILE, 'r') as f:
+                config = json.load(f)
+        # Update shared folder path
+        config['shared_folder_path'] = path
+        # Save config
+        with open(CONFIG_FILE, 'w') as f:
+            json.dump(config, f, indent=2)
+        return True
+    except Exception as e:
+        print(f"Error saving config: {e}")
+        return False
+def get_client_folder_path(client_id: int) -> Path:
+    """
+    Get the path to a client's folder in the shared directory.
+    Uses the client's onedrive_folder_path from the database.
+    Args:
+        client_id: Client ID
+    Returns:
+        Path object for client folder
+    """
+    # Get the shared folder base path
+    shared_folder, _ = get_shared_folder_path()
+    # Get client data
+    client = client_queries.get_client_by_id(client_id)
+    if not client or not client.get('onedrive_folder_path'):
+        # If no folder path specified, use "Unknown Client" folder
+        client_path = Path(shared_folder) / "Unknown Clients" / f"Client_{client_id}"
+        # Ensure folder exists
+        os.makedirs(client_path, exist_ok=True)
+        return client_path
+    # Use specified path (normalize slashes)
+    folder_path = client['onedrive_folder_path'].replace('/', '\\')
+    # Check if path is already absolute
+    if os.path.isabs(folder_path):
+        return Path(folder_path)
+    # Combine with shared folder path
+    client_path = Path(shared_folder) / folder_path
+    # Check if directory exists
+    if not os.path.exists(client_path):
+        print(f"WARNING: Client folder not found: {client_path}")
+    return client_path
+def scan_client_directory(client_id: int, register_files: bool = False) -> Dict[str, Any]:
+    """
+    Scan a client's directory and optionally register files in the database.
+    Args:
+        client_id: Client ID
+        register_files: Whether to register found files in the database
+    Returns:
+        Dictionary with directory structure
+    """
+    client_path = get_client_folder_path(client_id)
+    shared_folder, base_path = get_shared_folder_path()
+    # Check if path exists
+    if not os.path.exists(client_path):
+        return {
+            "success": False,
+            "message": f"Client directory not found: {client_path}",
+            "files": [],
+            "directories": []
+        }
+    # Get existing files from database
+    db_files = file_queries.get_client_files(client_id)
+    existing_files = {f['onedrive_path']: f for f in db_files}
+    # Track files and directories
+    files = []
+    directories = []
+    new_files_count = 0
+    # Walk directory
+    for root, dirs, filenames in os.walk(client_path):
+        # Get relative path from shared folder
+        try:
+            rel_root = os.path.relpath(root, shared_folder)
+        except ValueError:
+            # If not relative to shared folder, use absolute path
+            rel_root = root
+        if rel_root == '.':
+            rel_root = ''
+        # Add directories
+        for dir_name in dirs:
+            dir_path = os.path.join(rel_root, dir_name)
+            directories.append({
+                "name": dir_name,
+                "path": dir_path.replace('\\', '/'),
+                "full_path": os.path.join(root, dir_name)
+            })
+        # Add files
+        for file_name in filenames:
+            file_path = os.path.join(rel_root, file_name)
+            file_path_norm = file_path.replace('\\', '/')
+            full_path = os.path.join(root, file_name)
+            # Only include supported file types
+            if not is_valid_file_type(file_name):
+                continue
+            # Check if file already registered
+            if file_path_norm in existing_files:
+                # File already registered
+                file_info = existing_files[file_path_norm]
+                files.append({
+                    "file_id": file_info['file_id'],
+                    "name": file_name,
+                    "path": file_path_norm,
+                    "full_path": full_path,
+                    "size": os.path.getsize(full_path),
+                    "registered": True,
+                    "uploaded_at": file_info['uploaded_at']
+                })
+            else:
+                # New file
+                file_info = {
+                    "file_id": None,
+                    "name": file_name,
+                    "path": file_path_norm,
+                    "full_path": full_path,
+                    "size": os.path.getsize(full_path),
+                    "registered": False,
+                    "uploaded_at": None
+                }
+                # Register file if requested
+                if register_files:
+                    try:
+                        file_id = file_queries.create_file(client_id, file_name, file_path_norm)
+                        file_info["file_id"] = file_id
+                        file_info["registered"] = True
+                        file_info["uploaded_at"] = datetime.now().isoformat()
+                        new_files_count += 1
+                    except Exception as e:
+                        print(f"Error registering file {file_path_norm}: {e}")
+                files.append(file_info)
+    return {
+        "success": True,
+        "client_id": client_id,
+        "base_path": str(client_path),
+        "files": files,
+        "directories": directories,
+        "new_files_registered": new_files_count
+    }
+def get_consulting_fee_folder(client_id: int, year: Optional[int] = None) -> Path:
+    """
+    Get the path to a client's consulting fee folder for a specific year.
+    Creates the folder if it doesn't exist.
+    Args:
+        client_id: Client ID
+        year: Year (defaults to current year)
+    Returns:
+        Path to consulting fee folder
+    """
+    if year is None:
+        year = datetime.now().year
+    client_path = get_client_folder_path(client_id)
+    fee_path = client_path / "Consulting Fee" / str(year)
+    # Create directory if it doesn't exist
+    os.makedirs(fee_path, exist_ok=True)
+    return fee_path
+def is_valid_file_type(filename: str) -> bool:
+    """
+    Check if a file has a supported extension.
+    Args:
+        filename: Name of the file
+    Returns:
+        True if file type is supported, False otherwise
+    """
+    ext = os.path.splitext(filename)[1].lower()
+    return ext in SUPPORTED_EXTENSIONS
+def register_existing_file(client_id: int, file_path: str) -> Dict[str, Any]:
+    """
+    Register an existing file in the database.
+    Args:
+        client_id: Client ID
+        file_path: Path to the file (absolute or relative to shared folder)
+    Returns:
+        Dictionary with file information
+    """
+    shared_folder, _ = get_shared_folder_path()
+    # Check if path is absolute or relative
+    if os.path.isabs(file_path):
+        # Convert to relative path
+        try:
+            rel_path = os.path.relpath(file_path, shared_folder)
+        except ValueError:
+            return {"success": False, "message": "File is not in shared folder"}
+    else:
+        # Already relative
+        rel_path = file_path.replace('\\', '/')
+    # Get filename
+    filename = os.path.basename(file_path)
+    # Check if file exists
+    full_path = os.path.join(shared_folder, rel_path)
+    if not os.path.exists(full_path):
+        return {"success": False, "message": f"File not found: {full_path}"}
+    # Check if already registered
+    existing_files = file_queries.get_client_files(client_id)
+    for file in existing_files:
+        if file['onedrive_path'].replace('\\', '/') == rel_path.replace('\\', '/'):
+            return {
+                "success": True,
+                "message": "File already registered",
+                "file_id": file['file_id'],
+                "client_id": client_id,
+                "file_name": filename,
+                "onedrive_path": rel_path
+            }
+    # Register file
+    file_id = file_queries.create_file(client_id, filename, rel_path)
+    return {
+        "success": True,
+        "file_id": file_id,
+        "client_id": client_id,
+        "file_name": filename,
+        "onedrive_path": rel_path
+    }
+def save_file(client_id: int, file_obj: BinaryIO, filename: str, for_payment: bool = False, year: Optional[int] = None) -> Dict[str, Any]:
+    """
+    Save a file to the client's folder and record in database.
+    Args:
+        client_id: Client ID
+        file_obj: File object
+        filename: Name of the file
+        for_payment: Whether file is related to a payment
+        year: Year folder to use (for payment files)
+    Returns:
+        Dictionary with file information
+    """
+    # Check file type
+    if not is_valid_file_type(filename):
+        valid_extensions = ", ".join(SUPPORTED_EXTENSIONS)
+        raise ValueError(f"Unsupported file type. Supported types: {valid_extensions}")
+    # Determine destination folder
+    if for_payment:
+        # Use Consulting Fee/{year} folder
+        dest_folder = get_consulting_fee_folder(client_id, year)
+    else:
+        # Use main client folder
+        dest_folder = get_client_folder_path(client_id)
+    # Create folder if it doesn't exist
+    os.makedirs(dest_folder, exist_ok=True)
+    # Handle filename conflicts by appending timestamp if needed
+    base_name, extension = os.path.splitext(filename)
+    dest_path = dest_folder / filename
+    if os.path.exists(dest_path):
+        # Append timestamp to make unique
+        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        filename = f"{base_name}_{timestamp}{extension}"
+        dest_path = dest_folder / filename
+    # Save file
+    with open(dest_path, 'wb') as f:
+        shutil.copyfileobj(file_obj, f)
+    # Get shared folder for relative path calculation
+    shared_folder, _ = get_shared_folder_path()
+    # Create relative path for storage
+    try:
+        relative_path = str(dest_path.relative_to(shared_folder))
+    except ValueError:
+        # If not relative to shared folder, store absolute path
+        relative_path = str(dest_path)
+    # Record in database
+    file_id = file_queries.create_file(client_id, filename, relative_path)
+    return {
+        "success": True,
+        "file_id": file_id,
+        "client_id": client_id,
+        "file_name": filename,
+        "onedrive_path": relative_path
+    }
+def link_file_to_payment(payment_id: int, file_id: int) -> Dict[str, bool]:
+    """
+    Link an existing file to a payment.
+    Args:
+        payment_id: Payment ID
+        file_id: File ID
+    Returns:
+        Dictionary with success status
+    """
+    success = file_queries.link_file_to_payment(payment_id, file_id)
+    return {"success": success}
+def unlink_file_from_payment(payment_id: int, file_id: int) -> Dict[str, bool]:
+    """
+    Unlink a file from a payment.
+    Args:
+        payment_id: Payment ID
+        file_id: File ID
+    Returns:
+        Dictionary with success status
+    """
+    success = file_queries.unlink_file_from_payment(payment_id, file_id)
+    return {"success": success}
+def delete_file(file_id: int, delete_physical: bool = False) -> Dict[str, Any]:
+    """
+    Delete a file from the database and optionally from disk.
+    Args:
+        file_id: File ID
+        delete_physical: Whether to delete the physical file
+    Returns:
+        Dictionary with deletion status
+    """
+    # Check if file is linked to payments
+    payment_count = file_queries.get_payment_count_for_file(file_id)
+    if payment_count > 0:
+        return {
+            "success": False,
+            "message": f"File is linked to {payment_count} payments. Remove these links first."
+        }
+    # Get file info for deletion
+    file_info = file_queries.get_file_by_id(file_id)
+    if not file_info:
+        return {"success": False, "message": "File not found"}
+    # Delete physical file if requested
+    if delete_physical:
+        shared_folder, _ = get_shared_folder_path()
+        file_path = shared_folder / file_info['onedrive_path']
+        try:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        except OSError as e:
+            return {"success": False, "message": f"Error deleting file: {str(e)}"}
+    # Delete from database
+    success = file_queries.delete_file(file_id)
+    if not success:
+        return {"success": False, "message": "Error deleting file record"}
+    return {"success": True}
+def get_file_content(file_id: int) -> Dict[str, Any]:
+    """
+    Get file content and metadata for display.
+    Args:
+        file_id: File ID
+    Returns:
+        Dictionary with file content and metadata
+    """
+    # Get file info
+    file_info = file_queries.get_file_by_id(file_id)
+    if not file_info:
+        return {"success": False, "message": "File not found"}
+    # Get full path
+    shared_folder, _ = get_shared_folder_path()
+    file_path = shared_folder / file_info['onedrive_path']
+    # Check if file exists
+    if not os.path.exists(file_path):
+        return {"success": False, "message": "File not found on disk"}
+    # Get file size
+    file_size = os.path.getsize(file_path)
+    # Determine MIME type
+    mime_type, _ = mimetypes.guess_type(file_path)
+    if not mime_type:
+        mime_type = 'application/octet-stream'
+    # Read first part of file for preview (for text files)
+    preview = None
+    is_text = mime_type.startswith('text/') or mime_type in [
+        'application/csv', 
+        'application/json',
+        'application/xml'
+    ]
+    if is_text and file_size < 1024 * 1024:  # Only preview if < 1MB
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                preview = f.read(4096)  # Read first 4KB
+        except UnicodeDecodeError:
+            # Not a text file after all
+            preview = None
+    # TODO: Add preview support for PDF and other document types
+    # This would require additional libraries like pdf2image, python-docx, etc.
+    return {
+        "success": True,
+        "file_id": file_info['file_id'],
+        "client_id": file_info['client_id'],
+        "file_name": file_info['file_name'],
+        "onedrive_path": file_info['onedrive_path'],
+        "uploaded_at": file_info['uploaded_at'],
+        "file_size": file_size,
+        "mime_type": mime_type,
+        "preview": preview,
+        "is_text": is_text,
+        "file_path": str(file_path)
+    }
+def search_client_files(client_id: int, search_term: str) -> List[Dict[str, Any]]:
+    """
+    Search for files by name for a client.
+    Args:
+        client_id: Client ID
+        search_term: Search term
+    Returns:
+        List of matching file dictionaries
+    """
+    return file_queries.search_client_files(client_id, search_term)
+```
+
+services\payment_service.py
+```py
+# Payment calculation, validation
+from database.queries import payments as payment_queries
+from database.queries import clients as client_queries
+from models.schemas import Payment, PaymentCreate, PaymentUpdate, PaymentWithDetails, PaginatedResponse
+from typing import List, Dict, Any, Optional, Tuple
+from datetime import datetime, date
+import uuid
+import re
+from fastapi import HTTPException
+def get_client_payments(client_id: int, page: int = 1, page_size: int = 20) -> PaginatedResponse:
+    client = client_queries.get_client_by_id(client_id)
+    if not client:
+        raise HTTPException(status_code=404, detail="Client not found")
+    offset = (page - 1) * page_size
+    payments, total = payment_queries.get_client_payments(client_id, page_size, offset)
+    return PaginatedResponse(
+        total=total,
+        page=page,
+        page_size=page_size,
+        items=payments
+    )
+def get_payment_by_id(payment_id: int) -> Optional[PaymentWithDetails]:
+    payment = payment_queries.get_payment_by_id(payment_id)
+    if not payment:
+        return None
+    files = payment_queries.get_payment_files(payment_id)
+    payment_detail = PaymentWithDetails(**payment, files=files)
+    return payment_detail
+def create_payment(payment_data: PaymentCreate) -> Dict[str, Any]:
+    """
+    Create a payment record. For split payments spanning multiple periods,
+    creates a single payment record with start/end period fields.
+    """
+    client_data = client_queries.get_client_with_contracts(payment_data.client_id)
+    if not client_data or not client_data['contracts']:
+        raise ValueError("Client or contract not found")
+    contract = next((c for c in client_data['contracts'] if c['contract_id'] == payment_data.contract_id), None)
+    if not contract:
+        raise ValueError(f"Contract {payment_data.contract_id} not found for client {payment_data.client_id}")
+    is_monthly = contract['payment_schedule'].lower() == 'monthly'
+    period_type = 'month' if is_monthly else 'quarter'
+    expected_fee = None
+    if payment_data.total_assets is not None:
+        expected_fee = payment_queries.calculate_expected_fee(
+            payment_data.contract_id, 
+            payment_data.total_assets, 
+            period_type
+        )
+    if payment_data.is_split_payment:
+        if payment_data.end_period is None or payment_data.end_period_year is None:
+            raise ValueError("End period is required for split payments")
+        start_total = payment_data.start_period_year * (12 if is_monthly else 4) + payment_data.start_period
+        end_total = payment_data.end_period_year * (12 if is_monthly else 4) + payment_data.end_period
+        if end_total < start_total:
+            raise ValueError("End period cannot be before start period")
+    if is_monthly:
+        payment_id = payment_queries.create_payment(
+            contract_id=payment_data.contract_id,
+            client_id=payment_data.client_id,
+            received_date=payment_data.received_date,
+            total_assets=payment_data.total_assets,
+            expected_fee=expected_fee,
+            actual_fee=float(payment_data.actual_fee),
+            method=payment_data.method,
+            notes=payment_data.notes,
+            applied_start_month=payment_data.start_period,
+            applied_start_month_year=payment_data.start_period_year,
+            applied_end_month=payment_data.is_split_payment and payment_data.end_period or payment_data.start_period,
+            applied_end_month_year=payment_data.is_split_payment and payment_data.end_period_year or payment_data.start_period_year,
+            applied_start_quarter=None,
+            applied_start_quarter_year=None,
+            applied_end_quarter=None,
+            applied_end_quarter_year=None
+        )
+    else:
+        payment_id = payment_queries.create_payment(
+            contract_id=payment_data.contract_id,
+            client_id=payment_data.client_id,
+            received_date=payment_data.received_date,
+            total_assets=payment_data.total_assets,
+            expected_fee=expected_fee,
+            actual_fee=float(payment_data.actual_fee),
+            method=payment_data.method,
+            notes=payment_data.notes,
+            applied_start_month=None,
+            applied_start_month_year=None,
+            applied_end_month=None,
+            applied_end_month_year=None,
+            applied_start_quarter=payment_data.start_period,
+            applied_start_quarter_year=payment_data.start_period_year,
+            applied_end_quarter=payment_data.is_split_payment and payment_data.end_period or payment_data.start_period,
+            applied_end_quarter_year=payment_data.is_split_payment and payment_data.end_period_year or payment_data.start_period_year
+        )
+    return {
+        "success": True,
+        "payment_id": payment_id,
+        "is_split": payment_data.is_split_payment
+    }
+def update_payment(payment_id: int, payment_data: PaymentUpdate) -> Dict[str, Any]:
+    existing_payment = payment_queries.get_payment_by_id(payment_id)
+    if not existing_payment:
+        return {"success": False, "message": "Payment not found"}
+    actual_fee = float(payment_data.actual_fee) if payment_data.actual_fee is not None else None
+    success = payment_queries.update_payment(
+        payment_id=payment_id,
+        received_date=payment_data.received_date,
+        total_assets=payment_data.total_assets,
+        actual_fee=actual_fee,
+        method=payment_data.method,
+        notes=payment_data.notes
+    )
+    if not success:
+        return {"success": False, "message": "Payment not found or no changes made"}
+    if payment_data.total_assets is not None:
+        payment = payment_queries.get_payment_by_id(payment_id)
+        if payment:
+            is_monthly = payment.get('applied_start_month') is not None
+            period_type = 'month' if is_monthly else 'quarter'
+            expected_fee = payment_queries.calculate_expected_fee(
+                payment['contract_id'], 
+                payment_data.total_assets, 
+                period_type
+            )
+            if expected_fee is not None:
+                payment_queries.update_expected_fee(payment_id, expected_fee)
+    return {"success": True, "payment_id": payment_id}
+def delete_payment(payment_id: int) -> Dict[str, Any]:
+    payment = payment_queries.get_payment_by_id(payment_id)
+    if not payment:
+        return {"success": False, "message": "Payment not found"}
+    success = payment_queries.delete_payment(payment_id)
+    if not success:
+        return {"success": False, "message": "Failed to delete payment"}
+    return {"success": True}
+def calculate_expected_fee(
+    client_id: int,
+    contract_id: int,
+    total_assets: Optional[int],
+    period_type: str,
+    period: int,
+    year: int
+) -> Dict[str, Any]:
+    if period_type not in ('month', 'quarter'):
+        raise ValueError("Period type must be 'month' or 'quarter'")
+    if period_type == 'month' and (period < 1 or period > 12):
+        raise ValueError("Month must be between 1 and 12")
+    if period_type == 'quarter' and (period < 1 or period > 4):
+        raise ValueError("Quarter must be between 1 and 4")
+    client_data = client_queries.get_client_with_contracts(client_id)
+    if not client_data or not client_data['contracts']:
+        raise ValueError("Client or contract not found")
+    contract = next((c for c in client_data['contracts'] if c['contract_id'] == contract_id), None)
+    if not contract:
+        raise ValueError(f"Contract {contract_id} not found for client {client_id}")
+    fee_type = contract['fee_type'].lower() if contract['fee_type'] else None
+    if total_assets is None and fee_type in ('percentage', 'percent'):
+        metrics = client_queries.get_client_metrics(client_id)
+        if metrics and metrics.get('last_recorded_assets'):
+            total_assets = int(metrics['last_recorded_assets'])
+    expected_fee = payment_queries.calculate_expected_fee(contract_id, total_assets, period_type)
+    if fee_type == 'flat':
+        flat_rate = contract['flat_rate']
+        period_label = "monthly" if period_type == "month" else "quarterly"
+        calculation_method = f"Flat fee ({period_label}): ${flat_rate:,.2f}"
+    elif fee_type in ('percentage', 'percent'):
+        if total_assets is not None:
+            rate = contract['percent_rate']
+            rate_percentage = float(rate) * 100
+            calculation_method = f"{rate_percentage:.3f}% of ${total_assets:,}"
+        else:
+            calculation_method = "Percentage fee (assets not provided)"
+    else:
+        calculation_method = "Unknown fee type"
+    return {
+        "expected_fee": expected_fee,
+        "fee_type": fee_type,
+        "calculation_method": calculation_method
+    }
+def get_available_periods(client_id: int, contract_id: int) -> Dict[str, Any]:
+    client = client_queries.get_client_by_id(client_id)
+    if not client:
+        raise HTTPException(status_code=404, detail=f"Client {client_id} not found")
+    contract_query = """
+        SELECT 
+            contract_id, client_id, contract_number, provider_name,
+            contract_start_date, fee_type, percent_rate, flat_rate,
+            payment_schedule, num_people, notes
+        FROM contracts
+        WHERE contract_id = ? AND client_id = ? AND valid_to IS NULL
+    """
+    from database.connection import execute_single_query
+    contract = execute_single_query(contract_query, (contract_id, client_id))
+    if not contract:
+        raise HTTPException(status_code=400, detail=f"Contract {contract_id} not found for client {client_id}")
+    is_monthly = contract['payment_schedule'].lower() == 'monthly'
+    contract_start = contract['contract_start_date']
+    if not contract_start:
+        contract_start = f"{datetime.now().year}-01-01"
+    try:
+        start_date = datetime.strptime(contract_start, "%Y-%m-%d")
+    except ValueError:
+        try:
+            start_date = datetime.strptime(contract_start, "%Y-%m-%d")
+        except ValueError:
+            start_date = datetime(datetime.now().year, 1, 1)
+    current_date = datetime.now()
+    periods = []
+    if is_monthly:
+        start_year = start_date.year
+        start_month = start_date.month
+        current_year = current_date.year
+        current_month = current_date.month - 1 
+        if current_month < 1:
+            current_month = 12
+            current_year -= 1
+        total_start_months = start_year * 12 + start_month
+        total_current_months = current_year * 12 + current_month
+        month_names = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ]
+        for total_month in range(total_start_months, total_current_months + 1):
+            year = total_month             month = total_month % 12
+            if month == 0:
+                month = 12
+                year -= 1
+            period_label = f"{month_names[month-1]} {year}"
+            periods.append({
+                "label": period_label,
+                "value": {
+                    "month": month,
+                    "year": year
+                }
+            })
+    else:
+        start_year = start_date.year
+        start_quarter = (start_date.month - 1)         
+        current_year = current_date.year
+        current_quarter = (current_date.month - 1)         if current_quarter < 1:
+            current_quarter = 4
+            current_year -= 1
+        total_start_quarters = start_year * 4 + start_quarter
+        total_current_quarters = current_year * 4 + current_quarter
+        for total_quarter in range(total_start_quarters, total_current_quarters + 1):
+            year = total_quarter             quarter = total_quarter % 4
+            if quarter == 0:
+                quarter = 4
+                year -= 1
+            period_label = f"Q{quarter} {year}"
+            periods.append({
+                "label": period_label,
+                "value": {
+                    "quarter": quarter,
+                    "year": year
+                }
+            })
+    if not periods:
+        if is_monthly:
+            month = current_date.month
+            periods.append({
+                "label": f"{month_names[month-1]} {current_date.year}",
+                "value": {
+                    "month": month,
+                    "year": current_date.year
+                }
+            })
+        else:
+            current_quarter = (current_date.month - 1)             periods.append({
+                "label": f"Q{current_quarter} {current_date.year}",
+                "value": {
+                    "quarter": current_quarter,
+                    "year": current_date.year
+                }
+            })
+    periods.reverse()
+    return {
+        "is_monthly": is_monthly,
+        "periods": periods,
+        "contract_start_date": contract_start
+    }
+def format_period_label(is_monthly: bool, period: int, year: int) -> str:
+    if is_monthly:
+        month_names = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ]
+        if 1 <= period <= 12:
+            return f"{month_names[period-1]} {year}"
+        return f"Month {period} {year}"
+    else:
+        if 1 <= period <= 4:
+            return f"Q{period} {year}"
+        return f"Quarter {period} {year}"
+```
+
+utils.py
+```py
+# backend/utils.py
+# Shared utility functions
+from datetime import datetime, date
+from typing import Optional, Dict, List, Any, Union
+import locale
+import os
+from pathlib import Path
+# Set locale for currency formatting
+try:
+    locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+except:
+    try:
+        locale.setlocale(locale.LC_ALL, 'C')
+    except:
+        pass  # Fallback to default formatting if locale not available
+def format_currency(amount: Optional[Union[float, int]]) -> str:
+    """
+    Format amount as USD currency.
+    Args:
+        amount: Amount to format
+    Returns:
+        Formatted string with $ symbol and commas
+    """
+    if amount is None:
+        return "N/A"
+    try:
+        return locale.currency(float(amount), grouping=True)
+    except:
+        # Fallback if locale formatting fails
+        return f"${amount:,.2f}"
+def format_percentage(value: Optional[float]) -> str:
+    """
+    Format value as percentage.
+    Args:
+        value: Value to format (0.05 = 5%)
+    Returns:
+        Formatted string with % symbol
+    """
+    if value is None:
+        return "N/A"
+    return f"{value:.2f}%"
+def parse_date(date_str: str) -> Optional[date]:
+    """
+    Parse date string in YYYY-MM-DD format.
+    Args:
+        date_str: Date string to parse
+    Returns:
+        Date object or None if invalid
+    """
+    if not date_str:
+        return None
+    try:
+        return datetime.strptime(date_str, '%Y-%m-%d').date()
+    except ValueError:
+        return None
+def format_date(date_obj: Optional[Union[date, datetime, str]], format_str: str = '%m/%d/%Y') -> str:
+    """
+    Format date object to string.
+    Args:
+        date_obj: Date object, datetime object, or ISO date string
+        format_str: Format string for strftime
+    Returns:
+        Formatted date string
+    """
+    if date_obj is None:
+        return ""
+    # If it's a string, try to parse it
+    if isinstance(date_obj, str):
+        date_obj = parse_date(date_obj)
+        if date_obj is None:
+            return ""
+    # If it's a datetime, convert to date
+    if isinstance(date_obj, datetime):
+        date_obj = date_obj.date()
+    return date_obj.strftime(format_str)
+def quarter_to_months(quarter: int) -> List[int]:
+    """
+    Convert quarter number to list of month numbers.
+    Args:
+        quarter: Quarter number (1-4)
+    Returns:
+        List of month numbers
+    """
+    if quarter < 1 or quarter > 4:
+        raise ValueError("Quarter must be between 1 and 4")
+    start_month = (quarter - 1) * 3 + 1
+    return [start_month, start_month + 1, start_month + 2]
+def month_to_quarter(month: int) -> int:
+    """
+    Convert month number to quarter number.
+    Args:
+        month: Month number (1-12)
+    Returns:
+        Quarter number (1-4)
+    """
+    if month < 1 or month > 12:
+        raise ValueError("Month must be between 1 and 12")
+    return (month - 1) 
+def format_period(is_monthly: bool, period: int, year: int) -> str:
+    """
+    Format period for display.
+    Args:
+        is_monthly: Whether period is a month
+        period: Period number (1-12 for months, 1-4 for quarters)
+        year: Year
+    Returns:
+        Formatted period string
+    """
+    if is_monthly:
+        month_names = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ]
+        if period < 1 or period > 12:
+            return f"Invalid Month ({period}) {year}"
+        return f"{month_names[period-1]} {year}"
+    else:
+        if period < 1 or period > 4:
+            return f"Invalid Quarter ({period}) {year}"
+        return f"Q{period} {year}"
+def format_applied_period(payment: Dict[str, Any]) -> str:
+    """
+    Format the applied period from a payment record.
+    Args:
+        payment: Payment dictionary
+    Returns:
+        Formatted period string
+    """
+    # Determine if monthly or quarterly
+    is_monthly = payment.get('applied_start_month') is not None
+    if is_monthly:
+        start_month = payment.get('applied_start_month')
+        start_year = payment.get('applied_start_month_year')
+        end_month = payment.get('applied_end_month')
+        end_year = payment.get('applied_end_month_year')
+        if start_month == end_month and start_year == end_year:
+            return format_period(True, start_month, start_year)
+        else:
+            start_str = format_period(True, start_month, start_year)
+            end_str = format_period(True, end_month, end_year)
+            return f"{start_str} - {end_str}"
+    else:
+        start_quarter = payment.get('applied_start_quarter')
+        start_year = payment.get('applied_start_quarter_year')
+        end_quarter = payment.get('applied_end_quarter')
+        end_year = payment.get('applied_end_quarter_year')
+        if start_quarter == end_quarter and start_year == end_year:
+            return format_period(False, start_quarter, start_year)
+        else:
+            start_str = format_period(False, start_quarter, start_year)
+            end_str = format_period(False, end_quarter, end_year)
+            return f"{start_str} - {end_str}"
+def normalize_path(path: str) -> str:
+    """
+    Normalize file path for cross-platform compatibility.
+    Args:
+        path: File path
+    Returns:
+        Normalized path
+    """
+    if not path:
+        return ""
+    # Convert to Path object and back to string
+    normalized = str(Path(path))
+    # Ensure proper path separators
+    return normalized.replace('\\', '/')
+def calculate_payment_variance(expected: Optional[float], actual: float) -> Dict[str, Any]:
+    """
+    Calculate variance between expected and actual payment.
+    Args:
+        expected: Expected payment amount
+        actual: Actual payment amount
+    Returns:
+        Dictionary with variance amount, percentage, and status
+    """
+    if expected is None:
+        return {
+            "amount": None,
+            "percentage": None,
+            "status": "unknown"
+        }
+    variance_amount = actual - expected
+    variance_percentage = (variance_amount / expected) * 100 if expected != 0 else 0
+    # Determine status
+    if abs(variance_percentage) <= 5:
+        status = "ok"
+    elif abs(variance_percentage) <= 15:
+        status = "warning"
+    else:
+        status = "error"
+    return {
+        "amount": variance_amount,
+        "percentage": variance_percentage,
+        "status": status
+    }
+```

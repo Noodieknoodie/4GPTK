@@ -1,0 +1,978 @@
+################ BACKEND -- NEW ###################
+
+
+api\clients.py
+```py
+from fastapi import APIRouter, HTTPException, Query
+from typing import List, Optional
+from core.database import execute_query
+from models.clients import Client, ClientSummary
+from services.client_service import get_all_clients, get_client_by_id, get_client_summary
+router = APIRouter(prefix="/clients", tags=["clients"])
+@router.get("/", response_model=List[Client])
+async def read_clients(
+    provider: Optional[str] = Query(None, description="Filter by provider name")
+):
+    try:
+        clients = get_all_clients(provider)
+        return clients
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.get("/{client_id}", response_model=Client)
+async def read_client(client_id: int):
+    try:
+        client = get_client_by_id(client_id)
+        if not client:
+            raise HTTPException(status_code=404, detail="Client not found")
+        return client
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.get("/{client_id}/summary", response_model=ClientSummary)
+async def read_client_summary(client_id: int):
+    try:
+        summary = get_client_summary(client_id)
+        if not summary:
+            raise HTTPException(status_code=404, detail="Client not found")
+        return summary
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+```
+
+api\contracts.py
+```py
+from fastapi import APIRouter, HTTPException, Query
+from typing import Optional
+from models.contracts import Contract, ExpectedFeeCalculation
+from services.contract_service import (
+    get_contract_by_id, 
+    get_client_contract,
+    calculate_expected_fee
+)
+router = APIRouter(prefix="/contracts", tags=["contracts"])
+@router.get("/{contract_id}", response_model=Contract)
+async def read_contract(contract_id: int):
+    try:
+        contract = get_contract_by_id(contract_id)
+        if not contract:
+            raise HTTPException(status_code=404, detail="Contract not found")
+        return contract
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.get("/client/{client_id}", response_model=Contract)
+async def read_client_contract(client_id: int):
+    try:
+        contract = get_client_contract(client_id)
+        if not contract:
+            raise HTTPException(status_code=404, detail="Contract not found for this client")
+        return contract
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.get("/{contract_id}/expected-fee", response_model=ExpectedFeeCalculation)
+async def calculate_fee(
+    contract_id: int,
+    total_assets: Optional[float] = Query(None, description="Total assets for percentage-based fees")
+):
+    try:
+        fee_calculation = calculate_expected_fee(contract_id, total_assets)
+        return fee_calculation
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+```
+
+api\payments.py
+```py
+from fastapi import APIRouter, HTTPException, Query, Path
+from typing import List, Optional
+from models.payments import Payment, PaymentCreate, PaymentWithDetails, AvailablePeriods
+from services.payment_service import (
+    get_client_payments, 
+    get_payment_by_id,
+    create_payment,
+    update_payment,
+    delete_payment,
+    get_available_periods
+)
+router = APIRouter(tags=["payments"])
+@router.get("/clients/{client_id}/payments", response_model=List[PaymentWithDetails])
+async def read_client_payments(
+    client_id: int,
+    page: int = Query(1, ge=1, description="Page number"),
+    limit: int = Query(10, ge=1, le=100, description="Items per page"),
+    year: Optional[int] = Query(None, description="Filter by year")
+):
+    try:
+        payments = get_client_payments(
+            client_id=client_id, 
+            page=page, 
+            limit=limit, 
+            year=year
+        )
+        return payments
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.get("/payments/{payment_id}", response_model=PaymentWithDetails)
+async def read_payment(payment_id: int = Path(..., ge=1)):
+    try:
+        payment = get_payment_by_id(payment_id)
+        if not payment:
+            raise HTTPException(status_code=404, detail="Payment not found")
+        return payment
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.post("/payments", response_model=Payment)
+async def create_new_payment(payment: PaymentCreate):
+    try:
+        result = create_payment(payment)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.put("/payments/{payment_id}", response_model=Payment)
+async def update_existing_payment(
+    payment_id: int = Path(..., ge=1),
+    payment: PaymentCreate = None
+):
+    try:
+        result = update_payment(payment_id, payment)
+        if not result:
+            raise HTTPException(status_code=404, detail="Payment not found")
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.delete("/payments/{payment_id}", status_code=204)
+async def delete_existing_payment(payment_id: int = Path(..., ge=1)):
+    try:
+        success = delete_payment(payment_id)
+        if not success:
+            raise HTTPException(status_code=404, detail="Payment not found")
+        return None
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+@router.get("/contracts/{contract_id}/periods", response_model=AvailablePeriods)
+async def read_available_periods(
+    contract_id: int,
+    client_id: int = Query(..., description="Client ID is required"),
+):
+    try:
+        periods = get_available_periods(contract_id, client_id)
+        return {"periods": periods}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+```
+
+core\__init__.py
+```py
+# Package initialization
+```
+
+core\config.py
+```py
+import os
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+DB_PATH = os.environ.get("DB_PATH", f"{BASE_DIR}/data/401k_payments.db")
+ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:8000", 
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:8000",
+]
+APP_NAME = "401(k) Payment Tracking System"
+APP_VERSION = "1.0.0"
+```
+
+core\database.py
+```py
+import sqlite3
+from contextlib import contextmanager
+from typing import Dict, List, Tuple, Union, Any
+from .config import DB_PATH
+def dict_factory(cursor, row):
+    return {col[0]: row[idx] for idx, col in enumerate(cursor.description)}
+@contextmanager
+def get_db_connection():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = dict_factory
+    try:
+        yield conn
+    finally:
+        conn.close()
+def execute_query(
+    query: str, 
+    params: Union[Tuple, Dict, List] = None, 
+    fetch_one: bool = False
+) -> List[Dict[str, Any]]:
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        if params:
+            cursor.execute(query, params)
+        else:
+            cursor.execute(query)
+        if query.strip().upper().startswith(("INSERT", "UPDATE", "DELETE")):
+            conn.commit()
+            return {"lastrowid": cursor.lastrowid, "rowcount": cursor.rowcount}
+        if fetch_one:
+            return cursor.fetchone()
+        return cursor.fetchall()
+```
+
+main.py
+```py
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from core.config import APP_NAME, APP_VERSION, ORIGINS
+from api import clients, contracts, payments
+app = FastAPI(
+    title=APP_NAME,
+    version=APP_VERSION,
+    description="API for 401(k) payment tracking system",
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+app.include_router(clients.router)
+app.include_router(contracts.router)
+app.include_router(payments.router)
+@app.get("/")
+async def root():
+    return {"status": "ok", "message": f"{APP_NAME} API is running"}
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
+```
+
+models\clients.py
+```py
+from pydantic import BaseModel
+from typing import Optional, List, Dict, Any
+class ClientBase(BaseModel):
+    client_id: int
+    display_name: str
+    full_name: str
+    ima_signed_date: Optional[str] = None
+    onedrive_folder_path: Optional[str] = None
+class Client(ClientBase):
+    compliance_status: Optional[str] = None
+    compliance_reason: Optional[str] = None
+    last_payment_date: Optional[str] = None
+    last_payment_amount: Optional[float] = None
+    provider_name: Optional[str] = None
+class ClientMetrics(BaseModel):
+    last_payment_date: Optional[str] = None
+    last_payment_amount: Optional[float] = None
+    last_payment_quarter: Optional[int] = None
+    last_payment_year: Optional[int] = None
+    total_ytd_payments: Optional[float] = None
+    avg_quarterly_payment: Optional[float] = None
+    last_recorded_assets: Optional[float] = None
+class ClientSummary(BaseModel):
+    client: ClientBase
+    metrics: Optional[ClientMetrics] = None
+    contract: Optional[Dict[str, Any]] = None
+    quarterly_summaries: Optional[List[Dict[str, Any]]] = None
+    yearly_summaries: Optional[List[Dict[str, Any]]] = None
+```
+
+models\contracts.py
+```py
+from pydantic import BaseModel
+from typing import Optional
+class ContractBase(BaseModel):
+    contract_id: int
+    client_id: int
+    provider_name: str
+    fee_type: str
+    payment_schedule: str
+class Contract(ContractBase):
+    contract_number: Optional[str] = None
+    contract_start_date: Optional[str] = None
+    percent_rate: Optional[float] = None
+    flat_rate: Optional[float] = None
+    num_people: Optional[int] = None
+    notes: Optional[str] = None
+class ExpectedFeeCalculation(BaseModel):
+    expected_fee: Optional[float] = None
+    fee_type: str
+    calculation_method: str
+```
+
+models\payments.py
+```py
+from pydantic import BaseModel
+from typing import Optional, List, Dict, Any
+class PaymentBase(BaseModel):
+    contract_id: int
+    client_id: int
+    received_date: str
+    actual_fee: float
+class PaymentCreate(PaymentBase):
+    total_assets: Optional[float] = None
+    expected_fee: Optional[float] = None
+    method: Optional[str] = None
+    notes: Optional[str] = None
+    applied_start_month: Optional[int] = None
+    applied_start_month_year: Optional[int] = None
+    applied_end_month: Optional[int] = None
+    applied_end_month_year: Optional[int] = None
+    applied_start_quarter: Optional[int] = None
+    applied_start_quarter_year: Optional[int] = None
+    applied_end_quarter: Optional[int] = None
+    applied_end_quarter_year: Optional[int] = None
+class Payment(PaymentBase):
+    payment_id: int
+    total_assets: Optional[float] = None
+    expected_fee: Optional[float] = None
+    method: Optional[str] = None
+    notes: Optional[str] = None
+    applied_start_month: Optional[int] = None
+    applied_start_month_year: Optional[int] = None
+    applied_end_month: Optional[int] = None
+    applied_end_month_year: Optional[int] = None
+    applied_start_quarter: Optional[int] = None
+    applied_start_quarter_year: Optional[int] = None
+    applied_end_quarter: Optional[int] = None
+    applied_end_quarter_year: Optional[int] = None
+    client_name: Optional[str] = None
+    provider_name: Optional[str] = None
+class PaymentWithDetails(Payment):
+    is_split_payment: bool = False
+    periods: Optional[List[Dict[str, Any]]] = None
+    variance: Optional[Dict[str, Any]] = None
+class AvailablePeriods(BaseModel):
+    periods: List[Dict[str, Any]]
+```
+
+requirements.txt
+```txt
+fastapi==0.115.11
+uvicorn==0.34.0
+pydantic==2.10.6
+loguru==0.7.3
+python-multipart==0.0.20
+starlette==0.46.0
+typing-extensions==4.12.2
+click==8.1.8
+h11==0.14.0
+annotated-types==0.7.0
+pydantic-core==2.27.2
+colorama==0.4.6
+win32-setctime==1.2.0
+anyio==4.8.0
+idna==3.10
+sniffio==1.3.1
+```
+
+services\client_service.py
+```py
+from typing import List, Dict, Any, Optional
+from datetime import datetime, timedelta
+from core.database import execute_query
+from models.clients import Client, ClientBase, ClientMetrics, ClientSummary
+def get_all_clients(provider: Optional[str] = None) -> List[Client]:
+    query = """
+        SELECT c.client_id, c.display_name, c.full_name, c.ima_signed_date, c.onedrive_folder_path,
+               co.provider_name, cm.last_payment_date, cm.last_payment_amount
+        FROM clients c
+        LEFT JOIN contracts co ON c.client_id = co.client_id AND co.valid_to IS NULL
+        LEFT JOIN client_metrics cm ON c.client_id = cm.client_id
+        WHERE c.valid_to IS NULL
+    """
+    params = {}
+    if provider:
+        query += " AND co.provider_name = :provider"
+        params["provider"] = provider
+    query += " ORDER BY c.display_name"
+    clients_data = execute_query(query, params)
+    clients = []
+    for client_data in clients_data:
+        client = Client(**client_data)
+        client.compliance_status = calculate_compliance_status(client_data)
+        clients.append(client)
+    return clients
+def get_client_by_id(client_id: int) -> Optional[Client]:
+    query = """
+        SELECT c.client_id, c.display_name, c.full_name, c.ima_signed_date, c.onedrive_folder_path,
+               co.provider_name, co.payment_schedule, co.fee_type, 
+               cm.last_payment_date, cm.last_payment_amount, cm.last_payment_quarter, 
+               cm.last_payment_year, cm.last_recorded_assets
+        FROM clients c
+        LEFT JOIN contracts co ON c.client_id = co.client_id AND co.valid_to IS NULL
+        LEFT JOIN client_metrics cm ON c.client_id = cm.client_id
+        WHERE c.client_id = :client_id AND c.valid_to IS NULL
+    """
+    client_data = execute_query(query, {"client_id": client_id}, fetch_one=True)
+    if not client_data:
+        return None
+    client = Client(**client_data)
+    client.compliance_status, client.compliance_reason = calculate_compliance_status(client_data, with_reason=True)
+    return client
+def get_client_summary(client_id: int) -> Optional[ClientSummary]:
+    client_query = """
+        SELECT client_id, display_name, full_name, ima_signed_date, onedrive_folder_path
+        FROM clients
+        WHERE client_id = :client_id AND valid_to IS NULL
+    """
+    client_data = execute_query(client_query, {"client_id": client_id}, fetch_one=True)
+    if not client_data:
+        return None
+    metrics_query = """
+        SELECT last_payment_date, last_payment_amount, last_payment_quarter, 
+               last_payment_year, total_ytd_payments, avg_quarterly_payment, last_recorded_assets
+        FROM client_metrics
+        WHERE client_id = :client_id
+    """
+    metrics_data = execute_query(metrics_query, {"client_id": client_id}, fetch_one=True)
+    contract_query = """
+        SELECT contract_id, provider_name, contract_number, contract_start_date,
+               fee_type, percent_rate, flat_rate, payment_schedule, num_people, notes
+        FROM contracts
+        WHERE client_id = :client_id AND valid_to IS NULL
+    """
+    contract_data = execute_query(contract_query, {"client_id": client_id}, fetch_one=True)
+    quarterly_query = """
+        SELECT year, quarter, total_payments, total_assets, payment_count, avg_payment, expected_total
+        FROM quarterly_summaries
+        WHERE client_id = :client_id
+        ORDER BY year DESC, quarter DESC
+        LIMIT 8
+    """
+    quarterly_data = execute_query(quarterly_query, {"client_id": client_id})
+    yearly_query = """
+        SELECT year, total_payments, total_assets, payment_count, avg_payment, yoy_growth
+        FROM yearly_summaries
+        WHERE client_id = :client_id
+        ORDER BY year DESC
+        LIMIT 5
+    """
+    yearly_data = execute_query(yearly_query, {"client_id": client_id})
+    summary = ClientSummary(
+        client=ClientBase(**client_data),
+        metrics=ClientMetrics(**metrics_data) if metrics_data else None,
+        contract=contract_data,
+        quarterly_summaries=quarterly_data,
+        yearly_summaries=yearly_data
+    )
+    return summary
+def calculate_compliance_status(client_data: Dict[str, Any], with_reason: bool = False) -> str:
+    if not client_data.get("last_payment_date"):
+        reason = "No payment records found"
+        return ("red", reason) if with_reason else "red"
+    last_payment = datetime.strptime(client_data["last_payment_date"], "%Y-%m-%d")
+    today = datetime.now()
+    days_since_payment = (today - last_payment).days
+    payment_schedule = client_data.get("payment_schedule", "").lower()
+    if payment_schedule == "monthly":
+        if days_since_payment <= 45:
+            status = "green"
+            reason = "Recent payment within acceptable timeframe"
+        elif days_since_payment <= 75:
+            status = "yellow"
+            reason = "Payment approaching due date"
+        else:
+            status = "red"
+            reason = "Payment overdue"
+    else:  # Quarterly or unspecified defaults to quarterly
+        if days_since_payment <= 135:
+            status = "green"
+            reason = "Recent payment within acceptable timeframe"
+        elif days_since_payment <= 195:
+            status = "yellow"
+            reason = "Payment approaching due date"
+        else:
+            status = "red"
+            reason = "Payment overdue"
+    return (status, reason) if with_reason else status
+```
+
+services\contract_service.py
+```py
+from typing import Dict, Any, Optional
+from models.contracts import Contract, ExpectedFeeCalculation
+from core.database import execute_query
+def get_contract_by_id(contract_id: int) -> Optional[Contract]:
+    query = """
+        SELECT contract_id, client_id, contract_number, provider_name, 
+               contract_start_date, fee_type, percent_rate, flat_rate,
+               payment_schedule, num_people, notes
+        FROM contracts
+        WHERE contract_id = :contract_id AND valid_to IS NULL
+    """
+    contract_data = execute_query(query, {"contract_id": contract_id}, fetch_one=True)
+    if not contract_data:
+        return None
+    return Contract(**contract_data)
+def get_client_contract(client_id: int) -> Optional[Contract]:
+    query = """
+        SELECT contract_id, client_id, contract_number, provider_name, 
+               contract_start_date, fee_type, percent_rate, flat_rate,
+               payment_schedule, num_people, notes
+        FROM contracts
+        WHERE client_id = :client_id AND valid_to IS NULL
+    """
+    contract_data = execute_query(query, {"client_id": client_id}, fetch_one=True)
+    if not contract_data:
+        return None
+    return Contract(**contract_data)
+def calculate_expected_fee(contract_id: int, total_assets: Optional[float] = None) -> ExpectedFeeCalculation:
+    contract = get_contract_by_id(contract_id)
+    if not contract:
+        return ExpectedFeeCalculation(
+            expected_fee=None,
+            fee_type="unknown",
+            calculation_method="Contract not found"
+        )
+    if contract.fee_type == "flat":
+        return ExpectedFeeCalculation(
+            expected_fee=contract.flat_rate,
+            fee_type="flat",
+            calculation_method="Flat fee"
+        )
+    if contract.fee_type in ["percentage", "percent"]:
+        if not total_assets:
+            assets_query = """
+                SELECT last_recorded_assets
+                FROM client_metrics
+                WHERE client_id = :client_id
+            """
+            metrics_data = execute_query(
+                assets_query, 
+                {"client_id": contract.client_id}, 
+                fetch_one=True
+            )
+            if metrics_data and metrics_data.get("last_recorded_assets"):
+                total_assets = metrics_data["last_recorded_assets"]
+        if total_assets and contract.percent_rate:
+            expected_fee = total_assets * contract.percent_rate
+            rate_percentage = contract.percent_rate * 100
+            return ExpectedFeeCalculation(
+                expected_fee=expected_fee,
+                fee_type="percentage",
+                calculation_method=f"{rate_percentage:.4f}% of ${total_assets:,.2f}"
+            )
+    return ExpectedFeeCalculation(
+        expected_fee=None,
+        fee_type=contract.fee_type,
+        calculation_method="Unable to calculate (missing data)"
+    )
+```
+
+services\payment_service.py
+```py
+from typing import List, Dict, Any, Optional
+from datetime import datetime
+from core.database import execute_query
+from models.payments import Payment, PaymentCreate, PaymentWithDetails
+from services.contract_service import get_contract_by_id
+def get_client_payments(
+    client_id: int,
+    page: int = 1,
+    limit: int = 10,
+    year: Optional[int] = None
+) -> List[PaymentWithDetails]:
+    offset = (page - 1) * limit
+    params = {"client_id": client_id, "limit": limit, "offset": offset}
+    query = """
+        SELECT 
+            p.payment_id, p.contract_id, p.client_id, p.received_date, 
+            p.total_assets, p.expected_fee, p.actual_fee, p.method, p.notes,
+            p.applied_start_month, p.applied_start_month_year, 
+            p.applied_end_month, p.applied_end_month_year,
+            p.applied_start_quarter, p.applied_start_quarter_year, 
+            p.applied_end_quarter, p.applied_end_quarter_year,
+            c.display_name as client_name, co.provider_name, co.fee_type, 
+            co.percent_rate, co.flat_rate, co.payment_schedule
+        FROM payments p
+        JOIN clients c ON p.client_id = c.client_id
+        LEFT JOIN contracts co ON p.contract_id = co.contract_id
+        WHERE p.client_id = :client_id AND p.valid_to IS NULL
+    """
+    if year:
+        query += """ 
+            AND (
+                (p.applied_start_month_year = :year) OR 
+                (p.applied_end_month_year = :year) OR
+                (p.applied_start_quarter_year = :year) OR 
+                (p.applied_end_quarter_year = :year)
+            )
+        """
+        params["year"] = year
+    query += " ORDER BY p.received_date DESC LIMIT :limit OFFSET :offset"
+    payment_data = execute_query(query, params)
+    enhanced_payments = []
+    for payment in payment_data:
+        payment_with_details = enhance_payment_with_details(payment)
+        enhanced_payments.append(payment_with_details)
+    return enhanced_payments
+def get_payment_by_id(payment_id: int) -> Optional[PaymentWithDetails]:
+    query = """
+        SELECT 
+            p.payment_id, p.contract_id, p.client_id, p.received_date, 
+            p.total_assets, p.expected_fee, p.actual_fee, p.method, p.notes,
+            p.applied_start_month, p.applied_start_month_year, 
+            p.applied_end_month, p.applied_end_month_year,
+            p.applied_start_quarter, p.applied_start_quarter_year, 
+            p.applied_end_quarter, p.applied_end_quarter_year,
+            c.display_name as client_name, co.provider_name, co.fee_type, 
+            co.percent_rate, co.flat_rate, co.payment_schedule
+        FROM payments p
+        JOIN clients c ON p.client_id = c.client_id
+        LEFT JOIN contracts co ON p.contract_id = co.contract_id
+        WHERE p.payment_id = :payment_id AND p.valid_to IS NULL
+    """
+    payment_data = execute_query(query, {"payment_id": payment_id}, fetch_one=True)
+    if not payment_data:
+        return None
+    return enhance_payment_with_details(payment_data)
+def create_payment(payment: PaymentCreate) -> Payment:
+    contract = get_contract_by_id(payment.contract_id)
+    is_monthly = contract.payment_schedule.lower() == "monthly"
+    query = """
+        INSERT INTO payments (
+            contract_id, client_id, received_date, total_assets,
+            expected_fee, actual_fee, method, notes
+    """
+    if is_monthly:
+        query += """,
+            applied_start_month, applied_start_month_year,
+            applied_end_month, applied_end_month_year
+        """
+    else:
+        query += """,
+            applied_start_quarter, applied_start_quarter_year,
+            applied_end_quarter, applied_end_quarter_year
+        """
+    query += ") VALUES ("
+    query += ":contract_id, :client_id, :received_date, :total_assets, "
+    query += ":expected_fee, :actual_fee, :method, :notes"
+    if is_monthly:
+        query += """,
+            :applied_start_month, :applied_start_month_year,
+            :applied_end_month, :applied_end_month_year
+        """
+    else:
+        query += """,
+            :applied_start_quarter, :applied_start_quarter_year,
+            :applied_end_quarter, :applied_end_quarter_year
+        """
+    query += ")"
+    params = payment.dict(exclude_unset=True)
+    result = execute_query(query, params)
+    update_client_metrics(payment.client_id)
+    created_payment = get_payment_by_id(result["lastrowid"])
+    return Payment(**created_payment.dict())
+def update_payment(payment_id: int, payment: PaymentCreate) -> Optional[Payment]:
+    existing = get_payment_by_id(payment_id)
+    if not existing:
+        return None
+    contract = get_contract_by_id(payment.contract_id)
+    is_monthly = contract.payment_schedule.lower() == "monthly"
+    query = """
+        UPDATE payments
+        SET contract_id = :contract_id,
+            client_id = :client_id,
+            received_date = :received_date,
+            total_assets = :total_assets,
+            expected_fee = :expected_fee,
+            actual_fee = :actual_fee,
+            method = :method,
+            notes = :notes
+    """
+    if is_monthly:
+        query += """,
+            applied_start_month = :applied_start_month,
+            applied_start_month_year = :applied_start_month_year,
+            applied_end_month = :applied_end_month,
+            applied_end_month_year = :applied_end_month_year,
+            applied_start_quarter = NULL,
+            applied_start_quarter_year = NULL,
+            applied_end_quarter = NULL,
+            applied_end_quarter_year = NULL
+        """
+    else:
+        query += """,
+            applied_start_month = NULL,
+            applied_start_month_year = NULL,
+            applied_end_month = NULL,
+            applied_end_month_year = NULL,
+            applied_start_quarter = :applied_start_quarter,
+            applied_start_quarter_year = :applied_start_quarter_year,
+            applied_end_quarter = :applied_end_quarter,
+            applied_end_quarter_year = :applied_end_quarter_year
+        """
+    query += " WHERE payment_id = :payment_id"
+    params = payment.dict(exclude_unset=True)
+    params["payment_id"] = payment_id
+    execute_query(query, params)
+    update_client_metrics(payment.client_id)
+    updated_payment = get_payment_by_id(payment_id)
+    return Payment(**updated_payment.dict())
+def delete_payment(payment_id: int) -> bool:
+    payment = get_payment_by_id(payment_id)
+    if not payment:
+        return False
+    query = """
+        UPDATE payments
+        SET valid_to = CURRENT_TIMESTAMP
+        WHERE payment_id = :payment_id
+    """
+    result = execute_query(query, {"payment_id": payment_id})
+    update_client_metrics(payment.client_id)
+    return result["rowcount"] > 0
+def update_client_metrics(client_id: int) -> None:
+    latest_payment_query = """
+        SELECT 
+            received_date, actual_fee, 
+            CASE 
+                WHEN applied_start_quarter IS NOT NULL THEN applied_start_quarter
+                ELSE (CAST((applied_start_month - 1) / 3 AS INT) + 1)
+            END as quarter,
+            CASE 
+                WHEN applied_start_quarter_year IS NOT NULL THEN applied_start_quarter_year
+                ELSE applied_start_month_year
+            END as year,
+            total_assets
+        FROM payments
+        WHERE client_id = :client_id AND valid_to IS NULL
+        ORDER BY received_date DESC
+        LIMIT 1
+    """
+    latest_payment = execute_query(
+        latest_payment_query, 
+        {"client_id": client_id}, 
+        fetch_one=True
+    )
+    if not latest_payment:
+        return
+    current_year = datetime.now().year
+    ytd_query = """
+        SELECT SUM(actual_fee) as total
+        FROM payments
+        WHERE client_id = :client_id 
+        AND valid_to IS NULL
+        AND (
+            (applied_start_quarter_year = :year) OR 
+            (applied_start_month_year = :year)
+        )
+    """
+    ytd_result = execute_query(
+        ytd_query, 
+        {"client_id": client_id, "year": current_year}, 
+        fetch_one=True
+    )
+    avg_query = """
+        SELECT AVG(total_payments) as average
+        FROM quarterly_summaries
+        WHERE client_id = :client_id
+        ORDER BY year DESC, quarter DESC
+        LIMIT 8
+    """
+    avg_result = execute_query(
+        avg_query, 
+        {"client_id": client_id}, 
+        fetch_one=True
+    )
+    upsert_query = """
+        INSERT INTO client_metrics (
+            client_id, last_payment_date, last_payment_amount, 
+            last_payment_quarter, last_payment_year, 
+            total_ytd_payments, avg_quarterly_payment, 
+            last_recorded_assets, last_updated
+        ) VALUES (
+            :client_id, :last_payment_date, :last_payment_amount,
+            :last_payment_quarter, :last_payment_year,
+            :total_ytd_payments, :avg_quarterly_payment,
+            :last_recorded_assets, CURRENT_TIMESTAMP
+        )
+        ON CONFLICT(client_id) DO UPDATE SET
+            last_payment_date = :last_payment_date,
+            last_payment_amount = :last_payment_amount,
+            last_payment_quarter = :last_payment_quarter,
+            last_payment_year = :last_payment_year,
+            total_ytd_payments = :total_ytd_payments,
+            avg_quarterly_payment = :avg_quarterly_payment,
+            last_recorded_assets = :last_recorded_assets,
+            last_updated = CURRENT_TIMESTAMP
+    """
+    params = {
+        "client_id": client_id,
+        "last_payment_date": latest_payment.get("received_date"),
+        "last_payment_amount": latest_payment.get("actual_fee"),
+        "last_payment_quarter": latest_payment.get("quarter"),
+        "last_payment_year": latest_payment.get("year"),
+        "total_ytd_payments": ytd_result.get("total") if ytd_result else None,
+        "avg_quarterly_payment": avg_result.get("average") if avg_result else None,
+        "last_recorded_assets": latest_payment.get("total_assets"),
+    }
+    execute_query(upsert_query, params)
+def enhance_payment_with_details(payment_data: Dict[str, Any]) -> PaymentWithDetails:
+    payment = PaymentWithDetails(**payment_data)
+    is_split_monthly = (
+        payment.applied_start_month is not None and
+        payment.applied_end_month is not None and
+        (
+            payment.applied_start_month != payment.applied_end_month or
+            payment.applied_start_month_year != payment.applied_end_month_year
+        )
+    )
+    is_split_quarterly = (
+        payment.applied_start_quarter is not None and
+        payment.applied_end_quarter is not None and
+        (
+            payment.applied_start_quarter != payment.applied_end_quarter or
+            payment.applied_start_quarter_year != payment.applied_end_quarter_year
+        )
+    )
+    payment.is_split_payment = is_split_monthly or is_split_quarterly
+    if payment.is_split_payment:
+        payment.periods = calculate_periods(payment)
+    payment.variance = calculate_variance(payment)
+    return payment
+def calculate_periods(payment: PaymentWithDetails) -> List[Dict[str, Any]]:
+    periods = []
+    if payment.applied_start_quarter is not None:
+        start_quarter = payment.applied_start_quarter
+        start_year = payment.applied_start_quarter_year
+        end_quarter = payment.applied_end_quarter
+        end_year = payment.applied_end_quarter_year
+        total_periods = (end_year - start_year) * 4 + (end_quarter - start_quarter) + 1
+        amount_per_period = payment.actual_fee / total_periods if total_periods > 0 else 0
+        for i in range(total_periods):
+            current_quarter = ((start_quarter + i - 1) % 4) + 1
+            current_year = start_year + ((start_quarter + i - 1) 
+            periods.append({
+                "period": f"Q{current_quarter} {current_year}",
+                "amount": amount_per_period
+            })
+    elif payment.applied_start_month is not None:
+        start_month = payment.applied_start_month
+        start_year = payment.applied_start_month_year
+        end_month = payment.applied_end_month
+        end_year = payment.applied_end_month_year
+        total_periods = (end_year - start_year) * 12 + (end_month - start_month) + 1
+        amount_per_period = payment.actual_fee / total_periods if total_periods > 0 else 0
+        for i in range(total_periods):
+            current_month = ((start_month + i - 1) % 12) + 1
+            current_year = start_year + ((start_month + i - 1) 
+            month_name = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ][current_month - 1]
+            periods.append({
+                "period": f"{month_name} {current_year}",
+                "amount": amount_per_period
+            })
+    return periods
+def calculate_variance(payment: PaymentWithDetails) -> Dict[str, Any]:
+    effective_expected_fee = payment.expected_fee
+    if (
+        payment.expected_fee is None and 
+        payment.total_assets is not None and 
+        payment.fee_type == "percentage" and
+        payment.percent_rate is not None
+    ):
+        effective_expected_fee = payment.total_assets * payment.percent_rate
+    if effective_expected_fee is None:
+        return {
+            "difference": None,
+            "percent_difference": None,
+            "status": "unknown",
+            "message": "Cannot calculate"
+        }
+    difference = payment.actual_fee - effective_expected_fee
+    percent_difference = (difference / effective_expected_fee) * 100 if effective_expected_fee != 0 else 0
+    abs_percent_difference = abs(percent_difference)
+    if payment.actual_fee == effective_expected_fee:
+        status = "exact"
+        message = "Exact Match"
+    elif abs_percent_difference <= 5:
+        status = "acceptable"
+        message = f"${difference:.2f} ({percent_difference:.2f}%) ✓"
+    elif abs_percent_difference <= 15:
+        status = "warning"
+        message = f"${difference:.2f} ({percent_difference:.2f}%)"
+    else:
+        status = "alert"
+        message = f"${difference:.2f} ({percent_difference:.2f}%)"
+    return {
+        "difference": difference,
+        "percent_difference": percent_difference,
+        "status": status,
+        "message": message
+    }
+def get_available_periods(contract_id: int, client_id: int) -> List[Dict[str, Any]]:
+    query = """
+        SELECT payment_schedule, contract_start_date
+        FROM contracts
+        WHERE contract_id = :contract_id AND client_id = :client_id AND valid_to IS NULL
+    """
+    contract_data = execute_query(
+        query, 
+        {"contract_id": contract_id, "client_id": client_id}, 
+        fetch_one=True
+    )
+    if not contract_data:
+        return []
+    contract_start = None
+    if contract_data.get("contract_start_date"):
+        try:
+            contract_start = datetime.strptime(
+                contract_data["contract_start_date"], 
+                "%Y-%m-%d"
+            )
+        except ValueError:
+            pass
+    if not contract_start:
+        contract_start = datetime(datetime.now().year, 1, 1)
+    current_date = datetime.now()
+    periods = []
+    if contract_data["payment_schedule"].lower() == "monthly":
+        for year in range(contract_start.year, current_date.year + 1):
+            start_month = 1
+            end_month = 12
+            if year == contract_start.year:
+                start_month = contract_start.month
+            if year == current_date.year:
+                end_month = current_date.month
+            for month in range(start_month, end_month + 1):
+                month_name = [
+                    "January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"
+                ][month - 1]
+                periods.append({
+                    "label": f"{month_name} {year}",
+                    "value": f"{month}-{year}"
+                })
+    else:
+        for year in range(contract_start.year, current_date.year + 1):
+            start_quarter = 1
+            end_quarter = 4
+            if year == contract_start.year:
+                start_quarter = (contract_start.month - 1) 
+            if year == current_date.year:
+                end_quarter = (current_date.month - 1) 
+            for quarter in range(start_quarter, end_quarter + 1):
+                periods.append({
+                    "label": f"Q{quarter} {year}",
+                    "value": f"{quarter}-{year}"
+                })
+    return periods
+```

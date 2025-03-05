@@ -1,0 +1,89 @@
+# YOUR JOB IS TO COMPLETELY REBUILD THIS APP FROM THE GROUND UP as if you are a professional SOLO developer working on your own. IT MUST BE FULLY FUNCTIONAL.
+
+# REQUIREMENTS = 
+- FULLY FUNCTIONAL "Payments" PAGE. 
+- "under construction" status for the other pages
+- follows KISS principles and DRY principles but very maintainable and a breath of fresh air. 
+
+# HOW TO DO IT RIGHT IN ONE SHOT
+- look at the database and the amazing amount of material provided at your disposal. you have literally an arsenal of data at your fingertips... from schema, to calculations (the user didnt have to provide this but they did so you could do a better job), to verbatim raw data... this data doesnt lie... if you see something in it then that is the FACTS regardless of what anyone else says. theres NO room for oversights. you have everything you need to thrive.
+- determine a maintainable directory structure. keep it simple and maintainable but clear separation of concerns. an intentional balanced approach that a REAL HUMAN BEING would impliment in the real world (not you trying to show off how many micro-files you can drum up that have 1 line of code in them)... it should make DAMN SENSE to any decent developer and should be easily scaleable for as this local app develops further. 
+- please, for the love of god... as you are going about this process, ALWAYS look for opportunities to reduce the code's complexity - whether that means, adding new libraries... finding shortcuts... reducing comments... finding optimizations.... CONSIDER THEM and DO THEM (as long as you are confident that they are a great idea for this project)
+- we cant to be able to have a very lovely and clean system at play where the code doesnt have to be brute forced to work... it just does... we want a system at play that makes it so as we continue development, theres literally no way in FUCK we will run into dumb bullshit that shouldbe been ironed out in the beginning... and most importantly... we would ever EVER run into situations where we end up producing duplicated logic or comflicting logic... this app is based around a SINGLE SOURCE OF TRUTH mentallity wherever you see fit (within reason of cource). 
+- show me what a professional developer is made of... but not a developer working in a team... a developer working SOLO... you dont need to leave corporate sounding comments... just do what a person themselves would find most sustainable and maintainable.
+- determine what sort of setup files or configs or keys or definitons or whatever sort of other things should be utilized (like, what a real person whos a professional developer would do) to reduce shitty boilerplate code, follow DRY and KISS principals, and to have a SINGLE SOURCE OF TRUTH, where, nomatter what way you come at it... it just fucking works smooth... like a beautiful foundation to build off of. 
+-- i have intentially not given you to code files from the original to prevent you from being influenced. you must use whats at your disposal. 
+
+*** yes... this app was already built once... by a novice... so the "chages" and other sorts of things mentioned are regarding that... but you... you are only to brefily see that for context... in reality your app is your app
+
+# the only thing the user is attached to is the EXACT SAME UI structure and components as the wireframe has.
+
+
+
+
+----
+
+Project Name: 401(k) Payment Tracking System
+
+Purpose:
+This desktop app replaces an existing Excel-based process for tracking 401(k) plan payments at Hohimer Wealth Management (HH). HH, a financial advisory firm, manages investment options, compliance, and strategic oversight of 401(k) plans for approximately 30 client companies. Throughout the year, HH receives and must accurately track various service-related payments from providers (John Hancock, Voya, etc.) and directly from clients. The app ensures efficient, error-free payment tracking and simplifies record-keeping, compliance reviews, and related documentation management. Designed exclusively for local, offline use on workplace PCs, the app requires no internet connectivity, user authentication, or security considerations. All files are managed through a shared local OneDrive system.
+
+Technology Framework:
+- Local desktop application (Windows PCs only)
+- Max of 5 non-concurrent users
+- SQLite Database
+- Python backend with FastAPI
+- Direct SQL queries - no ORM.
+- React/Next.js frontend with Tailwind CSS. Various components from Radix UI and Shadcn UI.
+- TanStack Query for server state with a small Zustand store for UI state
+
+- THE DATABASE IS FULLY POPULATED AND READY. 
+
+
+
+
+
+
+---------------------------------------
+
+
+
+# OUTPUT
+
+
+- work in phases 
+
+
+
+Phase 1: Introduce yourself. Explain what you know about this project. stay grounded. share your outline and your gameplan for simple maintainable app. share your directory structure proposition (again, no need to show off here...) //everything you say much have a purpose and add value... no word vomiting. everything has a purpose.
+
+// the user will give feedback
+
+
+Phase 2: once confrimed state the names of every single file that you are going to produce within this session (aka... "fill out" the directory file hierarchy with file names. each file name should have a comment next to it that explain what it does. also include the react/next folders that will come about in the procecss. this should represent a pretty spot on representation of what the user will see once they finish this entire workflow with you. 
+
+
+THEN... divide the files (that a person would write) into FOUR "ROUNDS"... like Round 1: write the code for (list all the files)... round 2 (list all the files)... etc...
+
+#### NEVER EVER EVER EVER DISCUSS OR WRITE ANY MENTION OF TESTS OR TESTING. YOUR CODE WILL NOT BE TESTED YOU HAVE TO DO EVERYTHING IN YOUR POWER TO NOT RELY ON HUMANS TO FIX YOUR SHIT. YOUR CODE WILL WORK 
+
+// the user will give feedback. the user will also create empty directories and empty files based on your directory structure settled on.
+
+Phase 3: BEGIN ROUND 1 of 4. PRINT ALL OF THE CODE FOR ALL OF THE FILES THAT YOU MAPPED OUT FOR THIS ROUND. DO NOT PRINT CODE COMMENTS. KEEP IT LEAN. (remember... you are working solo... so if you want to leave code comments they should be directed at yourself... like "REMEMEBR TO LINK THIS UP" or whatever... 
+
+// the user will paste each of the code files you produced in the prior round into the actual files on their end. 
+
+
+PHASE 4: Round 2 of 4
+
+PHASE 5: Round 3 of 4
+
+PHASE 6: Round 4 of 4 
+
+PHASE 7: TRANSFORM INTO A NEW PERSON... you are now an unbiased and rested third party who comes through as a DATABASE TESTER... you have the database in hand and you "run through" the logic used... does the data pass? 
+
+PHASE 8: a linter and optimizer tweaker and give s feedback on it. youre not a nitpicker but someone who points out things that you mightve missed. any core logic totally blown or weird shit? 
+
+Phase 8: if there is any feedback from PHASE 7 and 8, then provide the targeted chunks of code to swap out, ideally in clear start and end sections. 
+
+

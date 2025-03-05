@@ -1,0 +1,534 @@
+
+
+### Client Management System Decision Tree  
+
+#### Client Selection  
+- If the client is active, display their `client_id` and `display_name`, sorted alphabetically.  
+
+#### Provider-Based Grouping  
+- If a contract exists for a client, include the `provider_name`.  
+- Otherwise, list the client without a provider.  
+
+### Client Dashboard Cards  
+
+#### Contract Details  
+- If `contract_number` exists, display it. Otherwise, show "N/A".  
+- Display `provider_name`.  
+- If `payment_schedule` is "monthly," show "Monthly"; otherwise, show "Quarterly".  
+- If `fee_type` is "flat," show "Flat Rate"; otherwise, show "Percentage of AUM".  
+
+#### Fee Amount / Percentage  
+- If `fee_type` is "flat," display `flat_rate`.  
+- If `fee_type` is "percentage," adjust `percent_rate` based on `payment_schedule`:  
+  - Monthly: Use `percent_rate` as-is.  
+  - Quarterly: Multiply by 3 for annual equivalence.  
+
+#### Payment Information  
+- If `last_recorded_assets` exists, display its value; otherwise, show "No AUM data available".  
+- If `fee_type` is "flat`, use `flat_rate`.  
+- If `fee_type` is "percentage` and `last_recorded_assets` exists, multiply by `percent_rate`.  
+- If `last_recorded_assets` is missing but `last_payment_amount` exists, use that as a fallback.  
+- If no data exists, show "N/A".  
+- Display `last_payment_date`.  
+- If `last_payment_amount` exists, display it; otherwise, show "N/A".  
+- Calculate `next_payment_due`:  
+  - If `last_payment_date` exists, add one month for monthly payments or three months for quarterly.  
+  - If no payment history exists, show today's date.  
+
+### Compliance Status  
+- If no payment exists, status is "red" with reason "No payment records found".  
+- If `payment_schedule` is monthly:  
+  - Within 45 days: "green" (recent payment).  
+  - 45-75 days: "yellow" (approaching due).  
+  - Over 75 days: "red" (overdue).  
+- If `payment_schedule` is quarterly:  
+  - Within 135 days: "green".  
+  - 135-195 days: "yellow".  
+  - Over 195 days: "red".  
+
+### Payment Form Logic  
+
+#### Available Periods  
+- If `payment_schedule` is "monthly," generate all months from contract start date to the present.  
+- If "quarterly," generate quarters instead.  
+
+#### Expected Fee Calculation  
+- If `fee_type` is "flat," use `flat_rate`.  
+- If "percentage," multiply `percent_rate` by `last_recorded_assets` if available.  
+- If no AUM data exists, fallback to "Percentage fee (assets not provided)".  
+
+#### Payment Creation  
+- Store `contract_id`, `client_id`, `received_date`, `total_assets`, `expected_fee`, and `actual_fee`.  
+- If "monthly," store applied start and end months.  
+- If "quarterly," store applied start and end quarters.  
+
+#### Split Payments Validation  
+- If a split payment is used, ensure `end_period` is not before `start_period`.  
+
+### Payment History  
+
+#### Display  
+- List all payments linked to a client, sorted by `received_date`.  
+
+#### Split Payment Handling  
+- If spanning multiple quarters or months, calculate the total periods and distribute `actual_fee` evenly.  
+
+#### Payment Variance Calculation  
+- If expected fee is missing but AUM data exists, calculate `expected_fee = total_assets * percent_rate`.  
+- Compare `actual_fee` to `expected_fee`:  
+  - If exact, mark "Exact Match".  
+  - If within 5%, mark "✓".  
+  - If within 15%, mark "warning".  
+  - If over 15%, mark "alert".  
+
+### File Management  
+
+#### Client Directory  
+- If `onedrive_folder_path` exists, use it. Otherwise, assign a default path.  
+
+#### File Storage  
+- Store payment-related files in a `Consulting Fee/{year}` folder, creating it if necessary.  
+- Prevent filename conflicts by appending a timestamp if needed.  
+- Record stored file paths in the database.  
+
+#### Payment-File Association  
+- Link or unlink files from payments.  
+- Prevent deletion if a file is linked to payments.
+
+
+
+# Client Management System Decision Trees
+
+## Client Selection
+```
+SELECT client_id, display_name 
+FROM clients 
+WHERE valid_to IS NULL  
+ORDER BY display_name
+```
+
+### Provider-Based Grouping
+```
+SELECT c.client_id, c.display_name, c.full_name, con.provider_name
+FROM clients c
+LEFT JOIN contracts con ON c.client_id = con.client_id AND con.valid_to IS NULL
+WHERE c.valid_to IS NULL
+ORDER BY con.provider_name, c.display_name
+```
+
+## Client Dashboard Cards
+
+### Contract Details Card
+- **Contract Number**
+```
+IF contracts.contract_number IS NOT NULL THEN contracts.contract_number ELSE "N/A"
+```
+
+- **Plan Provider**
+```
+contracts.provider_name
+```
+
+- **Payment Frequency**
+```
+IF contracts.payment_schedule = 'monthly' THEN "Monthly" ELSE "Quarterly"
+```
+
+- **Fee Structure**
+```
+IF contracts.fee_type = 'flat' THEN "Flat Rate" ELSE "Percentage of AUM"
+```
+
+- **Fee Amount/Percentage**
+```
+IF contracts.fee_type = 'flat' THEN 
+    FORMAT_CURRENCY(contracts.flat_rate)
+ELSE
+    # Display tiered percentage rates
+    IF contracts.payment_schedule = 'monthly' THEN
+        RATES = {
+            MONTHLY: contracts.percent_rate,
+            QUARTERLY: contracts.percent_rate * 3,
+            ANNUAL: contracts.percent_rate * 12
+        }
+    ELSE
+        RATES = {
+            MONTHLY: contracts.percent_rate / 3,
+            QUARTERLY: contracts.percent_rate,
+            ANNUAL: contracts.percent_rate * 4
+        }
+    ENDIF
+ENDIF
+```
+
+### Payment Information Card
+- **AUM (Assets Under Management)**
+```
+IF client_metrics.last_recorded_assets IS NOT NULL THEN
+    FORMAT_CURRENCY(client_metrics.last_recorded_assets)
+ELSE
+    "No AUM data available"
+ENDIF
+```
+
+- **Expected Fee**
+```
+IF contracts.fee_type = 'flat' THEN
+    contracts.flat_rate
+ELSE IF client_metrics.last_recorded_assets IS NOT NULL THEN
+    client_metrics.last_recorded_assets * contracts.percent_rate
+ELSE IF client_metrics.last_payment_amount IS NOT NULL THEN
+    # Fall back to last payment when no AUM
+    client_metrics.last_payment_amount
+ELSE
+    "N/A"
+ENDIF
+```
+
+- **Last Payment**
+```
+FORMAT_DATE(client_metrics.last_payment_date)
+```
+
+- **Last Payment Amount**
+```
+FORMAT_CURRENCY(client_metrics.last_payment_amount)
+```
+
+- **Next Payment Due**
+```
+IF client_metrics.last_payment_date IS NOT NULL THEN
+    IF contracts.payment_schedule = 'monthly' THEN
+        DATE_ADD(client_metrics.last_payment_date, INTERVAL 1 MONTH)
+    ELSE 
+        DATE_ADD(client_metrics.last_payment_date, INTERVAL 3 MONTH)
+    ENDIF
+ELSE
+    CURRENT_DATE()
+ENDIF
+```
+
+### Compliance Status Card
+```
+# From client_queries.get_client_compliance_status()
+SELECT received_date, payment_schedule, applied_period, applied_period_year
+FROM payments p
+JOIN contracts c ON p.contract_id = c.contract_id
+WHERE p.client_id = ? AND p.valid_to IS NULL
+ORDER BY p.received_date DESC
+LIMIT 1
+
+IF last_payment IS NULL THEN
+    status = "red"
+    reason = "No payment records found"
+    RETURN
+
+days_since_payment = TODAY - last_payment_date
+
+IF payment_schedule = 'monthly' THEN
+    IF days_since_payment <= 45 THEN
+        status = "green"
+        reason = "Recent payment within acceptable timeframe"
+    ELSE IF days_since_payment <= 75 THEN
+        status = "yellow"
+        reason = "Payment approaching due date"
+    ELSE
+        status = "red"
+        reason = "Payment overdue"
+    ENDIF
+ELSE # Quarterly
+    IF days_since_payment <= 135 THEN
+        status = "green"
+        reason = "Recent payment within acceptable timeframe"
+    ELSE IF days_since_payment <= 195 THEN
+        status = "yellow"
+        reason = "Payment approaching due date"
+    ELSE
+        status = "red"
+        reason = "Payment overdue"
+    ENDIF
+ENDIF
+```
+
+## Payment Form Logic
+
+### Available Periods
+```
+# From paymentApi.getAvailablePeriods()
+SELECT payment_schedule, contract_start_date
+FROM contracts
+WHERE contract_id = ? AND client_id = ? AND valid_to IS NULL
+
+IF contract.payment_schedule = 'monthly' THEN
+    start_date = COALESCE(contract.contract_start_date, CONCAT(CURRENT_YEAR(), '-01-01'))
+    current_date = TODAY
+    
+    # Generate all months between start_date and current_date
+    FOR year = start_date.year TO current_date.year
+        FOR month = (year == start_date.year ? start_date.month : 1) TO (year == current_date.year ? current_date.month - 1 : 12)
+            periods.push({
+                label: MONTH_NAME(month) + " " + year,
+                value: { month: month, year: year }
+            })
+        ENDFOR
+    ENDFOR
+ELSE # Quarterly
+    start_date = COALESCE(contract.contract_start_date, CONCAT(CURRENT_YEAR(), '-01-01'))
+    current_date = TODAY
+    
+    # Generate all quarters between start_date and current_date
+    FOR year = start_date.year TO current_date.year
+        start_quarter = (year == start_date.year ? FLOOR((start_date.month - 1) / 3) + 1 : 1)
+        end_quarter = (year == current_date.year ? FLOOR((current_date.month - 1) / 3) : 4)
+        
+        FOR quarter = start_quarter TO end_quarter
+            periods.push({
+                label: "Q" + quarter + " " + year,
+                value: { quarter: quarter, year: year }
+            })
+        ENDFOR
+    ENDFOR
+ENDIF
+
+RETURN periods
+```
+
+### Expected Fee Calculation
+```
+# From paymentApi.calculateExpectedFee()
+SELECT fee_type, percent_rate, flat_rate, payment_schedule
+FROM contracts
+WHERE contract_id = ? AND valid_to IS NULL
+
+IF fee_type = 'flat' THEN
+    expected_fee = flat_rate
+    calculation_method = "Flat fee"
+ELSE IF fee_type IN ('percentage', 'percent') THEN
+    IF total_assets IS NULL THEN
+        # Try to get assets from metrics
+        SELECT last_recorded_assets
+        FROM client_metrics
+        WHERE client_id = ?
+        
+        IF metrics.last_recorded_assets IS NOT NULL THEN
+            total_assets = metrics.last_recorded_assets
+        ENDIF
+    ENDIF
+    
+    IF total_assets IS NOT NULL THEN
+        expected_fee = total_assets * percent_rate
+        rate_percentage = percent_rate * 100
+        calculation_method = rate_percentage + "% of $" + FORMAT_CURRENCY(total_assets)
+    ELSE
+        expected_fee = NULL
+        calculation_method = "Percentage fee (assets not provided)"
+    ENDIF
+ELSE
+    expected_fee = NULL
+    calculation_method = "Unknown fee type"
+ENDIF
+
+RETURN { expected_fee, fee_type, calculation_method }
+```
+
+### Payment Creation
+```
+# From paymentApi.createPayment()
+is_monthly = contract.payment_schedule.toLowerCase() == 'monthly'
+
+IF is_monthly THEN
+    payment = {
+        contract_id: formData.contract_id,
+        client_id: formData.client_id,
+        received_date: formData.received_date,
+        total_assets: formData.total_assets,
+        expected_fee: calculated_expected_fee,
+        actual_fee: formData.actual_fee,
+        method: formData.method,
+        notes: formData.notes,
+        applied_start_month: formData.start_period,
+        applied_start_month_year: formData.start_period_year,
+        applied_end_month: formData.is_split_payment ? formData.end_period : formData.start_period,
+        applied_end_month_year: formData.is_split_payment ? formData.end_period_year : formData.start_period_year
+    }
+ELSE
+    payment = {
+        # Same as above but with quarter fields instead of month fields
+        applied_start_quarter: formData.start_period,
+        applied_start_quarter_year: formData.start_period_year,
+        applied_end_quarter: formData.is_split_payment ? formData.end_period : formData.start_period,
+        applied_end_quarter_year: formData.is_split_payment ? formData.end_period_year : formData.start_period_year
+    }
+ENDIF
+
+INSERT INTO payments VALUES (payment)
+```
+
+### Split Payments Validation
+```
+IF isSplitPayment AND startPeriod AND endPeriod THEN
+    [startPeriod, startYear] = startPeriod.split('-')
+    [endPeriod, endYear] = endPeriod.split('-')
+    
+    startTotal = (startYear * (isMonthly ? 12 : 4)) + startPeriod
+    endTotal = (endYear * (isMonthly ? 12 : 4)) + endPeriod
+    
+    IF endTotal < startTotal THEN
+        ERROR "End period cannot be before start period"
+    ENDIF
+ENDIF
+```
+
+## Payment History Display
+
+### Payment Table Row
+```
+SELECT 
+    p.payment_id, p.contract_id, p.client_id, p.received_date, 
+    p.total_assets, p.expected_fee, p.actual_fee, p.method, p.notes,
+    c.display_name as client_name, co.provider_name, co.fee_type, 
+    co.percent_rate, co.flat_rate, co.payment_schedule
+FROM payments p
+JOIN clients c ON p.client_id = c.client_id
+LEFT JOIN contracts co ON p.contract_id = co.contract_id
+WHERE p.client_id = ? AND p.valid_to IS NULL
+ORDER BY p.received_date DESC
+LIMIT ? OFFSET ?
+```
+
+### Split Payment Display
+```
+IF payment.applied_start_quarter IS NOT NULL AND
+   payment.applied_end_quarter IS NOT NULL AND
+   (payment.applied_start_quarter != payment.applied_end_quarter OR
+    payment.applied_start_quarter_year != payment.applied_end_quarter_year) THEN
+   
+    isSplitPayment = true
+    
+    # Calculate all periods in the range
+    startQuarter = payment.applied_start_quarter
+    startYear = payment.applied_start_quarter_year
+    endQuarter = payment.applied_end_quarter
+    endYear = payment.applied_end_quarter_year
+    
+    totalPeriods = (endYear - startYear) * 4 + (endQuarter - startQuarter) + 1
+    amountPerPeriod = payment.actual_fee / totalPeriods
+    
+    # Generate period details for each period in the range
+    FOR i = 0 TO totalPeriods - 1
+        currentQuarter = (startQuarter + i - 1) % 4 + 1
+        currentYear = startYear + FLOOR((startQuarter + i - 1) / 4)
+        
+        periods.push({
+            period: "Q" + currentQuarter + " " + currentYear,
+            amount: amountPerPeriod
+        })
+    ENDFOR
+ELSE IF payment.applied_start_month IS NOT NULL AND
+        payment.applied_end_month IS NOT NULL AND
+        (payment.applied_start_month != payment.applied_end_month OR
+         payment.applied_start_month_year != payment.applied_end_month_year) THEN
+    
+    # Similar logic for monthly payments
+    # [implementation similar to quarterly logic above]
+ENDIF
+```
+
+### Payment Variance Calculation
+```
+IF payment.expected_fee IS NULL AND payment.total_assets IS NOT NULL AND contract.percent_rate IS NOT NULL THEN
+    # Calculate expected fee if not provided but we have enough data
+    effectiveExpectedFee = payment.total_assets * contract.percent_rate
+ELSE
+    effectiveExpectedFee = payment.expected_fee
+ENDIF
+
+IF effectiveExpectedFee IS NOT NULL THEN
+    difference = payment.actual_fee - effectiveExpectedFee
+    percentDifference = (difference / effectiveExpectedFee) * 100
+    absPercentDifference = ABS(percentDifference)
+    
+    IF payment.actual_fee = effectiveExpectedFee THEN
+        status = "Exact Match" 
+        class = "bg-blue-100 text-blue-800"
+    ELSE IF absPercentDifference <= 5 THEN
+        status = FORMAT_CURRENCY(difference) + " (" + FORMAT_PERCENTAGE(percentDifference) + "%) ✓"
+        class = "bg-green-100 text-green-800"
+    ELSE IF absPercentDifference <= 15 THEN
+        status = FORMAT_CURRENCY(difference) + " (" + FORMAT_PERCENTAGE(percentDifference) + "%)"
+        class = "bg-yellow-100 text-yellow-800"
+    ELSE
+        status = FORMAT_CURRENCY(difference) + " (" + FORMAT_PERCENTAGE(percentDifference) + "%)"
+        class = "bg-red-100 text-red-800"
+    ENDIF
+ELSE
+    status = "Cannot calculate"
+    class = "bg-gray-100 text-gray-800"
+ENDIF
+```
+
+## File Management
+
+### Client Directory Path
+```
+SELECT onedrive_folder_path FROM clients WHERE client_id = ?
+
+IF client.onedrive_folder_path IS NOT NULL THEN
+    path = NORMALIZE_PATH(client.onedrive_folder_path)
+    
+    IF IS_ABSOLUTE_PATH(path) THEN
+        RETURN path
+    ELSE
+        RETURN SHARED_FOLDER_PATH + path
+    ENDIF
+ELSE
+    # Use default path when none specified
+    RETURN SHARED_FOLDER_PATH + "/Unknown Clients/Client_" + client_id
+ENDIF
+```
+
+### File Storage Logic
+```
+IF for_payment THEN
+    # Store in Consulting Fee/{year} folder
+    dest_folder = client_folder + "/Consulting Fee/" + year
+ELSE
+    # Store in main client folder
+    dest_folder = client_folder
+ENDIF
+
+# Create folder if it doesn't exist
+ENSURE_DIRECTORY_EXISTS(dest_folder)
+
+# Handle filename conflicts
+IF FILE_EXISTS(dest_folder + "/" + filename) THEN
+    timestamp = CURRENT_TIMESTAMP_STRING()
+    filename = base_name + "_" + timestamp + extension
+ENDIF
+
+# Calculate relative path for storage
+relative_path = RELATIVE_PATH(dest_folder + "/" + filename, SHARED_FOLDER_PATH)
+
+# Record in database
+INSERT INTO client_files (client_id, file_name, onedrive_path) 
+VALUES (client_id, filename, relative_path)
+```
+
+### File-Payment Association
+```
+# Link a file to a payment
+INSERT INTO payment_files (payment_id, file_id) VALUES (?, ?)
+
+# Unlink a file from a payment
+DELETE FROM payment_files WHERE payment_id = ? AND file_id = ?
+
+# Check if file can be deleted (no payment links)
+SELECT COUNT(*) as count FROM payment_files WHERE file_id = ?
+IF count > 0 THEN
+    ERROR "File is linked to payments. Remove these links first."
+ENDIF
+```
+
+
+
+---

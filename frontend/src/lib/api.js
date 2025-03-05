@@ -1,4 +1,15 @@
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+// Add a health check function
+async function checkApiHealth() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/health`);
+    return response.ok;
+  } catch (error) {
+    console.error('API health check failed:', error);
+    return false;
+  }
+}
 
 async function request(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
@@ -18,7 +29,8 @@ async function request(endpoint, options = {}) {
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.detail || `API error: ${response.status}`);
+      console.error('API error response:', errorData);
+      throw new Error(errorData.detail || `API error: ${response.status} ${response.statusText}`);
     }
     
     if (response.status === 204) {
@@ -27,12 +39,16 @@ async function request(endpoint, options = {}) {
     
     return await response.json();
   } catch (error) {
-    console.error('API request failed:', error);
+    console.error('API request failed:', error, 'URL:', url);
+    if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+      throw new Error('Cannot connect to the server. Please make sure the backend is running.');
+    }
     throw error;
   }
 }
 
 const api = {
+  health: checkApiHealth,
   getClients: () => request('/clients'),
   getClient: (id) => request(`/clients/${id}`),
   
