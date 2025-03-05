@@ -1,0 +1,58 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn.lock
+package-lock.json
+
+# Next.js build files
+.next/
+out/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Editor and IDE settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# TypeScript build artifacts
+*.tsbuildinfo
+
+# Tailwind CSS
+.tailwind/
+
+# Static cache
+.cache/
+public/static/
+
+# Generated files
+*.bak
+*.tmp
+
+# Virtual environment (if using WSL or Python-based tooling)
+backend-env/
+
+# SQLite database (if used)
+backend/data/*.db
+backend/data/*.sqlite
+
+# Lockfiles and dependency artifacts
+pnpm-lock.yaml

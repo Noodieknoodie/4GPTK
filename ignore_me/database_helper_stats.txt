@@ -1,0 +1,1134 @@
+
+---
+
+1. TABLE: quarterly_summaries
+- Total Rows: 493
+- Unique client_ids: 30
+- Duplicate Rows: 0
+
+1.1 FIELD: id
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 100.0%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.2 FIELD: client_id
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 6.09%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched 100.0%, unmatched 0.0%
+
+1.3 FIELD: year
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 1.62%
+- Structured Data: YES
+- If Structured, options: 2019, 2020, 2021, 2022, 2023, 2024, 1900, 2018
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.4 FIELD: quarter
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 0.81%
+- Structured Data: YES
+- If Structured, options: 1, 2, 3, 4
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.5 FIELD: total_payments
+- Type: REAL
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 61.05%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.6 FIELD: total_assets
+- Type: REAL
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 310 (62.88%)
+- Cardinality: 37.12%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.7 FIELD: payment_count
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 1.42%
+- Structured Data: YES
+- If Structured, options: 1, 5, 3, 2, 4, 20, 10
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.8 FIELD: avg_payment
+- Type: REAL
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 60.45%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.9 FIELD: expected_total
+- Type: REAL
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 331 (67.14%)
+- Cardinality: 17.04%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.10 FIELD: last_updated
+- Type: TEXT
+- Avg Length (text fields only): 19.0
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 0.61%
+- Structured Data: YES
+- If Structured, options: 2025-02-27 08:45:17, 2025-03-03 23:16:10, 2025-03-03 23:16:11
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+quarterly_summaries SAMPLE DATA:
+id | client_id | year | quarter | total_payments | total_assets | payment_count | avg_payment | expected_total | last_updated
+441 | 27 | 2023 | 2 | 72.17 | 28946.0 | 1 | 72.17 | None | 2025-02-27 08:45:17
+442 | 27 | 2024 | 2 | 122.81 | 49397.0 | 1 | 122.81 | None | 2025-02-27 08:45:17
+443 | 27 | 2023 | 3 | 104.49 | 41457.0 | 1 | 104.49 | None | 2025-02-27 08:45:17
+444 | 27 | 2024 | 3 | 141.42 | 56262.0 | 1 | 141.42 | None | 2025-02-27 08:45:17
+445 | 27 | 2022 | 4 | 22.62 | 8971.0 | 1 | 22.62 | None | 2025-02-27 08:45:17
+...
+id | client_id | year | quarter | total_payments | total_assets | payment_count | avg_payment | expected_total | last_updated
+306 | 18 | 2023 | 1 | 2499.99 | None | 1 | 2499.99 | None | 2025-02-27 08:45:17
+307 | 18 | 2024 | 1 | 2499.99 | None | 1 | 2499.99 | None | 2025-02-27 08:45:17
+308 | 18 | 2019 | 2 | 1666.66 | None | 1 | 1666.66 | 1666.66 | 2025-02-27 08:45:17
+309 | 18 | 2020 | 2 | 2500.0 | None | 1 | 2500.0 | 2500.0 | 2025-02-27 08:45:17
+310 | 18 | 2021 | 2 | 2499.98 | None | 1 | 2499.98 | None | 2025-02-27 08:45:17
+...
+id | client_id | year | quarter | total_payments | total_assets | payment_count | avg_payment | expected_total | last_updated
+43 | 2 | 2022 | 4 | 4327.9 | None | 3 | 1442.6333333333332 | None | 2025-02-27 08:45:17
+44 | 2 | 2023 | 4 | 4926.66 | None | 3 | 1642.22 | None | 2025-02-27 08:45:17
+45 | 3 | 2020 | 1 | 2000.0099999999998 | 1975482.0 | 3 | 666.67 | 666.67 | 2025-02-27 08:45:17
+46 | 3 | 2021 | 1 | 1999.98 | None | 3 | 666.66 | None | 2025-02-27 08:45:17
+47 | 3 | 2022 | 1 | 1999.98 | None | 3 | 666.66 | None | 2025-02-27 08:45:17
+
+---
+
+1. TABLE: yearly_summaries
+- Total Rows: 145
+- Unique client_ids: 30
+- Duplicate Rows: 0
+
+1.1 FIELD: id
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 100.0%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.2 FIELD: client_id
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 20.69%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched 100.0%, unmatched 0.0%
+
+1.3 FIELD: year
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 5.52%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.4 FIELD: total_payments
+- Type: REAL
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 84.83%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.5 FIELD: total_assets
+- Type: REAL
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 90 (62.07%)
+- Cardinality: 37.93%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.6 FIELD: payment_count
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 10.34%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.7 FIELD: avg_payment
+- Type: REAL
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 77.93%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.8 FIELD: yoy_growth
+- Type: REAL
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): N/A%
+- NULL Count: 145 (100.0%)
+- Cardinality: 0.0%
+- Structured Data: YES
+- If Structured, options: 
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.9 FIELD: last_updated
+- Type: TEXT
+- Avg Length (text fields only): 19.0
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 1.38%
+- Structured Data: YES
+- If Structured, options: 2025-02-27 08:45:17, 2025-03-03 23:16:11
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+yearly_summaries SAMPLE DATA:
+id | client_id | year | total_payments | total_assets | payment_count | avg_payment | yoy_growth | last_updated
+52 | 10 | 2024 | 17842.0 | 2656248.3611111115 | 10 | 1770.829722222222 | None | 2025-02-27 08:45:17
+53 | 11 | 2022 | 9635.05 | 5818242.5 | 8 | 1201.9261111111111 | None | 2025-02-27 08:45:17
+54 | 11 | 2023 | 17593.64 | 7043221.916666666 | 12 | 1466.1366666666668 | None | 2025-02-27 08:45:17
+55 | 11 | 2024 | 19424.050000000003 | 9300081.833333334 | 10 | 1935.062777777778 | None | 2025-02-27 08:45:17
+56 | 12 | 2019 | 6354.79 | None | 4 | 1667.1899999999998 | None | 2025-02-27 08:45:17
+...
+id | client_id | year | total_payments | total_assets | payment_count | avg_payment | yoy_growth | last_updated
+138 | 29 | 2020 | 44.25 | None | 5 | 8.85 | None | 2025-02-27 08:45:17
+139 | 29 | 2021 | 443.73 | 66967.0 | 12 | 36.9775 | None | 2025-02-27 08:45:17
+140 | 29 | 2022 | 1082.01 | 142480.3333333333 | 12 | 90.1675 | None | 2025-02-27 08:45:17
+141 | 29 | 2023 | 2276.0 | 280048.1666666667 | 7 | 440.9275 | None | 2025-02-27 08:45:17
+142 | 29 | 2024 | 2904.94 | None | 3 | 968.3133333333334 | None | 2025-02-27 08:45:17
+...
+id | client_id | year | total_payments | total_assets | payment_count | avg_payment | yoy_growth | last_updated
+117 | 23 | 2023 | 7451.4 | 1493710.6666666667 | 12 | 620.95 | None | 2025-02-27 08:45:17
+118 | 23 | 2024 | 7907.97 | 1703680.3055555557 | 10 | 785.1905555555555 | None | 2025-02-27 08:45:17
+119 | 24 | 2023 | 3050.53 | None | 3 | 1016.8433333333334 | None | 2025-02-27 08:45:17
+120 | 24 | 2024 | 4634.5599999999995 | None | 3 | 1544.8533333333332 | None | 2025-02-27 08:45:17
+121 | 25 | 2023 | 21104.16 | None | 4 | 5276.04 | None | 2025-02-27 08:45:17
+
+---
+
+1. TABLE: contacts
+- Total Rows: 70
+- Unique client_ids: 30
+- Duplicate Rows: 0
+
+1.1 FIELD: contact_id
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 100.0%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.2 FIELD: client_id
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 42.86%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched 100.0%, unmatched 0.0%
+
+1.3 FIELD: contact_type
+- Type: TEXT
+- Avg Length (text fields only): 8.33
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 5.71%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.4 FIELD: contact_name
+- Type: TEXT
+- Avg Length (text fields only): 12.35
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 5 (7.14%)
+- Cardinality: 84.29%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.5 FIELD: phone
+- Type: TEXT
+- Avg Length (text fields only): 12.0
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 29 (41.43%)
+- Cardinality: 45.71%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.6 FIELD: email
+- Type: TEXT
+- Avg Length (text fields only): 21.92
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 17 (24.29%)
+- Cardinality: 68.57%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.7 FIELD: fax
+- Type: TEXT
+- Avg Length (text fields only): 12.25
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 66 (94.29%)
+- Cardinality: 4.29%
+- Structured Data: YES
+- If Structured, options: 206-433-0280, 866-377-9577 , 555-987-6543
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.8 FIELD: physical_address
+- Type: TEXT
+- Avg Length (text fields only): 38.41
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 36 (51.43%)
+- Cardinality: 41.43%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.9 FIELD: mailing_address
+- Type: TEXT
+- Avg Length (text fields only): 37.58
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 51 (72.86%)
+- Cardinality: 25.71%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.10 FIELD: valid_from
+- Type: DATETIME
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): 2025-02-24 21:31:57 to 2025-02-24 21:31:57
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 68 (97.14%)
+- Cardinality: 1.43%
+- Structured Data: YES
+- If Structured, options: 2025-02-24 21:31:57
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.11 FIELD: valid_to
+- Type: DATETIME
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): N/A%
+- NULL Count: 70 (100.0%)
+- Cardinality: 0.0%
+- Structured Data: YES
+- If Structured, options: 
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+contacts SAMPLE DATA:
+contact_id | client_id | contact_type | contact_name | phone | email | fax | physical_address | mailing_address | valid_from | valid_to
+20 | 20 | Primary | William Linafelter | 206-900-1236 | william.linafelter@moxiworks.com | None | 1000 2nd Ave, Suite 1300, Seattle, WA 98104 | 815 WESTERN AVE STE 300, SEATTLE, WA 98104 | None | None
+21 | 21 | Primary | None | None | None | None | None | None | None | None
+22 | 22 | Primary | Mark Yokers | 206-403-1290 | mark@pswm.net | 206-433-0280 | None | PO BOX 66152, Normandy Park, WA 98116 | None | None
+23 | 23 | Primary | Ken Frankel | 253-395-1125 | kenf@threesigma.net | None | 22604 58th Pl. South Kent, WA 98032 | None | None | None
+24 | 24 | Primary | Rose Vogel | 360-820-2977 | rose@tonyscoffee.com | None | 2033 Division St Bellingham, WA 98226 | None | None | None
+...
+contact_id | client_id | contact_type | contact_name | phone | email | fax | physical_address | mailing_address | valid_from | valid_to
+66 | 26 | Provider | Austin Del Prado | 800-333-0963 | delprau@jhancock.com | None | 601 Congress St, Boston, MA 02210 | None | None | None
+67 | 27 | Provider | Brett Lundgren | 866-421-2137 | Brett.Lundgren@capgroup.com | None | None | None | None | None
+68 | 29 | Provider | Maria Viala-Wood | None | maria.vialawood@transamerica.com | None | None | None | None | None
+89 | 49 | Primary | John Test | 555-123-4567 | john.test@aatest.com | 555-987-6543 | 123 Test Street, Suite 100, Test City, TS 12345 | PO Box 567, Test City, TS 12345 | 2025-02-24 21:31:57 | None
+90 | 49 | Billing | Jane Finance | 555-234-5678 | finance@aatest.com | 555-987-6543 | 123 Test Street, Suite 100, Test City, TS 12345 | PO Box 567, Test City, TS 12345 | 2025-02-24 21:31:57 | None
+...
+contact_id | client_id | contact_type | contact_name | phone | email | fax | physical_address | mailing_address | valid_from | valid_to
+21 | 21 | Primary | None | None | None | None | None | None | None | None
+22 | 22 | Primary | Mark Yokers | 206-403-1290 | mark@pswm.net | 206-433-0280 | None | PO BOX 66152, Normandy Park, WA 98116 | None | None
+23 | 23 | Primary | Ken Frankel | 253-395-1125 | kenf@threesigma.net | None | 22604 58th Pl. South Kent, WA 98032 | None | None | None
+24 | 24 | Primary | Rose Vogel | 360-820-2977 | rose@tonyscoffee.com | None | 2033 Division St Bellingham, WA 98226 | None | None | None
+25 | 25 | Primary | Elizabeth StoDomingo | None | estodomingo@uwkc.org | None | 720 2nd Ave, Seattle, WA 98104 | None | None | None
+
+---
+
+1. TABLE: contracts
+- Total Rows: 30
+- Unique client_ids: 30
+- Duplicate Rows: 0
+
+1.1 FIELD: contract_id
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 100.0%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.2 FIELD: client_id
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 100.0%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched 100.0%, unmatched 0.0%
+
+1.3 FIELD: contract_number
+- Type: TEXT
+- Avg Length (text fields only): 6.29
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 9 (30.0%)
+- Cardinality: 70.0%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.4 FIELD: provider_name
+- Type: TEXT
+- Avg Length (text fields only): 12.23
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 43.33%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.5 FIELD: contract_start_date
+- Type: TEXT
+- Avg Length (text fields only): 10.5
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 26 (86.67%)
+- Cardinality: 13.33%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.6 FIELD: fee_type
+- Type: TEXT
+- Avg Length (text fields only): 7.6
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 10.0%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.7 FIELD: percent_rate
+- Type: REAL
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 12 (40.0%)
+- Cardinality: 43.33%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.8 FIELD: flat_rate
+- Type: REAL
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 18 (60.0%)
+- Cardinality: 33.33%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.9 FIELD: payment_schedule
+- Type: TEXT
+- Avg Length (text fields only): 8.07
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 6.67%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.10 FIELD: num_people
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 4 (13.33%)
+- Cardinality: 66.67%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.11 FIELD: notes
+- Type: TEXT
+- Avg Length (text fields only): 85.5
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 28 (93.33%)
+- Cardinality: 6.67%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.12 FIELD: valid_from
+- Type: DATETIME
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): 2025-02-24 21:33:46 to 2025-02-24 21:33:46
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 29 (96.67%)
+- Cardinality: 3.33%
+- Structured Data: YES
+- If Structured, options: 2025-02-24 21:33:46
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.13 FIELD: valid_to
+- Type: DATETIME
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): N/A%
+- NULL Count: 30 (100.0%)
+- Cardinality: 0.0%
+- Structured Data: YES
+- If Structured, options: 
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+contracts SAMPLE DATA:
+contract_id | client_id | contract_number | provider_name | contract_start_date | fee_type | percent_rate | flat_rate | payment_schedule | num_people | notes | valid_from | valid_to
+27 | 27 | 171414 | Capital Group / American Funds | None | percentage | 0.0025 | None | quarterly | 2 | None | None | None
+31 | 4 | None | John Hancock | None | percentage | 0.00125 | None | quarterly | 139 | None | None | None
+32 | 7 | None | Voya | None | percentage | 0.000417 | None | monthly | 15 | None | None | None
+33 | 16 | None | Empower | None | flat | None | 3500.0 | quarterly | None | None | None | None
+34 | 28 | None | Empower | None | percentage | 0.000667 | None | monthly | 43 | None | None | None
+...
+contract_id | client_id | contract_number | provider_name | contract_start_date | fee_type | percent_rate | flat_rate | payment_schedule | num_people | notes | valid_from | valid_to
+22 | 22 | 818536 | Voya | None | percentage | 0.125 | None | monthly | 20 | None | None | None
+23 | 23 | 146965 | John Hancock | None | percentage | 0.000417 | None | monthly | 32 | None | None | None
+24 | 24 | 824457 | Pricipal | None | percentage | 0.001875 | None | quarterly | 15 | None | None | None
+25 | 25 | 539835 | Principal | None | percentage | 0.0003 | None | monthly | None | None | None | None
+26 | 26 | 77111 | John Hancock | None | flat | None | 6250.0 | quarterly | 273 | None | None | None
+...
+contract_id | client_id | contract_number | provider_name | contract_start_date | fee_type | percent_rate | flat_rate | payment_schedule | num_people | notes | valid_from | valid_to
+15 | 15 | 809872 | Transamerica | None | percentage | 0.000417 | None | monthly | None | None | None | None
+17 | 17 | None | Capital Group / American Funds | None | flat | None | 1000.0 | quarterly | 15 | None | None | None
+18 | 18 | 24277 | Fidelity | None | flat | None | 2499.99 | quarterly | 32 | None | None | None
+19 | 19 | None | Ascensus | None | flat | None | 2000.0 | quarterly | 18 | None | None | None
+20 | 20 | 10127553 | Hunnex & Shoemaker | None | flat | None | 6250.0 | quarterly | 184 | None | None | None
+
+---
+
+1. TABLE: client_metrics
+- Total Rows: 30
+- Unique client_ids: 30
+- Duplicate Rows: 0
+
+1.1 FIELD: id
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 100.0%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.2 FIELD: client_id
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 100.0%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched 100.0%, unmatched 0.0%
+
+1.3 FIELD: last_payment_date
+- Type: TEXT
+- Avg Length (text fields only): 10.0
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 43.33%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.4 FIELD: last_payment_amount
+- Type: REAL
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 1 (3.33%)
+- Cardinality: 93.33%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.5 FIELD: last_payment_quarter
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 13.33%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.6 FIELD: last_payment_year
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 6.67%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.7 FIELD: total_ytd_payments
+- Type: REAL
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): N/A%
+- NULL Count: 30 (100.0%)
+- Cardinality: 0.0%
+- Structured Data: YES
+- If Structured, options: 
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.8 FIELD: avg_quarterly_payment
+- Type: REAL
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): N/A%
+- NULL Count: 30 (100.0%)
+- Cardinality: 0.0%
+- Structured Data: YES
+- If Structured, options: 
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.9 FIELD: last_recorded_assets
+- Type: REAL
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 20 (66.67%)
+- Cardinality: 33.33%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.10 FIELD: last_updated
+- Type: TEXT
+- Avg Length (text fields only): 19.0
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 3.33%
+- Structured Data: YES
+- If Structured, options: 2025-02-27 08:45:17
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+client_metrics SAMPLE DATA:
+id | client_id | last_payment_date | last_payment_amount | last_payment_quarter | last_payment_year | total_ytd_payments | avg_quarterly_payment | last_recorded_assets | last_updated
+10 | 10 | 2024-11-20 | 1963.34 | 3 | 2024 | None | None | 2945059.0 | 2025-02-27 08:45:17
+11 | 11 | 2024-11-19 | 2021.47 | 3 | 2024 | None | None | 9714827.0 | 2025-02-27 08:45:17
+12 | 12 | 2024-10-16 | 2250.0 | 3 | 2024 | None | None | None | 2025-02-27 08:45:17
+13 | 13 | 2024-10-16 | 5000.01 | 3 | 2024 | None | None | None | 2025-02-27 08:45:17
+14 | 14 | 2024-10-16 | 3750.0 | 3 | 2024 | None | None | None | 2025-02-27 08:45:17
+...
+id | client_id | last_payment_date | last_payment_amount | last_payment_quarter | last_payment_year | total_ytd_payments | avg_quarterly_payment | last_recorded_assets | last_updated
+9 | 9 | 2024-05-20 | 5000.0 | 4 | 2023 | None | None | None | 2025-02-27 08:45:17
+10 | 10 | 2024-11-20 | 1963.34 | 3 | 2024 | None | None | 2945059.0 | 2025-02-27 08:45:17
+11 | 11 | 2024-11-19 | 2021.47 | 3 | 2024 | None | None | 9714827.0 | 2025-02-27 08:45:17
+12 | 12 | 2024-10-16 | 2250.0 | 3 | 2024 | None | None | None | 2025-02-27 08:45:17
+13 | 13 | 2024-10-16 | 5000.01 | 3 | 2024 | None | None | None | 2025-02-27 08:45:17
+...
+id | client_id | last_payment_date | last_payment_amount | last_payment_quarter | last_payment_year | total_ytd_payments | avg_quarterly_payment | last_recorded_assets | last_updated
+5 | 5 | 2024-10-16 | 3000.0 | 3 | 2024 | None | None | None | 2025-02-27 08:45:17
+6 | 6 | 2024-11-19 | 1923.0 | 3 | 2024 | None | None | 15397306.0 | 2025-02-27 08:45:17
+7 | 7 | 2024-07-31 | 39.06 | 2 | 2024 | None | None | None | 2025-02-27 08:45:17
+8 | 8 | 2024-10-16 | 3846.25 | 3 | 2024 | None | None | None | 2025-02-27 08:45:17
+9 | 9 | 2024-05-20 | 5000.0 | 4 | 2023 | None | None | None | 2025-02-27 08:45:17
+
+---
+
+1. TABLE: clients
+- Total Rows: 30
+- Unique client_ids: 30
+- Duplicate Rows: 0
+
+1.1 FIELD: client_id
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 100.0%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.2 FIELD: display_name
+- Type: TEXT
+- Avg Length (text fields only): 12.77
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 100.0%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.3 FIELD: full_name
+- Type: TEXT
+- Avg Length (text fields only): 24.8
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 100.0%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.4 FIELD: ima_signed_date
+- Type: TEXT
+- Avg Length (text fields only): 10.0
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 9 (30.0%)
+- Cardinality: 63.33%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.5 FIELD: onedrive_folder_path
+- Type: TEXT
+- Avg Length (text fields only): 23.0
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 29 (96.67%)
+- Cardinality: 3.33%
+- Structured Data: YES
+- If Structured, options: /documentation/AA_TEST/
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.6 FIELD: valid_from
+- Type: DATETIME
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): 2025-02-24 21:31:57 to 2025-02-24 21:31:57
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 29 (96.67%)
+- Cardinality: 3.33%
+- Structured Data: YES
+- If Structured, options: 2025-02-24 21:31:57
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.7 FIELD: valid_to
+- Type: DATETIME
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): N/A%
+- NULL Count: 30 (100.0%)
+- Cardinality: 0.0%
+- Structured Data: YES
+- If Structured, options: 
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+clients SAMPLE DATA:
+client_id | display_name | full_name | ima_signed_date | onedrive_folder_path | valid_from | valid_to
+8 | Dakota Creek | DAKOTA CREEK INDUSTRIES | None | None | None | None
+9 | CG Engineering | CG ENGINEERING PLLC | 2020-07-28 | None | None | None
+10 | Fast Water Heater | FAST WATER HEATER CO | 2019-10-14 | None | None | None
+11 | Floform | FLOFORM COUNTERTOPS | None | None | None | None
+12 | Hansen Bros | HANSEN BROS TRANSFER & STORAGE CO | 2019-03-18 | None | None | None
+...
+client_id | display_name | full_name | ima_signed_date | onedrive_folder_path | valid_from | valid_to
+25 | United Way | UWKC | None | None | None | None
+26 | Urban Renaissance | URBAN RENAISSANCE 401K AND TRUST | 2020-07-29 | None | None | None
+27 | XFire | XFIRE INDUSTRIES INC 401K PLAN | None | None | None | None
+28 | Younker Motors | YOUNKER MOTORS | 2020-07-30 | None | None | None
+29 | Youth Dynamics | YOUTH DYNAMICS | None | None | None | None
+...
+client_id | display_name | full_name | ima_signed_date | onedrive_folder_path | valid_from | valid_to
+24 | Tony's Coffee | TONYS COFFEE | None | None | None | None
+25 | United Way | UWKC | None | None | None | None
+26 | Urban Renaissance | URBAN RENAISSANCE 401K AND TRUST | 2020-07-29 | None | None | None
+27 | XFire | XFIRE INDUSTRIES INC 401K PLAN | None | None | None | None
+28 | Younker Motors | YOUNKER MOTORS | 2020-07-30 | None | None | None
+
+---
+
+1. TABLE: client_files
+- Total Rows: 0
+- Unique client_ids: 0
+- Duplicate Rows: 0
+
+1.1 FIELD: file_id
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): N/A%
+- NULL Count: 0 (0%)
+- Cardinality: 0%
+- Structured Data: YES
+- If Structured, options: 
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.2 FIELD: client_id
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): N/A%
+- NULL Count: 0 (0%)
+- Cardinality: 0%
+- Structured Data: YES
+- If Structured, options: 
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.3 FIELD: file_name
+- Type: TEXT
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): N/A%
+- NULL Count: 0 (0%)
+- Cardinality: 0%
+- Structured Data: YES
+- If Structured, options: 
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.4 FIELD: onedrive_path
+- Type: TEXT
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): N/A%
+- NULL Count: 0 (0%)
+- Cardinality: 0%
+- Structured Data: YES
+- If Structured, options: 
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.5 FIELD: uploaded_at
+- Type: DATETIME
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): N/A%
+- NULL Count: 0 (0%)
+- Cardinality: 0%
+- Structured Data: YES
+- If Structured, options: 
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+client_files SAMPLE DATA:
+Not enough rows for 3 samples.
+
+---
+
+1. TABLE: payment_files
+- Total Rows: 0
+- Unique client_ids: N/A (client_id column not present)
+- Duplicate Rows: 0
+
+1.1 FIELD: payment_id
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): N/A%
+- NULL Count: 0 (0%)
+- Cardinality: 0%
+- Structured Data: YES
+- If Structured, options: 
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.2 FIELD: file_id
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): N/A%
+- NULL Count: 0 (0%)
+- Cardinality: 0%
+- Structured Data: YES
+- If Structured, options: 
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.3 FIELD: linked_at
+- Type: DATETIME
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): N/A%
+- NULL Count: 0 (0%)
+- Cardinality: 0%
+- Structured Data: YES
+- If Structured, options: 
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+payment_files SAMPLE DATA:
+Not enough rows for 3 samples.
+
+---
+
+1. TABLE: payments
+- Total Rows: 867
+- Unique client_ids: 30
+- Duplicate Rows: 0
+
+1.1 FIELD: payment_id
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 100.0%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.2 FIELD: contract_id
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 3.46%
+- Structured Data: YES
+- If Structured, options: 1, 2, 3, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 31, 32, 33, 34, 35, 39
+- Foreign Key Integrity (if applicable): matched 100.0%, unmatched 0.0%
+
+1.3 FIELD: client_id
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 3.46%
+- Structured Data: YES
+- If Structured, options: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 49
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.4 FIELD: received_date
+- Type: TEXT
+- Avg Length (text fields only): 10.0
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 0 (0.0%)
+- Cardinality: 38.99%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.5 FIELD: total_assets
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 98.84%
+- NULL Count: 435 (50.17%)
+- Cardinality: 49.13%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.6 FIELD: expected_fee
+- Type: REAL
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 629 (72.55%)
+- Cardinality: 16.72%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.7 FIELD: actual_fee
+- Type: REAL
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 1 (0.12%)
+- Cardinality: 71.86%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.8 FIELD: method
+- Type: TEXT
+- Avg Length (text fields only): 11.47
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 217 (25.03%)
+- Cardinality: 0.58%
+- Structured Data: YES
+- If Structured, options: Auto - Check, Auto - ACH, Invoice - Check, Wire Transfer, Check
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.9 FIELD: notes
+- Type: TEXT
+- Avg Length (text fields only): 41.69
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 705 (81.31%)
+- Cardinality: 13.03%
+- Structured Data: NO
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.10 FIELD: valid_from
+- Type: DATETIME
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): 2025-02-24 21:37:54 to 2025-02-24 21:56:12
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 855 (98.62%)
+- Cardinality: 0.35%
+- Structured Data: YES
+- If Structured, options: 2025-02-24 21:37:54, 2025-02-24 21:38:49, 2025-02-24 21:56:12
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.11 FIELD: valid_to
+- Type: DATETIME
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): N/A%
+- NULL Count: 867 (100.0%)
+- Cardinality: 0.0%
+- Structured Data: YES
+- If Structured, options: 
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.12 FIELD: applied_start_month
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 230 (26.53%)
+- Cardinality: 1.38%
+- Structured Data: YES
+- If Structured, options: 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.13 FIELD: applied_start_month_year
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 230 (26.53%)
+- Cardinality: 0.69%
+- Structured Data: YES
+- If Structured, options: 2019, 2020, 2021, 2022, 2023, 2024
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.14 FIELD: applied_end_month
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 230 (26.53%)
+- Cardinality: 1.38%
+- Structured Data: YES
+- If Structured, options: 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.15 FIELD: applied_end_month_year
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 230 (26.53%)
+- Cardinality: 0.69%
+- Structured Data: YES
+- If Structured, options: 2019, 2020, 2021, 2022, 2023, 2024
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.16 FIELD: applied_start_quarter
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 637 (73.47%)
+- Cardinality: 0.46%
+- Structured Data: YES
+- If Structured, options: 1, 2, 3, 4
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.17 FIELD: applied_start_quarter_year
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 637 (73.47%)
+- Cardinality: 0.69%
+- Structured Data: YES
+- If Structured, options: 2023, 2024, 2019, 2020, 2021, 2022
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.18 FIELD: applied_end_quarter
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 637 (73.47%)
+- Cardinality: 0.46%
+- Structured Data: YES
+- If Structured, options: 1, 2, 3, 4
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+1.19 FIELD: applied_end_quarter_year
+- Type: INTEGER
+- Avg Length (text fields only): N/A
+- Date Range (date fields only): N/A
+- Type Consistency (excl. NULLs): 100.0%
+- NULL Count: 637 (73.47%)
+- Cardinality: 0.69%
+- Structured Data: YES
+- If Structured, options: 2023, 2024, 2019, 2020, 2021, 2022
+- Foreign Key Integrity (if applicable): matched N/A%, unmatched N/A%
+
+payments SAMPLE DATA:
+payment_id | contract_id | client_id | received_date | total_assets | expected_fee | actual_fee | method | notes | valid_from | valid_to | applied_start_month | applied_start_month_year | applied_end_month | applied_end_month_year | applied_start_quarter | applied_start_quarter_year | applied_end_quarter | applied_end_quarter_year
+115 | 2 | 2 | 2023-05-19 | None | None | 1543.31 | Auto - ACH | None | None | None | 4 | 2023 | 4 | 2023 | None | None | None | None
+116 | 2 | 2 | 2023-06-16 | None | None | 1539.75 | Auto - ACH | None | None | None | 5 | 2023 | 5 | 2023 | None | None | None | None
+117 | 2 | 2 | 2023-07-21 | None | None | 1618.5 | Auto - ACH | None | None | None | 6 | 2023 | 6 | 2023 | None | None | None | None
+118 | 2 | 2 | 2023-08-18 | None | None | 1654.2 | Auto - ACH | None | None | None | 7 | 2023 | 7 | 2023 | None | None | None | None
+119 | 2 | 2 | 2023-09-15 | None | None | 1628.76 | Auto - ACH | None | None | None | 8 | 2023 | 8 | 2023 | None | None | None | None
+...
+payment_id | contract_id | client_id | received_date | total_assets | expected_fee | actual_fee | method | notes | valid_from | valid_to | applied_start_month | applied_start_month_year | applied_end_month | applied_end_month_year | applied_start_quarter | applied_start_quarter_year | applied_end_quarter | applied_end_quarter_year
+508 | 15 | 15 | 2021-03-08 | None | 294.84 | 294.84 | Auto - Check | None | None | None | 2 | 2021 | 2 | 2021 | None | None | None | None
+509 | 15 | 15 | 2021-04-12 | 671961 | 279.98 | 279.98 | Auto - Check | None | None | None | 3 | 2021 | 3 | 2021 | None | None | None | None
+510 | 15 | 15 | 2021-05-10 | 726112 | 302.55 | 302.55 | Auto - Check | None | None | None | 4 | 2021 | 4 | 2021 | None | None | None | None
+511 | 15 | 15 | 2021-06-08 | 745825 | 310.76 | 310.76 | Auto - Check | None | None | None | 5 | 2021 | 5 | 2021 | None | None | None | None
+512 | 15 | 15 | 2021-07-12 | 784464 | 326.86 | 326.86 | Auto - Check | None | None | None | 6 | 2021 | 6 | 2021 | None | None | None | None
+...
+payment_id | contract_id | client_id | received_date | total_assets | expected_fee | actual_fee | method | notes | valid_from | valid_to | applied_start_month | applied_start_month_year | applied_end_month | applied_end_month_year | applied_start_quarter | applied_start_quarter_year | applied_end_quarter | applied_end_quarter_year
+372 | 10 | 10 | 2023-06-20 | 2044578 | None | 1363.0 | None | None | None | None | 5 | 2023 | 5 | 2023 | None | None | None | None
+373 | 10 | 10 | 2023-07-21 | 2138345 | None | 1425.64 | None | None | None | None | 6 | 2023 | 6 | 2023 | None | None | None | None
+374 | 10 | 10 | 2023-08-21 | 2248503 | None | 1499.08 | None | None | None | None | 7 | 2023 | 7 | 2023 | None | None | None | None
+375 | 10 | 10 | 2023-09-19 | 2262255 | None | 1508.18 | None | None | None | None | 8 | 2023 | 8 | 2023 | None | None | None | None
+376 | 10 | 10 | 2023-10-23 | 2280817 | None | 1520.49 | None | None | None | None | 9 | 2023 | 9 | 2023 | None | None | None | None
+
+---
+
