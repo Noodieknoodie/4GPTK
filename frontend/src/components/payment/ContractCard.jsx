@@ -5,8 +5,14 @@ import { formatCurrency } from '../../lib/feeUtils';
 const ContractCard = ({ contract, isLoading }) => {
   if (isLoading) {
     return (
-      <Card title="Contract Details">
-        <div className="animate-pulse">
+      <Card 
+        variant="default"
+        elevation="default"
+      >
+        <div className="pb-2">
+          <h3 className="text-base font-semibold text-dark-700 border-b border-light-300 pb-2">Contract Details</h3>
+        </div>
+        <div className="animate-pulse mt-3">
           <div className="grid grid-cols-1 gap-2">
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="flex justify-between py-1">
@@ -22,7 +28,13 @@ const ContractCard = ({ contract, isLoading }) => {
 
   if (!contract) {
     return (
-      <Card title="Contract Details">
+      <Card 
+        variant="default"
+        elevation="default"
+      >
+        <div className="pb-2">
+          <h3 className="text-base font-semibold text-dark-700 border-b border-light-300 pb-2">Contract Details</h3>
+        </div>
         <div className="py-6 text-center text-gray-500">
           No contract information available
         </div>
@@ -52,20 +64,20 @@ const ContractCard = ({ contract, isLoading }) => {
       value:
         contract.fee_type === 'flat'
           ? formatCurrency(contract.flat_rate)
-          : `${(contract.percent_rate * 100).toFixed(4)}%`,
+          : `${(contract.percent_rate * 100).toFixed(3)}%`,
     },
   ];
 
   return (
-    <Card>
+    <Card variant="default" elevation="default">
       <div className="pb-2">
-        <h3 className="text-sm font-bold text-gray-800">Contract Details</h3>
+        <h3 className="text-base font-semibold text-dark-700 border-b border-light-300 pb-2">Contract Details</h3>
       </div>
-      <dl className="grid grid-cols-1 gap-1 text-sm">
+      <dl className="grid grid-cols-1 gap-2 text-sm mt-4">
         {details.map((item, idx) => (
-          <div key={idx} className="flex justify-between py-1">
-            <dt className="text-gray-500">{item.label}</dt>
-            <dd className="font-medium text-gray-900">{item.value}</dd>
+          <div key={idx} className="flex justify-between py-1.5 px-2 -mx-2 rounded">
+            <dt className="text-dark-500">{item.label}</dt>
+            <dd className="font-medium text-dark-700">{item.value}</dd>
           </div>
         ))}
       </dl>

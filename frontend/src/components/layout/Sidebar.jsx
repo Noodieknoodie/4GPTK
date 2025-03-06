@@ -26,6 +26,67 @@ const Sidebar = ({ clients = [], isLoading = false }) => {
   
   const groupedClients = groupClientsByProvider();
   
+  // Get the status icon based on compliance status
+  const StatusIcon = ({ status }) => {
+    if (status === 'green') {
+      return (
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width="16" 
+          height="16" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="2" 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          className="text-green-500"
+        >
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      );
+    } else if (status === 'yellow') {
+      return (
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width="16" 
+          height="16" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="2" 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          className="text-yellow-500"
+        >
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      );
+    } else {
+      return (
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width="16" 
+          height="16" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="2" 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          className="text-red-500"
+        >
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      );
+    }
+  };
+  
   if (isLoading) {
     return (
       <div className="w-80 border-r border-gray-200 bg-white flex flex-col h-full">
@@ -52,7 +113,7 @@ const Sidebar = ({ clients = [], isLoading = false }) => {
       <div className="p-4 border-b border-gray-200">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">Clients</h2>
         <ClientSearch clients={clients} isLoading={isLoading} />
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mt-3">
           <span className="text-sm font-medium text-gray-700">View by Provider</span>
           <button 
             className={`h-5 w-10 rounded-full relative ${showByProvider ? 'bg-blue-600' : 'bg-gray-200'}`}
@@ -77,39 +138,17 @@ const Sidebar = ({ clients = [], isLoading = false }) => {
             {providerClients.map(client => (
               <button
                 key={client.client_id}
-                className={`w-full justify-start py-2 px-3 mb-1 text-left rounded transition-colors ${
+                className={`w-full flex items-center py-2 px-3 mb-1 text-left rounded transition-colors ${
                   selectedClientId === client.client_id 
-                    ? 'bg-primary-50 text-primary-800 border-l-4 border-primary-600' 
+                    ? 'bg-gray-100 border-l-4 border-primary-600 font-medium text-dark-700' 
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
                 onClick={() => setSelectedClientId(client.client_id)}
               >
-                <div className="flex items-center w-full">
-                  <span className="mr-3">
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      width="16" 
-                      height="16" 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      strokeWidth="2" 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      className={
-                        client.compliance_status === 'green' 
-                          ? 'text-green-500' 
-                          : client.compliance_status === 'yellow' 
-                            ? 'text-yellow-500' 
-                            : 'text-red-500'
-                      }
-                    >
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                      <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                  </span>
-                  <span className="truncate flex-grow">{client.display_name}</span>
-                </div>
+                <span className="truncate flex-grow">{client.display_name}</span>
+                <span className="ml-2 flex-shrink-0">
+                  <StatusIcon status={client.compliance_status} />
+                </span>
               </button>
             ))}
           </div>

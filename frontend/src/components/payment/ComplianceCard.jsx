@@ -6,17 +6,17 @@ import { generateFeeReferences } from '../../lib/feeUtils';
 const ComplianceCard = ({ client, contract, isLoading }) => {
   if (isLoading) {
     return (
-      <Card title="Compliance Status">
-        <div className="animate-pulse flex flex-col md:flex-row gap-4">
+      <Card variant="default" elevation="default">
+        <div className="pb-2">
+          <h3 className="text-base font-semibold text-dark-700 border-b border-light-300 pb-2">Compliance Status</h3>
+        </div>
+        <div className="animate-pulse flex flex-col md:flex-row gap-4 mt-3">
           <div className="flex-1">
             <div className="h-10 bg-gray-200 rounded w-2/3 mb-4"></div>
             <div className="space-y-3">
               <div className="h-4 bg-gray-200 rounded"></div>
               <div className="h-4 bg-gray-200 rounded"></div>
             </div>
-          </div>
-          <div className="md:w-2/5">
-            <div className="h-20 bg-gray-200 rounded"></div>
           </div>
         </div>
       </Card>
@@ -58,75 +58,58 @@ const ComplianceCard = ({ client, contract, isLoading }) => {
   const getStatusText = () => {
     if (status === 'green') return 'Compliant';
     if (status === 'yellow') return 'Attention Needed';
-    return 'Non-Compliant';
+    return 'Payment Overdue';
   };
   
-  const getStatusColor = () => {
-    if (status === 'green') return 'text-green-700';
-    if (status === 'yellow') return 'text-yellow-700';
-    return 'text-red-700';
+  const getStatusBgColor = () => {
+    if (status === 'green') return 'bg-green-50 border-green-200 text-green-700';
+    if (status === 'yellow') return 'bg-yellow-50 border-yellow-200 text-yellow-700';
+    return 'bg-red-50 border-red-200 text-red-700';
   };
   
   const feeReferences = contract ? generateFeeReferences(contract) : null;
 
   return (
-    <Card>
+    <Card variant="default" elevation="default">
       <div className="pb-2">
-        <h3 className="text-sm font-bold text-gray-800">Compliance Status</h3>
+        <h3 className="text-base font-semibold text-dark-700 border-b border-light-300 pb-2">Payment Status</h3>
       </div>
-      <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex flex-col gap-4 mt-4">
         <div className="flex-1">
-          <div className="flex items-center gap-3 mb-4">
+          <div className={`flex items-center gap-3 p-3 rounded border ${getStatusBgColor()}`}>
             <StatusIcon />
-            <span className={`font-medium ${getStatusColor()}`}>
-              {getStatusText()}
-            </span>
+            <span className="font-medium">{getStatusText()}</span>
           </div>
-          <div className="grid grid-cols-1 gap-3">
-            {contract && (
-              <div className="flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-                <span className="text-sm text-gray-600">
-                  {contract.payment_schedule === 'monthly' ? 'Monthly' : 'Quarterly'} payment schedule
-                </span>
+          
+          {/* Simplified contract info */}
+          {contract && (
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-sm">
+              <div className="text-dark-500">
+                <span className="font-medium">Schedule:</span> {contract.payment_schedule === 'monthly' ? 'Monthly' : 'Quarterly'}
               </div>
-            )}
-            {contract && (
-              <div className="flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                  <line x1="1" y1="10" x2="23" y2="10"></line>
-                </svg>
-                <span className="text-sm text-gray-600">
-                  {contract.fee_type === 'flat' 
-                    ? `Flat fee of ${formatCurrency(contract.flat_rate)}`
-                    : `Percentage fee of ${(contract.percent_rate * 100).toFixed(4)}%`}
-                </span>
+              <div className="text-dark-500">
+                <span className="font-medium">Fee Type:</span> {contract.fee_type === 'flat' ? 'Flat' : 'Percentage'}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
         
+        {/* Fee reference is now more compact */}
         {feeReferences && (
-          <div className="md:w-2/5">
-            <div className="bg-gray-50 rounded-md p-3">
-              <h4 className="text-xs font-medium text-gray-500 mb-2">Fee Reference</h4>
-              <div className="grid grid-cols-1 gap-2 text-xs">
-                <div>
-                  <span className="text-gray-500">Monthly:</span>
-                  <span className="font-medium ml-1">{feeReferences.monthly}</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Quarterly:</span>
-                  <span className="font-medium ml-1">{feeReferences.quarterly}</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Annually:</span>
-                  <span className="font-medium ml-1">{feeReferences.annual}</span>
-                </div>
+          <div className="mt-2 border-t border-light-300 pt-3">
+            <h4 className="text-sm font-medium text-dark-600 mb-2">Fee Reference</h4>
+            <div className="grid grid-cols-3 gap-2 text-sm">
+              <div className="bg-light-200 p-2 rounded text-center">
+                <div className="text-xs text-dark-500">Monthly</div>
+                <div className="font-medium text-dark-700">{feeReferences.monthly}</div>
+              </div>
+              <div className="bg-light-200 p-2 rounded text-center">
+                <div className="text-xs text-dark-500">Quarterly</div>
+                <div className="font-medium text-dark-700">{feeReferences.quarterly}</div>
+              </div>
+              <div className="bg-light-200 p-2 rounded text-center">
+                <div className="text-xs text-dark-500">Annual</div>
+                <div className="font-medium text-dark-700">{feeReferences.annual}</div>
               </div>
             </div>
           </div>

@@ -12,10 +12,11 @@ const Card = ({
   ...props 
 }) => {
   const variantStyles = {
-    default: 'bg-light-card',
-    purple: 'bg-light-card border-l-4 border-primary-600',
+    default: 'bg-white border-l-4 border-light-400',
+    purple: 'bg-white border-l-4 border-primary-600',
     accent: 'bg-primary-50 border-b-2 border-primary-300',
-    dark: 'bg-dark-card text-light-300',
+    dark: 'bg-dark-card text-light-300 border-l-4 border-dark-accent',
+    premium: 'bg-white border-l-4 border-primary-400',
   };
 
   const sizeStyles = {
@@ -27,7 +28,7 @@ const Card = ({
   const elevationStyles = {
     flat: 'shadow-sm',
     default: 'shadow-card',
-    raised: 'shadow-lg',
+    raised: 'shadow-md',
   };
 
   return (
@@ -35,7 +36,7 @@ const Card = ({
       className={`
         ${variantStyles[variant] || variantStyles.default} 
         ${elevationStyles[elevation] || elevationStyles.default}
-        rounded-lg transition-all duration-200 ease-in-out 
+        rounded-lg
         ${className}
       `} 
       {...props}

@@ -10,12 +10,12 @@ const Button = ({
   ...props 
 }) => {
   const variantStyles = {
-    primary: 'bg-primary-600 text-white hover:bg-primary-700 shadow-sm',
-    secondary: 'bg-white border border-light-500 text-dark-500 hover:bg-light-300 shadow-sm',
-    outline: 'bg-transparent border border-primary-600 text-primary-600 hover:bg-primary-50 shadow-sm',
-    dark: 'bg-dark-600 text-white hover:bg-dark-700 shadow-sm',
-    ghost: 'text-dark-500 hover:bg-light-300',
-    danger: 'bg-status-error text-white hover:bg-red-700 shadow-sm',
+    primary: 'bg-primary-600 text-white hover:bg-primary-700 hover:shadow-sm shadow-sm',
+    secondary: 'bg-white border border-light-500 text-dark-500 hover:bg-light-200 hover:border-light-500 hover:text-dark-600 shadow-sm',
+    outline: 'bg-transparent border border-primary-600 text-primary-600 hover:bg-primary-50 hover:border-primary-700 hover:text-primary-700 shadow-sm',
+    dark: 'bg-dark-600 text-white hover:bg-dark-700 hover:shadow-sm shadow-sm',
+    ghost: 'text-dark-500 hover:bg-light-300 hover:text-dark-600',
+    danger: 'bg-status-error text-white hover:bg-red-700 hover:shadow-sm shadow-sm',
   };
   
   const sizeStyles = {
@@ -32,7 +32,7 @@ const Button = ({
         flex items-center justify-center gap-2
         rounded-md font-medium 
         transition-all duration-200 ease-in-out
-        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500
+        focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary-500
         ${className}
       `}
       {...props}

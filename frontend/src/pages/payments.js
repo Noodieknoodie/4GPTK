@@ -6,10 +6,12 @@ import PaymentForm from '../components/payment/PaymentForm';
 import PaymentHistory from '../components/payment/PaymentHistory';
 import api from '../lib/api';
 import useStore from '../store';
+import { useClient } from '../hooks/useClientData';
 
 const PaymentsPage = () => {
   const { selectedClientId, setSelectedClientId, documentViewerOpen, setDocumentViewerOpen } = useStore();
   const [apiHealthy, setApiHealthy] = useState(true);
+  const { data: clientDetails } = useClient(selectedClientId);
 
   useEffect(() => {
     // Check API health when component mounts
@@ -86,10 +88,13 @@ const PaymentsPage = () => {
     return (
       <div className="space-y-12">
         <div className="flex items-center justify-between mb-8">
-          <div className="relative">
-            <div className="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-primary-300 via-primary-600 to-primary-800"></div>
-            <div className="pl-4">
-              <div className="text-sm text-dark-400 mb-1 uppercase tracking-wider">Client Account</div>
+          <div>
+            <div>
+              {clientDetails?.full_name && (
+                <div className="text-sm text-dark-400 mb-1 uppercase tracking-wider">
+                  {clientDetails.full_name}
+                </div>
+              )}
               <h1 className="text-3xl font-bold text-dark-700">
                 {isLoading ? 'Loading...' : client?.display_name || 'Client Company Name'}
               </h1>

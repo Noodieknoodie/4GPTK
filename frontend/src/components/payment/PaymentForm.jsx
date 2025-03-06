@@ -5,13 +5,14 @@ import Select from '../ui/Select';
 import DatePicker from '../ui/DatePicker';
 import Button from '../ui/Button';
 import { useCreatePayment, useUpdatePayment, useAvailablePeriods } from '../../hooks/usePaymentData';
-import { useClientContract } from '../../hooks/useClientData';
+import { useClientContract, useClient } from '../../hooks/useClientData';
 import { formatCurrency } from '../../lib/feeUtils';
 import useStore from '../../store';
 
 const PaymentForm = ({ clientId }) => {
   const { editingPayment, clearEditingPayment, isFormDirty, setFormDirty } = useStore();
   const { data: contract, isLoading: isContractLoading } = useClientContract(clientId);
+  const { data: client, isLoading: isClientLoading } = useClient(clientId);
   const { data: periodsData, isLoading: isPeriodsLoading } = useAvailablePeriods(
     contract?.contract_id, 
     clientId
@@ -280,12 +281,34 @@ const PaymentForm = ({ clientId }) => {
   
   return (
     <Card 
-      title={editingPayment ? "Edit Payment" : "Add Payment"} 
-      className="animate-fade-in form-container pt-6"
-      elevation="raised"
-      variant={editingPayment ? "purple" : "default"}
-      titleClassName={editingPayment ? "bg-primary-50 text-primary-700" : ""}
+      className="bg-white shadow-md"
+      variant="default"
+      elevation="default"
     >
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h2 className="text-xl font-semibold text-dark-700">
+            {editingPayment ? 'Edit Payment' : 'Add Payment'}
+            {!isClientLoading && client && (
+              <span className="ml-2 text-primary-600">
+                for {client.display_name}
+              </span>
+            )}
+          </h2>
+        </div>
+        {editingPayment && (
+          <Button 
+            variant="outline"
+            onClick={() => {
+              clearEditingPayment();
+              resetForm();
+            }}
+          >
+            Cancel Edit
+          </Button>
+        )}
+      </div>
+      
       {isContractLoading ? (
         <div className="flex justify-center py-8">
           <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
@@ -297,8 +320,8 @@ const PaymentForm = ({ clientId }) => {
       ) : (
         <>
         {showConfirmDialog && (
-          <div className="fixed inset-0 bg-dark-800 bg-opacity-75 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-lg">
+          <div className="fixed inset-0 bg-dark-800 bg-opacity-75 flex items-center justify-center z-50 backdrop-blur-sm">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-lg border border-light-400">
               <h3 className="text-lg font-medium mb-4">Unsaved Changes</h3>
               <p className="mb-6 text-gray-600">
                 You have unsaved changes. Are you sure you want to clear the form?
@@ -306,14 +329,14 @@ const PaymentForm = ({ clientId }) => {
               <div className="flex justify-end space-x-3">
                 <button
                   type="button"
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 hover:border-primary-300 hover:text-primary-600 transition-all duration-200"
                   onClick={cancelReset}
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
-                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 hover:shadow-sm transition-all duration-200"
                   onClick={resetForm}
                 >
                   Clear Form
@@ -323,7 +346,7 @@ const PaymentForm = ({ clientId }) => {
           </div>
         )}
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <DatePicker
               label="Received Date"

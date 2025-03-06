@@ -3,8 +3,10 @@ import ContractCard from './ContractCard';
 import PaymentInfoCard from './PaymentInfoCard';
 import ComplianceCard from './ComplianceCard';
 import { useClient, useClientContract, useClientSummary } from '../../hooks/useClientData';
+import useStore from '../../store';
 
 const ClientDashboard = ({ clientId }) => {
+  const { documentViewerOpen } = useStore();
   const {
     data: client,
     isLoading: isClientLoading,
@@ -34,9 +36,14 @@ const ClientDashboard = ({ clientId }) => {
     );
   }
   
+  // Determine layout based on document viewer state
+  const cardLayoutClass = documentViewerOpen 
+    ? "grid grid-cols-1 lg:grid-cols-2 gap-6" 
+    : "grid grid-cols-1 md:grid-cols-3 gap-6";
+  
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className={cardLayoutClass}>
         <ContractCard 
           contract={contract} 
           isLoading={isContractLoading} 
@@ -49,6 +56,7 @@ const ClientDashboard = ({ clientId }) => {
           isLoading={isLoading}
         />
         
+        {/* When document viewer is open and on smaller screens, this card moves below */}
         <ComplianceCard 
           client={client}
           contract={contract}

@@ -21,24 +21,23 @@ const Select = ({
   return (
     <div className={`space-y-1.5 w-full ${className}`}>
       {label && (
-        <label className="text-sm font-medium text-dark-500 flex items-center">
+        <label className="text-sm font-medium text-dark-600 flex items-center">
           {label}
           {required && <span className="text-status-error ml-1">*</span>}
         </label>
       )}
-      <div className="relative w-full">
+      <div className="relative w-full group">
         <select
           value={value || ''}
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
           className={`
-            w-full rounded-md appearance-none 
+            w-full rounded-md appearance-none shadow-sm
             ${sizeStyles[size] || sizeStyles.default}
             transition-all duration-200 ease-in-out
-            ${error ? 'border-status-error' : 'border-light-500'}
+            ${error ? 'border-status-error' : 'border-light-400 group-hover:border-light-500'}
             ${disabled ? 'bg-light-300 text-dark-400 cursor-not-allowed' : 'bg-light-100 text-dark-600'}
-            focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
-            hover:border-primary-300
+            focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent
           `}
         >
           <option value="" disabled>
@@ -61,11 +60,14 @@ const Select = ({
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="text-dark-400"
+            className="text-dark-400 group-hover:text-dark-500 transition-colors duration-200"
           >
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </div>
+        {!error && !disabled && (
+          <div className="absolute inset-0 border border-transparent rounded-md pointer-events-none group-hover:border-light-400 transition-all duration-200"></div>
+        )}
       </div>
       {error && (
         <p className="text-status-error text-xs mt-1 animate-fade-in">{error}</p>
