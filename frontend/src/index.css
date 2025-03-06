@@ -1,0 +1,114 @@
+/* Form focus effect */
+.form-focus {
+  position: relative;
+  z-index: 50;
+}
+
+.form-focus::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(2px);
+  z-index: 40;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.form-focus > * {
+  position: relative;
+  z-index: 50;
+  transform: translateY(0);
+  transition: transform 0.2s ease-out;
+  animation: cardRaise 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes cardRaise {
+  from { transform: translateY(10px); }
+  to { transform: translateY(0); }
+}
+
+/* Comprehensive vertical spacing reduction */
+/* Global container spacing */
+.card-container > * {
+  margin-bottom: 0.75rem !important; /* Reduced from default 1rem */
+}
+
+.card-container > *:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Card internal spacing */
+.card {
+  padding: 0.875rem !important;
+}
+
+/* Form spacing */
+.space-y-5 > * {
+  margin-top: 1rem !important;
+  margin-bottom: 0 !important;
+}
+
+.space-y-5 > *:first-child {
+  margin-top: 0 !important;
+}
+
+/* Header spacing */
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: 0.5rem !important;
+}
+
+/* Padding classes */
+.py-3 {
+  padding-top: 0.625rem !important;
+  padding-bottom: 0.625rem !important;
+}
+
+.py-4 {
+  padding-top: 0.875rem !important;
+  padding-bottom: 0.875rem !important;
+}
+
+.py-5 {
+  padding-top: 1.125rem !important;
+  padding-bottom: 1.125rem !important;
+}
+
+.p-5 {
+  padding: 1.125rem !important;
+}
+
+.p-4 {
+  padding: 0.875rem !important;
+}
+
+/* Margin classes */
+.mt-6 {
+  margin-top: 1.25rem !important;
+}
+
+.mt-5 {
+  margin-top: 1.125rem !important;
+}
+
+.mt-4 {
+  margin-top: 0.875rem !important;
+}
+
+.mb-4 {
+  margin-bottom: 0.875rem !important;
+}
+
+.mb-6 {
+  margin-bottom: 1.25rem !important;
+}
+
+.my-4 {
+  margin-top: 0.875rem !important;
+  margin-bottom: 0.875rem !important;
+} 

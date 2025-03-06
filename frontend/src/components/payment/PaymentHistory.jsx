@@ -53,8 +53,8 @@ const PaymentHistory = ({ clientId }) => {
   }
   
   return (
-    <div className="animate-fade-in mt-6">
-      <div className="flex items-center justify-between mb-4">
+    <div className="animate-fade-in mt-3">
+      <div className="flex items-center justify-between mb-2">
         <h2 className="text-xl font-semibold text-dark-700 flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-dark-500 mr-2">
             <path d="M19 5H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2z"></path>
@@ -80,11 +80,11 @@ const PaymentHistory = ({ clientId }) => {
       </div>
       
       {isLoading ? (
-        <div className="flex justify-center py-8">
+        <div className="flex justify-center py-5">
           <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
         </div>
       ) : payments.length === 0 ? (
-        <div className="bg-white border border-light-300 p-6 rounded-lg text-center text-dark-500 shadow-sm">
+        <div className="bg-white border border-light-300 p-5 rounded-lg text-center text-dark-500 shadow-sm">
           No payment records found.
         </div>
       ) : (
@@ -97,15 +97,15 @@ const PaymentHistory = ({ clientId }) => {
             <table className="min-w-full table-fixed border-collapse">
               <thead>
                 <tr className="bg-light-200 border-b border-light-300">
-                  <th className="w-[2%] py-3 px-1 text-left text-xs font-medium text-dark-600 uppercase tracking-wider"></th>
-                  <th className="w-[11%] py-3 px-2 text-left text-xs font-medium text-dark-600 uppercase tracking-wider">Date</th>
-                  <th className="w-[17%] py-3 px-2 text-left text-xs font-medium text-dark-600 uppercase tracking-wider">Provider</th>
-                  <th className="w-[12%] py-3 px-2 text-left text-xs font-medium text-dark-600 uppercase tracking-wider">Period</th>
-                  <th className="w-[12%] py-3 px-2 text-left text-xs font-medium text-dark-600 uppercase tracking-wider">AUM</th>
-                  <th className="w-[13%] py-3 px-2 text-left text-xs font-medium text-dark-600 uppercase tracking-wider">Expected</th>
-                  <th className="w-[13%] py-3 px-2 text-left text-xs font-medium text-dark-600 uppercase tracking-wider">Actual</th>
-                  <th className="w-[14%] py-3 px-2 text-left text-xs font-medium text-dark-600 uppercase tracking-wider">Variance</th>
-                  <th className="w-[6%] py-3 px-1 text-center text-xs font-medium text-dark-600 uppercase tracking-wider">Actions</th>
+                  <th className="w-[2%] py-2.5 px-1 text-left text-xs font-medium text-dark-600 uppercase tracking-wider"></th>
+                  <th className="w-[11%] py-2.5 px-2 text-left text-xs font-medium text-dark-600 uppercase tracking-wider">Date</th>
+                  <th className="w-[17%] py-2.5 px-2 text-left text-xs font-medium text-dark-600 uppercase tracking-wider">Provider</th>
+                  <th className="w-[12%] py-2.5 px-2 text-left text-xs font-medium text-dark-600 uppercase tracking-wider">Period</th>
+                  <th className="w-[12%] py-2.5 px-2 text-left text-xs font-medium text-dark-600 uppercase tracking-wider">AUM</th>
+                  <th className="w-[13%] py-2.5 px-2 text-left text-xs font-medium text-dark-600 uppercase tracking-wider">Expected</th>
+                  <th className="w-[13%] py-2.5 px-2 text-left text-xs font-medium text-dark-600 uppercase tracking-wider">Actual</th>
+                  <th className="w-[14%] py-2.5 px-2 text-left text-xs font-medium text-dark-600 uppercase tracking-wider">Variance</th>
+                  <th className="w-[6%] py-2.5 px-1 text-center text-xs font-medium text-dark-600 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-light-300">
@@ -263,7 +263,7 @@ const PaymentHistory = ({ clientId }) => {
                       <tr>
                         <td className="py-0"></td>
                         <td colSpan="8" className="py-0">
-                          <div className="bg-light-200 p-3 my-1 rounded-md">
+                          <div className="bg-light-200 p-2 my-1 rounded-md">
                             <h4 className="text-sm font-medium text-dark-700 mb-2">
                               Payment Distribution
                             </h4>
@@ -293,7 +293,7 @@ const PaymentHistory = ({ clientId }) => {
           </div>
           
           {/* Pagination */}
-          <div className="flex items-center justify-between px-5 py-3 bg-light-200 border-t border-light-300">
+          <div className="flex items-center justify-between px-4 py-2 bg-light-200 border-t border-light-300">
             <div className="text-sm text-dark-500">
               Showing {payments.length} payments
             </div>
@@ -327,9 +327,9 @@ const PaymentHistory = ({ clientId }) => {
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-dark-800 bg-opacity-75 flex items-center justify-center z-50">
           <Card className="max-w-md w-full" elevation="default">
-            <div className="p-5">
-              <h3 className="text-lg font-medium mb-3 text-dark-700">Confirm Delete</h3>
-              <p className="mb-4 text-dark-500">
+            <div className="p-4">
+              <h3 className="text-lg font-medium mb-2 text-dark-700">Confirm Delete</h3>
+              <p className="mb-3 text-dark-500">
                 Are you sure you want to delete this payment? This action cannot be undone.
               </p>
               <div className="flex justify-end space-x-3">

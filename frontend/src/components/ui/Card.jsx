@@ -11,34 +11,30 @@ const Card = ({
   elevation = 'default',
   ...props 
 }) => {
-  const variantStyles = {
-    default: 'bg-white border-l-4 border-light-400',
-    purple: 'bg-white border-l-4 border-primary-600',
-    accent: 'bg-primary-50 border-b-2 border-primary-300',
-    dark: 'bg-dark-card text-light-300 border-l-4 border-dark-accent',
-    premium: 'bg-white border-l-4 border-primary-400',
-  };
-
-  const sizeStyles = {
-    sm: 'p-3',
-    default: 'p-5',
-    lg: 'p-6',
-  };
-
-  const elevationStyles = {
-    flat: 'shadow-sm',
-    default: 'shadow-card',
+  const elevationClasses = {
+    none: '',
+    default: 'shadow-sm',
     raised: 'shadow-md',
+    floating: 'shadow-lg',
   };
+
+  const variantClasses = {
+    default: 'bg-white border border-light-300',
+    outlined: 'bg-white border border-light-300',
+    filled: 'bg-light-100 border border-light-200',
+  };
+
+  // Default to p-3 (smaller than before) if no padding class is specified in className
+  const hasPaddingClass = /\bp-\d+\b/.test(className);
+  const paddingClass = hasPaddingClass ? '' : 'p-3';
+
+  const baseClasses = 'rounded-lg';
+  const elevationClass = elevationClasses[elevation] || elevationClasses.default;
+  const variantClass = variantClasses[variant] || variantClasses.default;
 
   return (
     <div 
-      className={`
-        ${variantStyles[variant] || variantStyles.default} 
-        ${elevationStyles[elevation] || elevationStyles.default}
-        rounded-lg
-        ${className}
-      `} 
+      className={`${baseClasses} ${elevationClass} ${variantClass} ${paddingClass} ${className}`}
       {...props}
     >
       {title && (
@@ -46,7 +42,7 @@ const Card = ({
           <h3 className="text-lg">{title}</h3>
         </div>
       )}
-      <div className={`${sizeStyles[size] || sizeStyles.default} ${bodyClassName}`}>
+      <div className={`${size} ${bodyClassName}`}>
         {children}
       </div>
     </div>
