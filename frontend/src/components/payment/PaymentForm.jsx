@@ -279,238 +279,256 @@ const PaymentForm = ({ clientId }) => {
   const isSubmitting = createPaymentMutation.isLoading || updatePaymentMutation.isLoading;
   
   return (
-    <Card title={editingPayment ? "Edit Payment" : "Add Payment"}>
-      {showConfirmDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-lg">
-            <h3 className="text-lg font-medium mb-4">Unsaved Changes</h3>
-            <p className="mb-6 text-gray-600">
-              You have unsaved changes. Are you sure you want to clear the form?
-            </p>
-            <div className="flex justify-end space-x-3">
-              <button
-                type="button"
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-                onClick={cancelReset}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-                onClick={resetForm}
-              >
-                Clear Form
-              </button>
-            </div>
-          </div>
+    <Card 
+      title={editingPayment ? "Edit Payment" : "Add Payment"} 
+      className="animate-fade-in form-container pt-6"
+      elevation="raised"
+      variant={editingPayment ? "purple" : "default"}
+      titleClassName={editingPayment ? "bg-primary-50 text-primary-700" : ""}
+    >
+      {isContractLoading ? (
+        <div className="flex justify-center py-8">
+          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
         </div>
-      )}
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <DatePicker
-            label="Received Date"
-            value={formValues.received_date}
-            onChange={(value) => handleInputChange('received_date', value)}
-            required
-            disabled={isDisabled}
-            error={formErrors.received_date}
-          />
-          
-          <div className="space-y-2 w-full">
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">Applied Period</label>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-500">Single</span>
+      ) : !contract ? (
+        <div className="text-center py-8 text-dark-500">
+          Please select a client to add payment details
+        </div>
+      ) : (
+        <>
+        {showConfirmDialog && (
+          <div className="fixed inset-0 bg-dark-800 bg-opacity-75 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-lg">
+              <h3 className="text-lg font-medium mb-4">Unsaved Changes</h3>
+              <p className="mb-6 text-gray-600">
+                You have unsaved changes. Are you sure you want to clear the form?
+              </p>
+              <div className="flex justify-end space-x-3">
                 <button
                   type="button"
-                  className={`h-5 w-10 rounded-full relative ${
-                    formValues.is_split_payment ? 'bg-blue-600' : 'bg-gray-200'
-                  }`}
-                  onClick={handleSplitToggle}
-                  disabled={isDisabled}
+                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  onClick={cancelReset}
                 >
-                  <div
-                    className={`absolute w-3 h-3 rounded-full bg-white top-1 transition-transform ${
-                      formValues.is_split_payment ? 'translate-x-5' : 'translate-x-1'
-                    }`}
-                  ></div>
+                  Cancel
                 </button>
-                <span className="text-sm text-gray-500">Split</span>
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                  onClick={resetForm}
+                >
+                  Clear Form
+                </button>
               </div>
             </div>
-            
-            <div className={`${formValues.is_split_payment ? 'grid grid-cols-2 gap-2' : 'w-full'}`}>
-              <Select
-                options={periodOptions}
-                value={formValues.start_period}
-                onChange={(value) => handleInputChange('start_period', value)}
-                placeholder="Select period"
-                disabled={isDisabled || isPeriodsLoading}
-                required
-                error={formErrors.start_period}
-              />
-              
-              {formValues.is_split_payment && (
-                <Select
-                  options={periodOptions}
-                  value={formValues.end_period}
-                  onChange={(value) => handleInputChange('end_period', value)}
-                  placeholder="End period"
-                  disabled={isDisabled || isPeriodsLoading}
-                  required
-                  error={formErrors.end_period}
-                />
-              )}
-            </div>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <Input
-            label="Assets Under Management"
-            type="text"
-            value={formValues.total_assets}
-            onChange={(value) => handleInputChange('total_assets', value)}
-            placeholder="Enter AUM (optional)"
-            prefix="$"
-            disabled={isDisabled}
-          />
-          
-          <Input
-            label="Payment Amount"
-            type="text"
-            value={formValues.actual_fee}
-            onChange={(value) => handleInputChange('actual_fee', value)}
-            placeholder="Enter payment amount"
-            prefix="$"
-            required
-            disabled={isDisabled}
-            error={formErrors.actual_fee}
-          />
-          
-          <Select
-            label="Payment Method"
-            options={methodOptions}
-            value={formValues.method}
-            onChange={(value) => handleInputChange('method', value)}
-            placeholder="Select method (optional)"
-            disabled={isDisabled}
-          />
-        </div>
-        
-        <div>
-          <button
-            type="button"
-            className="flex items-center text-sm font-medium text-gray-700 mb-2"
-            onClick={() => setShowAdvanced(!showAdvanced)}
-            disabled={isDisabled}
-          >
-            Notes & Attachments
-            <svg
-              className={`ml-2 h-4 w-4 transition-transform ${
-                showAdvanced ? 'rotate-180' : ''
-              }`}
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </button>
-          
-          {showAdvanced && (
-            <div className="space-y-3 p-3 bg-gray-50 rounded-md">
-              <Input
-                label="Notes"
-                type="text"
-                value={formValues.notes}
-                onChange={(value) => handleInputChange('notes', value)}
-                placeholder="Enter any notes about this payment"
-                disabled={isDisabled}
-              />
-              
-              <div className="mt-2">
-                <p className="text-sm text-gray-500 mb-2">Attachments</p>
-                <p className="text-xs text-gray-400">
-                  File upload functionality will be implemented in a future update.
-                </p>
-              </div>
-              
-              {contract?.fee_type === 'percentage' && formValues.total_assets && (
-                <div className="p-2 bg-blue-50 rounded text-sm">
-                  <div className="font-medium text-blue-800">Expected Fee:</div>
-                  <div className="text-blue-600">
-                    {formValues.expected_fee
-                      ? formatCurrency(parseFloat(formValues.expected_fee))
-                      : 'N/A'}
-                  </div>
-                  <div className="text-xs text-blue-500 mt-1">
-                    Based on {contract.percent_rate * 100}% of{' '}
-                    {formatCurrency(parseFloat(formValues.total_assets))}
-                  </div>
-                </div>
-              )}
-              
-              {contract?.fee_type === 'flat' && (
-                <div className="p-2 bg-blue-50 rounded text-sm">
-                  <div className="font-medium text-blue-800">Expected Fee:</div>
-                  <div className="text-blue-600">
-                    {formatCurrency(contract.flat_rate)}
-                  </div>
-                  <div className="text-xs text-blue-500 mt-1">
-                    Flat fee as specified in contract
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-        
-        {(createPaymentMutation.isError || updatePaymentMutation.isError) && (
-          <div className="bg-red-50 text-red-700 p-3 rounded-md text-sm">
-            Error: {createPaymentMutation.error?.message || updatePaymentMutation.error?.message}
           </div>
         )}
         
-        <div className="flex justify-end space-x-3 mt-6">
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={handleReset}
-            disabled={isDisabled || isSubmitting}
-          >
-            Clear
-          </Button>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <DatePicker
+              label="Received Date"
+              value={formValues.received_date}
+              onChange={(value) => handleInputChange('received_date', value)}
+              required
+              disabled={isDisabled}
+              error={formErrors.received_date}
+            />
+            
+            <div className="space-y-2 w-full">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium">Applied Period</label>
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-500">Single</span>
+                  <button
+                    type="button"
+                    className={`h-5 w-10 rounded-full relative ${
+                      formValues.is_split_payment ? 'bg-blue-600' : 'bg-gray-200'
+                    }`}
+                    onClick={handleSplitToggle}
+                    disabled={isDisabled}
+                  >
+                    <div
+                      className={`absolute w-3 h-3 rounded-full bg-white top-1 transition-transform ${
+                        formValues.is_split_payment ? 'translate-x-5' : 'translate-x-1'
+                      }`}
+                    ></div>
+                  </button>
+                  <span className="text-sm text-gray-500">Split</span>
+                </div>
+              </div>
+              
+              <div className={`${formValues.is_split_payment ? 'grid grid-cols-2 gap-2' : 'w-full'}`}>
+                <Select
+                  options={periodOptions}
+                  value={formValues.start_period}
+                  onChange={(value) => handleInputChange('start_period', value)}
+                  placeholder="Select period"
+                  disabled={isDisabled || isPeriodsLoading}
+                  required
+                  error={formErrors.start_period}
+                />
+                
+                {formValues.is_split_payment && (
+                  <Select
+                    options={periodOptions}
+                    value={formValues.end_period}
+                    onChange={(value) => handleInputChange('end_period', value)}
+                    placeholder="End period"
+                    disabled={isDisabled || isPeriodsLoading}
+                    required
+                    error={formErrors.end_period}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
           
-          <Button
-            type="submit"
-            variant="primary"
-            disabled={isDisabled || isSubmitting}
-          >
-            {isSubmitting ? (
-              <span className="flex items-center">
-                <span className="animate-spin mr-2">
-                  <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                </span>
-                Submitting...
-              </span>
-            ) : (
-              'Submit'
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <Input
+              label="Assets Under Management"
+              type="text"
+              value={formValues.total_assets}
+              onChange={(value) => handleInputChange('total_assets', value)}
+              placeholder="Enter AUM (optional)"
+              prefix="$"
+              disabled={isDisabled}
+            />
+            
+            <Input
+              label="Payment Amount"
+              type="text"
+              value={formValues.actual_fee}
+              onChange={(value) => handleInputChange('actual_fee', value)}
+              placeholder="Enter payment amount"
+              prefix="$"
+              required
+              disabled={isDisabled}
+              error={formErrors.actual_fee}
+            />
+            
+            <Select
+              label="Payment Method"
+              options={methodOptions}
+              value={formValues.method}
+              onChange={(value) => handleInputChange('method', value)}
+              placeholder="Select method (optional)"
+              disabled={isDisabled}
+            />
+          </div>
+          
+          <div>
+            <button
+              type="button"
+              className="flex items-center text-sm font-medium text-gray-700 mb-2"
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              disabled={isDisabled}
+            >
+              Notes & Attachments
+              <svg
+                className={`ml-2 h-4 w-4 transition-transform ${
+                  showAdvanced ? 'rotate-180' : ''
+                }`}
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            
+            {showAdvanced && (
+              <div className="space-y-3 p-3 bg-gray-50 rounded-md">
+                <Input
+                  label="Notes"
+                  type="text"
+                  value={formValues.notes}
+                  onChange={(value) => handleInputChange('notes', value)}
+                  placeholder="Enter any notes about this payment"
+                  disabled={isDisabled}
+                />
+                
+                <div className="mt-2">
+                  <p className="text-sm text-gray-500 mb-2">Attachments</p>
+                  <p className="text-xs text-gray-400">
+                    File upload functionality will be implemented in a future update.
+                  </p>
+                </div>
+                
+                {contract?.fee_type === 'percentage' && formValues.total_assets && (
+                  <div className="p-2 bg-blue-50 rounded text-sm">
+                    <div className="font-medium text-blue-800">Expected Fee:</div>
+                    <div className="text-blue-600">
+                      {formValues.expected_fee
+                        ? formatCurrency(parseFloat(formValues.expected_fee))
+                        : 'N/A'}
+                    </div>
+                    <div className="text-xs text-blue-500 mt-1">
+                      Based on {contract.percent_rate * 100}% of{' '}
+                      {formatCurrency(parseFloat(formValues.total_assets))}
+                    </div>
+                  </div>
+                )}
+                
+                {contract?.fee_type === 'flat' && (
+                  <div className="p-2 bg-blue-50 rounded text-sm">
+                    <div className="font-medium text-blue-800">Expected Fee:</div>
+                    <div className="text-blue-600">
+                      {formatCurrency(contract.flat_rate)}
+                    </div>
+                    <div className="text-xs text-blue-500 mt-1">
+                      Flat fee as specified in contract
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
-          </Button>
-        </div>
-      </form>
+          </div>
+          
+          {(createPaymentMutation.isError || updatePaymentMutation.isError) && (
+            <div className="bg-red-50 text-red-700 p-3 rounded-md text-sm">
+              Error: {createPaymentMutation.error?.message || updatePaymentMutation.error?.message}
+            </div>
+          )}
+          
+          <div className="flex justify-end space-x-3 mt-6">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleReset}
+              disabled={isDisabled || isSubmitting}
+            >
+              Clear
+            </Button>
+            
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={isDisabled || isSubmitting}
+            >
+              {isSubmitting ? (
+                <span className="flex items-center">
+                  <span className="animate-spin mr-2">
+                    <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </span>
+                  Submitting...
+                </span>
+              ) : (
+                'Submit'
+              )}
+            </Button>
+          </div>
+        </form>
+        </>
+      )}
     </Card>
   );
 };

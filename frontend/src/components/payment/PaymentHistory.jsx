@@ -5,6 +5,7 @@ import { formatCurrency } from '../../lib/feeUtils';
 import StatusBadge from '../ui/StatusBadge';
 import Button from '../ui/Button';
 import useStore from '../../store';
+import Card from '../ui/Card';
 
 const PaymentHistory = ({ clientId }) => {
   const [page, setPage] = useState(1);
@@ -52,58 +53,57 @@ const PaymentHistory = ({ clientId }) => {
   }
   
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-gray-800">Payment History</h2>
+    <div className="animate-fade-in mt-3">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-xl font-semibold text-dark-700">Payment History</h2>
         <div className="flex items-center space-x-2">
-          <label className="text-sm text-gray-600">Filter by Year:</label>
+          <label className="text-sm text-dark-500">Filter by Year:</label>
           <select
-            className="border border-gray-200 rounded-md text-sm p-1"
+            className="border border-light-500 rounded-md text-sm p-1.5 bg-white shadow-sm"
             value={year || ''}
-            onChange={(e) => {
-              setYear(e.target.value ? Number(e.target.value) : null);
-              setPage(1);
-            }}
+            onChange={(e) => setYear(e.target.value === '' ? null : e.target.value)}
           >
             <option value="">All Years</option>
             {availableYears.map((y) => (
-              <option key={y} value={y}>
-                {y}
-              </option>
+              <option key={y} value={y}>{y}</option>
             ))}
           </select>
         </div>
       </div>
       
-      <div className="bg-white rounded-md border border-gray-200 overflow-hidden">
-        {isLoading ? (
-          <div className="p-4 text-center text-gray-500">Loading payment history...</div>
-        ) : payments.length === 0 ? (
-          <div className="p-4 text-center text-gray-500">No payment records found.</div>
-        ) : (
+      {isLoading ? (
+        <div className="flex justify-center py-8">
+          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
+        </div>
+      ) : payments.length === 0 ? (
+        <div className="bg-light-300 border border-light-400 p-6 rounded-lg text-center text-dark-500">
+          No payment records found.
+        </div>
+      ) : (
+        <Card className="p-0 overflow-hidden" elevation="default">
           <div className="overflow-x-auto">
             <table className="min-w-full table-fixed">
-              <thead className="bg-gray-50">
+              <thead>
                 <tr>
-                  <th className="w-[5%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
-                  <th className="w-[11.875%] px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Received Date</th>
-                  <th className="w-[11.875%] px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Provider</th>
-                  <th className="w-[11.875%] px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applied Period</th>
-                  <th className="w-[11.875%] px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">AUM</th>
-                  <th className="w-[11.875%] px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expected Fee</th>
-                  <th className="w-[11.875%] px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                  <th className="w-[11.875%] px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Variance</th>
-                  <th className="w-[11.875%] px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="w-[4%]"></th>
+                  <th className="w-[12%]">Received Date</th>
+                  <th className="w-[12%]">Provider</th>
+                  <th className="w-[12%]">Applied Period</th>
+                  <th className="w-[12%]">AUM</th>
+                  <th className="w-[12%]">Expected Fee</th>
+                  <th className="w-[12%]">Amount</th>
+                  <th className="w-[12%]">Variance</th>
+                  <th className="w-[12%] text-center">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody>
                 {payments.map((payment, index) => (
                   <React.Fragment key={payment.payment_id}>
-                    <tr className={index % 2 === 0 ? 'bg-gray-50' : ''}>
-                      <td className="px-2 py-4">
+                    <tr>
+                      <td>
                         {payment.is_split_payment && (
                           <button
-                            className="w-6 h-6 flex items-center justify-center"
+                            className="w-6 h-6 flex items-center justify-center text-dark-400 hover:text-primary-600 transition-colors"
                             onClick={() => toggleExpandRow(payment.payment_id)}
                             aria-label="Toggle payment details"
                           >
@@ -126,52 +126,39 @@ const PaymentHistory = ({ clientId }) => {
                           </button>
                         )}
                       </td>
-                      <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-800 truncate">
-                        {formatDate(payment.received_date)}
-                      </td>
-                      <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-800 truncate">
-                        {payment.provider_name || 'N/A'}
-                      </td>
-                      <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-800 truncate">
+                      <td>{formatDate(payment.received_date)}</td>
+                      <td>{payment.provider_name || 'N/A'}</td>
+                      <td>
                         {payment.is_split_payment ? (
                           <div className="flex items-center">
-                            <StatusBadge label="Split" status="blue" />
-                            <span className="ml-2 text-gray-500">
+                            <span className="px-2 py-1 text-xs rounded bg-light-300 text-dark-600">Split</span>
+                            <span className="ml-2 text-dark-500">
                               {payment.periods?.length || 0} periods
                             </span>
                           </div>
-                        ) : (
-                          formatAppliedPeriod(payment)
-                        )}
+                        ) : formatAppliedPeriod(payment)}
                       </td>
-                      <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-800 truncate">
-                        {payment.total_assets
-                          ? formatCurrency(payment.total_assets)
-                          : 'N/A'}
+                      <td>
+                        {payment.total_assets ? formatCurrency(payment.total_assets) : 'N/A'}
                       </td>
-                      <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-800 truncate">
-                        {payment.expected_fee
-                          ? formatCurrency(payment.expected_fee)
-                          : 'N/A'}
+                      <td>
+                        {payment.expected_fee ? formatCurrency(payment.expected_fee) : 'N/A'}
                       </td>
-                      <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-800 font-medium truncate">
-                        {formatCurrency(payment.actual_fee)}
-                      </td>
-                      <td className="px-3 py-4 whitespace-nowrap truncate">
+                      <td className="font-medium">{formatCurrency(payment.actual_fee)}</td>
+                      <td>
                         {payment.variance?.status && (
                           <StatusBadge
-                            label={payment.variance.message}
                             status={payment.variance.status}
+                            label={payment.variance.message}
                           />
                         )}
                       </td>
-                      <td className="px-3 py-4 whitespace-nowrap text-center text-sm">
+                      <td>
                         <div className="flex justify-center space-x-3">
-                          {/* Edit Icon */}
-                          <button 
-                            className="text-blue-600 hover:text-blue-800 transition-colors" 
+                          <button
                             onClick={() => handleEdit(payment)}
-                            title="Edit payment"
+                            className="text-dark-500 hover:text-primary-600 transition-colors"
+                            aria-label="Edit payment"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -188,15 +175,13 @@ const PaymentHistory = ({ clientId }) => {
                               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                             </svg>
                           </button>
-                          
-                          {/* Delete Icon */}
                           {showDeleteConfirm === payment.payment_id ? (
                             <div className="flex items-center">
                               <button
-                                className="text-green-600 hover:text-green-800 transition-colors"
+                                className="text-dark-500 hover:text-status-success transition-colors"
                                 onClick={() => handleDelete(payment.payment_id)}
                                 disabled={deletePaymentMutation.isLoading}
-                                title="Confirm delete"
+                                aria-label="Confirm delete"
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -213,9 +198,9 @@ const PaymentHistory = ({ clientId }) => {
                                 </svg>
                               </button>
                               <button
-                                className="text-gray-600 hover:text-gray-800 ml-1 transition-colors"
+                                className="text-dark-500 hover:text-dark-700 ml-1 transition-colors"
                                 onClick={() => setShowDeleteConfirm(null)}
-                                title="Cancel delete"
+                                aria-label="Cancel delete"
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -235,9 +220,9 @@ const PaymentHistory = ({ clientId }) => {
                             </div>
                           ) : (
                             <button
-                              className="text-red-600 hover:text-red-800 transition-colors"
                               onClick={() => setShowDeleteConfirm(payment.payment_id)}
-                              title="Delete payment"
+                              className="text-dark-500 hover:text-status-error transition-colors"
+                              aria-label="Delete payment"
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -262,20 +247,20 @@ const PaymentHistory = ({ clientId }) => {
                     </tr>
                     
                     {expandedPaymentId === payment.payment_id && payment.is_split_payment && (
-                      <tr className={index % 2 === 0 ? 'bg-gray-50' : ''}>
-                        <td className="px-2"></td>
-                        <td colSpan="8" className="px-3 py-3">
-                          <div className="bg-gray-100 p-3 rounded-md">
-                            <h4 className="text-sm font-medium text-gray-700 mb-2">
+                      <tr>
+                        <td></td>
+                        <td colSpan="8">
+                          <div className="bg-light-300 p-3 rounded-md">
+                            <h4 className="text-sm font-medium text-dark-700 mb-2">
                               Payment Distribution
                             </h4>
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                               {payment.periods?.map((period, i) => (
                                 <div
                                   key={i}
-                                  className="bg-white p-2 rounded border border-gray-200"
+                                  className="bg-light-100 p-2 rounded border border-light-400"
                                 >
-                                  <div className="text-xs text-gray-500">
+                                  <div className="text-xs text-dark-500">
                                     {period.period}
                                   </div>
                                   <div className="text-sm font-medium">
@@ -293,68 +278,66 @@ const PaymentHistory = ({ clientId }) => {
               </tbody>
             </table>
           </div>
-        )}
-        
-        {/* Pagination */}
-        <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200">
-          <div className="flex-1 flex justify-between sm:hidden">
-            <Button
-              variant="secondary"
-              onClick={() => setPage((p) => Math.max(p - 1, 1))}
-              disabled={page === 1 || isLoading}
-              size="sm"
-            >
-              Previous
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => setPage((p) => p + 1)}
-              disabled={payments.length < 10 || isLoading || isPreviousData}
-              size="sm"
-            >
-              Next
-            </Button>
+          
+          {/* Pagination */}
+          <div className="flex items-center justify-between px-5 py-3 bg-light-200 border-t border-light-400">
+            <div className="text-sm text-dark-500">
+              Showing {payments.length} payments
+            </div>
+            <nav className="flex items-center space-x-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setPage(Math.max(page - 1, 1))}
+                disabled={page === 1 || isPreviousData}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  if (payments.length === 10 && !isPreviousData) {
+                    setPage(page + 1);
+                  }
+                }}
+                disabled={payments.length < 10 || isPreviousData}
+              >
+                Next
+              </Button>
+            </nav>
           </div>
-          <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm text-gray-700">
-                Page <span className="font-medium">{page}</span>
+        </Card>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-dark-800 bg-opacity-75 flex items-center justify-center z-50">
+          <Card className="max-w-md w-full" elevation="raised">
+            <div className="p-5">
+              <h3 className="text-lg font-medium mb-3 text-dark-700">Confirm Delete</h3>
+              <p className="mb-4 text-dark-500">
+                Are you sure you want to delete this payment? This action cannot be undone.
               </p>
+              <div className="flex justify-end space-x-3">
+                <Button 
+                  variant="secondary"
+                  onClick={() => setShowDeleteConfirm(null)}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  variant="danger"
+                  onClick={() => handleDelete(showDeleteConfirm)}
+                  disabled={deletePaymentMutation.isLoading}
+                >
+                  {deletePaymentMutation.isLoading ? 'Deleting...' : 'Delete'}
+                </Button>
+              </div>
             </div>
-            <div>
-              <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-                <Button
-                  variant="secondary"
-                  onClick={() => setPage(1)}
-                  disabled={page === 1 || isLoading}
-                  className="relative inline-flex items-center px-2 py-2 rounded-l-md text-sm font-medium"
-                >
-                  &lt;&lt;
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => setPage((p) => Math.max(p - 1, 1))}
-                  disabled={page === 1 || isLoading}
-                  className="relative inline-flex items-center px-2 py-2 text-sm font-medium"
-                >
-                  &lt;
-                </Button>
-                <span className="relative inline-flex items-center px-4 py-2 text-sm font-medium border border-gray-300 bg-white text-gray-700">
-                  Page {page}
-                </span>
-                <Button
-                  variant="secondary"
-                  onClick={() => setPage((p) => p + 1)}
-                  disabled={payments.length < 10 || isLoading || isPreviousData}
-                  className="relative inline-flex items-center px-2 py-2 text-sm font-medium"
-                >
-                  &gt;
-                </Button>
-              </nav>
-            </div>
-          </div>
+          </Card>
         </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -41,8 +41,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-size: var(--text-base);
   line-height: var(--leading-normal);
-  color: #374151; /* gray-700 */
-  background-color: #F9FAFB; /* gray-50 */
+  color: theme('colors.dark.500');
+  background-color: theme('colors.light.bg');
 }
 
 * {
@@ -54,7 +54,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   line-height: var(--leading-tight);
   margin-top: 0;
-  color: #111827; /* gray-900 */
+  color: theme('colors.dark.700');
 }
 
 h1 {
@@ -77,9 +77,20 @@ p {
   margin-bottom: 1rem;
 }
 
-/* Table Typography */
+/* Table Typography & Styling */
 table {
   font-size: var(--text-sm);
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  box-shadow: theme('boxShadow.DEFAULT');
+  background-color: theme('colors.light.100');
+}
+
+thead {
+  background-color: theme('colors.light.300');
 }
 
 th {
@@ -87,23 +98,52 @@ th {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: var(--tracking-wider);
-  color: #6B7280; /* gray-500 */
+  color: theme('colors.dark.500');
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid theme('colors.light.400');
 }
 
 td {
   font-size: var(--text-sm);
   line-height: var(--leading-snug);
+  padding: 1rem;
+  border-bottom: 1px solid theme('colors.light.300');
+  transition: background-color 0.2s ease;
+}
+
+tr:hover td {
+  background-color: theme('colors.primary.50');
+}
+
+tr:last-child td {
+  border-bottom: none;
 }
 
 /* Form Typography */
 label {
   font-size: var(--text-sm);
   font-weight: 500;
+  color: theme('colors.dark.500');
+  margin-bottom: 0.25rem;
+  display: block;
 }
 
 input, select, textarea {
   font-family: var(--font-primary);
   font-size: var(--text-sm);
+  padding: 0.625rem 0.75rem;
+  border: 1px solid theme('colors.light.500');
+  border-radius: 0.375rem;
+  background-color: theme('colors.light.100');
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: theme('colors.primary.500');
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
 }
 
 button {
@@ -114,13 +154,13 @@ button {
 
 /* Links */
 a {
-  color: #2563EB; /* blue-600 */
+  color: theme('colors.primary.600');
   text-decoration: none;
   transition: color 0.2s ease-in-out;
 }
 
 a:hover {
-  color: #1D4ED8; /* blue-700 */
+  color: theme('colors.primary.700');
 }
 
 /* Utility Classes */
@@ -174,6 +214,59 @@ a:hover {
   font-weight: 700;
 }
 
+/* ========== COMPONENT STYLES ========== */
+
+/* Card Styling */
+.card {
+  border-radius: 0.5rem;
+  background-color: theme('colors.light.card');
+  box-shadow: theme('boxShadow.card');
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  overflow: hidden;
+}
+
+.card:hover {
+  box-shadow: theme('boxShadow.hover');
+}
+
+/* Form Styling */
+.form-container {
+  background-color: theme('colors.light.card');
+  border-radius: 0.5rem;
+  box-shadow: theme('boxShadow.form');
+  border-left: 3px solid theme('colors.primary.600');
+}
+
+/* Dark UI Elements */
+.navbar-dark {
+  background-color: theme('colors.dark.bg');
+  color: theme('colors.light.300');
+}
+
+.sidebar-dark {
+  background-color: theme('colors.dark.card');
+  color: theme('colors.light.300');
+}
+
+/* Animation classes */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideUp {
+  0% { transform: translateY(10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
 /* Custom scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
@@ -181,14 +274,16 @@ a:hover {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #c5c5c5;
+  background: theme('colors.light.300');
   border-radius: 4px;
 }
 
+::-webkit-scrollbar-thumb {
+  background: theme('colors.light.500');
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: theme('colors.dark.400');
 }

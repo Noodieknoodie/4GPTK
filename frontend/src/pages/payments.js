@@ -84,7 +84,7 @@ const PaymentsPage = () => {
     const client = clients.find(c => c.client_id === selectedClientId);
     
     return (
-      <div className="space-y-6">
+      <div className="space-y-12">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-800">
             {isLoading ? 'Loading...' : client?.display_name || 'Client Company Name'}
