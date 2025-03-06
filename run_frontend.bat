@@ -1,3 +1,3 @@
 @echo off
 cd frontend
-npm run dev
+npm run dev -- --port 6069
