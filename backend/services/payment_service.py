@@ -295,8 +295,13 @@ def update_client_metrics(client_id: int) -> None:
     
     execute_query(upsert_query, params)
 
-def enhance_payment_with_details(payment_data: Dict[str, Any]) -> PaymentWithDetails:
-    payment = PaymentWithDetails(**payment_data)
+def enhance_payment_with_details(payment_data: Dict[str, Any] | PaymentWithDetails) -> PaymentWithDetails:
+    # If payment_data is already a PaymentWithDetails, use it directly
+    if isinstance(payment_data, PaymentWithDetails):
+        payment = payment_data
+    else:
+        # Otherwise, create a new PaymentWithDetails from the dictionary
+        payment = PaymentWithDetails(**payment_data)
     
     is_split_monthly = (
         payment.applied_start_month is not None and

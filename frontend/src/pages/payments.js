@@ -116,7 +116,9 @@ const PaymentsPage = () => {
         
         <ClientDashboard clientId={selectedClientId} />
         
-        <PaymentForm clientId={selectedClientId} />
+        <div className={`transition-all duration-300 ${!documentViewerOpen ? 'mx-[20%]' : ''}`}>
+          <PaymentForm clientId={selectedClientId} />
+        </div>
         
         <PaymentHistory clientId={selectedClientId} />
       </div>
