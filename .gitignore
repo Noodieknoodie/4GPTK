@@ -4,9 +4,6 @@ npm-debug.log*
 yarn.lock
 package-lock.json
 
-# Next.js build files
-.next/
-out/
 
 # Environment variables
 .env
@@ -28,7 +25,7 @@ pnpm-debug.log*
 Thumbs.db
 
 # Editor and IDE settings
-.vscode/
+
 .idea/
 *.swp
 *.swo
@@ -36,8 +33,7 @@ Thumbs.db
 # TypeScript build artifacts
 *.tsbuildinfo
 
-# Tailwind CSS
-.tailwind/
+
 
 # Static cache
 .cache/
