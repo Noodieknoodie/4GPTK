@@ -31,11 +31,6 @@
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/payments.js"
-    ],
-    "/under-construction": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/under-construction.js"
     ]
   },
   "ampFirstPages": []
