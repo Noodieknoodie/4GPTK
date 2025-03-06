@@ -11,20 +11,20 @@ const Select = ({
   error = null,
 }) => {
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-1.5 w-full">
       {label && (
         <label className="text-sm font-medium flex items-center">
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
-      <div className="relative">
+      <div className="relative w-full">
         <select
           value={value || ''}
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
           className={`
-            w-full h-10 px-3 border rounded-md appearance-none
+            w-full h-10 px-3 border rounded-md appearance-none text-base
             ${error ? 'border-red-500' : 'border-gray-200'}
             ${disabled ? 'bg-gray-100 text-gray-500' : 'bg-white text-gray-900'}
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent

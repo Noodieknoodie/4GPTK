@@ -15,6 +15,10 @@ const useStore = create((set) => ({
   
   isMobileMenuOpen: false,
   setMobileMenuOpen: (isOpen) => set({ isMobileMenuOpen: isOpen }),
+  
+  // Form state tracking
+  isFormDirty: false,
+  setFormDirty: (isDirty) => set({ isFormDirty: isDirty }),
 }));
 
 export default useStore;

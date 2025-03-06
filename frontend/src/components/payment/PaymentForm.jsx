@@ -10,7 +10,7 @@ import { formatCurrency } from '../../lib/feeUtils';
 import useStore from '../../store';
 
 const PaymentForm = ({ clientId }) => {
-  const { editingPayment, clearEditingPayment } = useStore();
+  const { editingPayment, clearEditingPayment, isFormDirty, setFormDirty } = useStore();
   const { data: contract, isLoading: isContractLoading } = useClientContract(clientId);
   const { data: periodsData, isLoading: isPeriodsLoading } = useAvailablePeriods(
     contract?.contract_id, 
@@ -20,7 +20,8 @@ const PaymentForm = ({ clientId }) => {
   const createPaymentMutation = useCreatePayment();
   const updatePaymentMutation = useUpdatePayment();
   
-  const [formValues, setFormValues] = useState({
+  // Initial form state for comparison
+  const defaultFormValues = {
     received_date: new Date().toISOString().split('T')[0],
     total_assets: '',
     actual_fee: '',
@@ -30,15 +31,18 @@ const PaymentForm = ({ clientId }) => {
     is_split_payment: false,
     start_period: '',
     end_period: '',
-  });
+  };
   
+  const [formValues, setFormValues] = useState(defaultFormValues);
+  const [initialFormState, setInitialFormState] = useState(defaultFormValues);
   const [formErrors, setFormErrors] = useState({});
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   
   // Reset form when client changes or when editing payment changes
   useEffect(() => {
     if (clientId && !editingPayment) {
-      setFormValues({
+      const newFormValues = {
         received_date: new Date().toISOString().split('T')[0],
         total_assets: '',
         actual_fee: '',
@@ -48,43 +52,51 @@ const PaymentForm = ({ clientId }) => {
         is_split_payment: false,
         start_period: '',
         end_period: '',
-      });
+      };
+      setFormValues(newFormValues);
+      setInitialFormState({...newFormValues});
       setFormErrors({});
+      setFormDirty(false);
     }
-  }, [clientId]);
+  }, [clientId, editingPayment, setFormDirty]);
   
   // Populate form when editing a payment
   useEffect(() => {
     if (editingPayment) {
-      const isMonthly = editingPayment.applied_start_month !== null;
-      const startPeriod = isMonthly
-        ? `${editingPayment.applied_start_month}-${editingPayment.applied_start_month_year}`
-        : `${editingPayment.applied_start_quarter}-${editingPayment.applied_start_quarter_year}`;
-      
-      const endPeriod = isMonthly
-        ? `${editingPayment.applied_end_month}-${editingPayment.applied_end_month_year}`
-        : `${editingPayment.applied_end_quarter}-${editingPayment.applied_end_quarter_year}`;
-      
-      const isSplit = isMonthly
-        ? (editingPayment.applied_start_month !== editingPayment.applied_end_month || 
-           editingPayment.applied_start_month_year !== editingPayment.applied_end_month_year)
-        : (editingPayment.applied_start_quarter !== editingPayment.applied_end_quarter || 
-           editingPayment.applied_start_quarter_year !== editingPayment.applied_end_quarter_year);
-      
-      setFormValues({
+      const formattedValues = {
         received_date: editingPayment.received_date,
         total_assets: editingPayment.total_assets?.toString() || '',
         actual_fee: editingPayment.actual_fee?.toString() || '',
         expected_fee: editingPayment.expected_fee?.toString() || '',
         method: editingPayment.method || '',
         notes: editingPayment.notes || '',
-        is_split_payment: isSplit,
-        start_period: startPeriod,
-        end_period: endPeriod,
-      });
-      setShowAdvanced(true);
+        is_split_payment: editingPayment.is_split_payment || false,
+        start_period: isMonthlySchedule(editingPayment) 
+          ? `${editingPayment.applied_start_month}-${editingPayment.applied_start_month_year}`
+          : `${editingPayment.applied_start_quarter}-${editingPayment.applied_start_quarter_year}`,
+        end_period: editingPayment.is_split_payment 
+          ? (isMonthlySchedule(editingPayment)
+              ? `${editingPayment.applied_end_month}-${editingPayment.applied_end_month_year}`
+              : `${editingPayment.applied_end_quarter}-${editingPayment.applied_end_quarter_year}`)
+          : '',
+      };
+      
+      setFormValues(formattedValues);
+      setInitialFormState({...formattedValues});
+      setFormDirty(false);
     }
-  }, [editingPayment]);
+  }, [editingPayment, setFormDirty]);
+
+  // Helper function to determine if payment is using monthly schedule
+  const isMonthlySchedule = (payment) => {
+    return payment.applied_start_month !== null;
+  };
+  
+  // Check if form is dirty on any input change
+  useEffect(() => {
+    const isDirty = JSON.stringify(formValues) !== JSON.stringify(initialFormState);
+    setFormDirty(isDirty);
+  }, [formValues, initialFormState, setFormDirty]);
   
   // Calculate expected fee when total_assets changes
   useEffect(() => {
@@ -106,15 +118,15 @@ const PaymentForm = ({ clientId }) => {
   }, [contract, formValues.total_assets]);
   
   const handleInputChange = (field, value) => {
-    setFormValues(prev => ({
+    setFormValues((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
     
     if (formErrors[field]) {
-      setFormErrors(prev => ({
+      setFormErrors((prev) => ({
         ...prev,
-        [field]: null
+        [field]: null,
       }));
     }
   };
@@ -214,7 +226,15 @@ const PaymentForm = ({ clientId }) => {
   };
   
   const handleReset = () => {
-    setFormValues({
+    if (isFormDirty) {
+      setShowConfirmDialog(true);
+    } else {
+      resetForm();
+    }
+  };
+  
+  const resetForm = () => {
+    const newFormValues = {
       received_date: new Date().toISOString().split('T')[0],
       total_assets: '',
       actual_fee: '',
@@ -224,9 +244,17 @@ const PaymentForm = ({ clientId }) => {
       is_split_payment: false,
       start_period: '',
       end_period: '',
-    });
+    };
+    setFormValues(newFormValues);
+    setInitialFormState({...newFormValues});
     setFormErrors({});
     clearEditingPayment();
+    setFormDirty(false);
+    setShowConfirmDialog(false);
+  };
+  
+  const cancelReset = () => {
+    setShowConfirmDialog(false);
   };
   
   const formatPeriodOptions = () => {
@@ -252,6 +280,33 @@ const PaymentForm = ({ clientId }) => {
   
   return (
     <Card title={editingPayment ? "Edit Payment" : "Add Payment"}>
+      {showConfirmDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-lg">
+            <h3 className="text-lg font-medium mb-4">Unsaved Changes</h3>
+            <p className="mb-6 text-gray-600">
+              You have unsaved changes. Are you sure you want to clear the form?
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                type="button"
+                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                onClick={cancelReset}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                onClick={resetForm}
+              >
+                Clear Form
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <DatePicker
@@ -263,7 +318,7 @@ const PaymentForm = ({ clientId }) => {
             error={formErrors.received_date}
           />
           
-          <div className="space-y-2">
+          <div className="space-y-2 w-full">
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium">Applied Period</label>
               <div className="flex items-center space-x-2">
@@ -286,7 +341,7 @@ const PaymentForm = ({ clientId }) => {
               </div>
             </div>
             
-            <div className={`flex ${formValues.is_split_payment ? 'space-x-2' : ''}`}>
+            <div className={`${formValues.is_split_payment ? 'grid grid-cols-2 gap-2' : 'w-full'}`}>
               <Select
                 options={periodOptions}
                 value={formValues.start_period}
@@ -425,20 +480,34 @@ const PaymentForm = ({ clientId }) => {
           </div>
         )}
         
-        <div className="flex justify-end space-x-3">
+        <div className="flex justify-end space-x-3 mt-6">
           <Button
-            variant="secondary"
             type="button"
+            variant="secondary"
             onClick={handleReset}
             disabled={isDisabled || isSubmitting}
           >
-            {editingPayment ? 'Cancel' : 'Clear'}
+            Clear
           </Button>
+          
           <Button
             type="submit"
+            variant="primary"
             disabled={isDisabled || isSubmitting}
           >
-            {isSubmitting ? 'Submitting...' : (editingPayment ? 'Update' : 'Submit')}
+            {isSubmitting ? (
+              <span className="flex items-center">
+                <span className="animate-spin mr-2">
+                  <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </span>
+                Submitting...
+              </span>
+            ) : (
+              'Submit'
+            )}
           </Button>
         </div>
       </form>
