@@ -5,7 +5,7 @@ class PaymentBase(BaseModel):
     contract_id: int
     client_id: int
     received_date: str
-    actual_fee: float
+    actual_fee: Optional[float] = None
 
 class PaymentCreate(PaymentBase):
     total_assets: Optional[float] = None
@@ -37,6 +37,11 @@ class Payment(PaymentBase):
     applied_end_quarter_year: Optional[int] = None
     client_name: Optional[str] = None
     provider_name: Optional[str] = None
+    # Contract-related fields that come from the join
+    fee_type: Optional[str] = None
+    percent_rate: Optional[float] = None
+    flat_rate: Optional[float] = None
+    payment_schedule: Optional[str] = None
 
 class PaymentWithDetails(Payment):
     is_split_payment: bool = False

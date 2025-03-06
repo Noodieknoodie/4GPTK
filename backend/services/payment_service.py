@@ -2,7 +2,7 @@ from typing import List, Dict, Any, Optional
 from datetime import datetime
 
 from core.database import execute_query
-from models.payments import Payment, PaymentCreate, PaymentWithDetails
+from models.payments import Payment, PaymentCreate, PaymentWithDetails, AvailablePeriods
 from services.contract_service import get_contract_by_id
 
 def get_client_payments(
@@ -328,6 +328,9 @@ def enhance_payment_with_details(payment_data: Dict[str, Any]) -> PaymentWithDet
 def calculate_periods(payment: PaymentWithDetails) -> List[Dict[str, Any]]:
     periods = []
     
+    # Default actual_fee to 0 if it's None
+    actual_fee = payment.actual_fee or 0
+    
     if payment.applied_start_quarter is not None:
         start_quarter = payment.applied_start_quarter
         start_year = payment.applied_start_quarter_year
@@ -335,7 +338,7 @@ def calculate_periods(payment: PaymentWithDetails) -> List[Dict[str, Any]]:
         end_year = payment.applied_end_quarter_year
         
         total_periods = (end_year - start_year) * 4 + (end_quarter - start_quarter) + 1
-        amount_per_period = payment.actual_fee / total_periods if total_periods > 0 else 0
+        amount_per_period = actual_fee / total_periods if total_periods > 0 else 0
         
         for i in range(total_periods):
             current_quarter = ((start_quarter + i - 1) % 4) + 1
@@ -352,7 +355,7 @@ def calculate_periods(payment: PaymentWithDetails) -> List[Dict[str, Any]]:
         end_year = payment.applied_end_month_year
         
         total_periods = (end_year - start_year) * 12 + (end_month - start_month) + 1
-        amount_per_period = payment.actual_fee / total_periods if total_periods > 0 else 0
+        amount_per_period = actual_fee / total_periods if total_periods > 0 else 0
         
         for i in range(total_periods):
             current_month = ((start_month + i - 1) % 12) + 1
@@ -381,7 +384,8 @@ def calculate_variance(payment: PaymentWithDetails) -> Dict[str, Any]:
     ):
         effective_expected_fee = payment.total_assets * payment.percent_rate
     
-    if effective_expected_fee is None:
+    # If either expected fee or actual fee is missing, we can't calculate variance
+    if effective_expected_fee is None or payment.actual_fee is None:
         return {
             "difference": None,
             "percent_difference": None,
@@ -413,22 +417,25 @@ def calculate_variance(payment: PaymentWithDetails) -> Dict[str, Any]:
         "message": message
     }
 
-def get_available_periods(contract_id: int, client_id: int) -> List[Dict[str, Any]]:
-    query = """
-        SELECT payment_schedule, contract_start_date
+def get_available_periods(contract_id: int, client_id: int) -> AvailablePeriods:
+    # Get contract details
+    contract_query = """
+        SELECT contract_id, contract_start_date, payment_schedule
         FROM contracts
-        WHERE contract_id = :contract_id AND client_id = :client_id AND valid_to IS NULL
+        WHERE contract_id = :contract_id 
+        AND client_id = :client_id
+        AND valid_to IS NULL
     """
     
     contract_data = execute_query(
-        query, 
+        contract_query, 
         {"contract_id": contract_id, "client_id": client_id}, 
         fetch_one=True
     )
     
     if not contract_data:
-        return []
-    
+        return AvailablePeriods(periods=[])
+        
     contract_start = None
     if contract_data.get("contract_start_date"):
         try:
@@ -481,4 +488,4 @@ def get_available_periods(contract_id: int, client_id: int) -> List[Dict[str, An
                     "value": f"{quarter}-{year}"
                 })
     
-    return periods
+    return AvailablePeriods(periods=periods)

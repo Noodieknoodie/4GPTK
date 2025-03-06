@@ -3,7 +3,9 @@ from typing import List, Optional
 
 from core.database import execute_query
 from models.clients import Client, ClientSummary
+from models.contracts import Contract
 from services.client_service import get_all_clients, get_client_by_id, get_client_summary
+from services.contract_service import get_client_contract
 
 router = APIRouter(prefix="/clients", tags=["clients"])
 
@@ -29,6 +31,7 @@ async def read_client(client_id: int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.get("/{client_id}/summary", response_model=ClientSummary)
 async def read_client_summary(client_id: int):
     try:
@@ -40,3 +43,16 @@ async def read_client_summary(client_id: int):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/{client_id}/contract", response_model=Contract)
+async def read_client_contract(client_id: int):
+    try:
+        contract = get_client_contract(client_id)
+        if not contract:
+            raise HTTPException(status_code=404, detail="Contract not found")
+        return contract
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+

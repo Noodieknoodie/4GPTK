@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import useStore from '../../store';
 import ClientSearch from '../client/ClientSearch';
+import { useRouter } from 'next/router';
 
 const Sidebar = ({ clients = [], isLoading = false }) => {
   const { selectedClientId, setSelectedClientId } = useStore();
   const [showByProvider, setShowByProvider] = useState(false);
+  const router = useRouter();
   
   // Group clients by provider
   const groupClientsByProvider = () => {

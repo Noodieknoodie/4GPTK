@@ -11,9 +11,13 @@ from services.payment_service import (
     get_available_periods
 )
 
-router = APIRouter(tags=["payments"])
+# Main payments router
+router = APIRouter(prefix="/payments", tags=["payments"])
 
-@router.get("/clients/{client_id}/payments", response_model=List[PaymentWithDetails])
+# Create a client payments router to match the expected endpoint structure
+client_payments_router = APIRouter(prefix="/clients", tags=["client-payments"])
+
+@client_payments_router.get("/{client_id}/payments", response_model=List[PaymentWithDetails])
 async def read_client_payments(
     client_id: int,
     page: int = Query(1, ge=1, description="Page number"),
@@ -21,17 +25,22 @@ async def read_client_payments(
     year: Optional[int] = Query(None, description="Filter by year")
 ):
     try:
+        # Convert year to int if it's a valid integer string, otherwise use None
+        filtered_year = year
+        if isinstance(year, str) and year.lower() == 'null':
+            filtered_year = None
+            
         payments = get_client_payments(
             client_id=client_id, 
             page=page, 
             limit=limit, 
-            year=year
+            year=filtered_year
         )
         return payments
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/payments/{payment_id}", response_model=PaymentWithDetails)
+@router.get("/{payment_id}", response_model=PaymentWithDetails)
 async def read_payment(payment_id: int = Path(..., ge=1)):
     try:
         payment = get_payment_by_id(payment_id)
@@ -43,30 +52,30 @@ async def read_payment(payment_id: int = Path(..., ge=1)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/payments", response_model=Payment)
+@router.post("/", response_model=Payment)
 async def create_new_payment(payment: PaymentCreate):
     try:
-        result = create_payment(payment)
-        return result
+        new_payment = create_payment(payment)
+        return new_payment
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e))
 
-@router.put("/payments/{payment_id}", response_model=Payment)
+@router.put("/{payment_id}", response_model=Payment)
 async def update_existing_payment(
     payment_id: int = Path(..., ge=1),
     payment: PaymentCreate = None
 ):
     try:
-        result = update_payment(payment_id, payment)
-        if not result:
+        updated_payment = update_payment(payment_id, payment)
+        if not updated_payment:
             raise HTTPException(status_code=404, detail="Payment not found")
-        return result
+        return updated_payment
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e))
 
-@router.delete("/payments/{payment_id}", status_code=204)
+@router.delete("/{payment_id}", status_code=204)
 async def delete_existing_payment(payment_id: int = Path(..., ge=1)):
     try:
         success = delete_payment(payment_id)
@@ -78,13 +87,16 @@ async def delete_existing_payment(payment_id: int = Path(..., ge=1)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/contracts/{contract_id}/periods", response_model=AvailablePeriods)
+# Create a contracts router for periods endpoint
+contracts_router = APIRouter(prefix="/contracts", tags=["contract-periods"])
+
+@contracts_router.get("/{contract_id}/periods", response_model=AvailablePeriods)
 async def read_available_periods(
     contract_id: int,
     client_id: int = Query(..., description="Client ID is required"),
 ):
     try:
         periods = get_available_periods(contract_id, client_id)
-        return {"periods": periods}
+        return periods
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

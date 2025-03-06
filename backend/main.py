@@ -10,6 +10,7 @@ app = FastAPI(
     description="API for 401(k) payment tracking system",
 )
 
+# Add CORS middleware first, before including routers
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ORIGINS,
@@ -18,9 +19,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Include all routers
 app.include_router(clients.router)
 app.include_router(contracts.router)
 app.include_router(payments.router)
+app.include_router(payments.client_payments_router)
+app.include_router(payments.contracts_router)
 
 @app.get("/")
 async def root():

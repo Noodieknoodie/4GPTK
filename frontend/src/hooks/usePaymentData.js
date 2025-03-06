@@ -5,9 +5,15 @@ import { queryKeys } from '../store/queries';
 export const usePaymentHistory = (clientId, options = {}) => {
   const { page = 1, limit = 10, year = null } = options;
   
+  // Create params object without null/undefined values
+  const params = { page, limit };
+  if (year !== null) {
+    params.year = year;
+  }
+  
   return useQuery(
     [...queryKeys.clients.payments(clientId), page, limit, year],
-    () => api.getPayments(clientId, { page, limit, year }),
+    () => api.getPayments(clientId, params),
     {
       enabled: !!clientId,
       keepPreviousData: true,

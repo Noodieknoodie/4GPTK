@@ -9,7 +9,12 @@ def get_all_clients(provider: Optional[str] = None) -> List[Client]:
         SELECT c.client_id, c.display_name, c.full_name, c.ima_signed_date, c.onedrive_folder_path,
                co.provider_name, cm.last_payment_date, cm.last_payment_amount
         FROM clients c
-        LEFT JOIN contracts co ON c.client_id = co.client_id AND co.valid_to IS NULL
+        LEFT JOIN (
+            SELECT client_id, provider_name
+            FROM contracts 
+            WHERE valid_to IS NULL
+            GROUP BY client_id
+        ) co ON c.client_id = co.client_id
         LEFT JOIN client_metrics cm ON c.client_id = cm.client_id
         WHERE c.valid_to IS NULL
     """

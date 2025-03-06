@@ -50,9 +50,7 @@ public/static/
 # Virtual environment (if using WSL or Python-based tooling)
 backend-env/
 
-# SQLite database (if used)
-backend/data/*.db
-backend/data/*.sqlite
+
 
 # Lockfiles and dependency artifacts
 pnpm-lock.yaml

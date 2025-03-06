@@ -16,7 +16,8 @@ export const getNextPaymentDate = (lastPaymentDate, schedule) => {
   try {
     const date = parseISO(lastPaymentDate);
     const months = schedule.toLowerCase() === 'monthly' ? 1 : 3;
-    return addMonths(date, months);
+    const nextDate = addMonths(date, months);
+    return format(nextDate, 'yyyy-MM-dd');
   } catch (error) {
     return null;
   }
