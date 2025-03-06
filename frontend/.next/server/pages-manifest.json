@@ -2,6 +2,9 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
+  "/payments": "pages/payments.js",
   "/summary": "pages/summary.js",
-  "/payments": "pages/payments.js"
+  "/export": "pages/export.js",
+  "/contracts": "pages/contracts.js",
+  "/contacts": "pages/contacts.js"
 }

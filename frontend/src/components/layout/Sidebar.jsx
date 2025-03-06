@@ -79,7 +79,7 @@ const Sidebar = ({ clients = [], isLoading = false }) => {
                 key={client.client_id}
                 className={`w-full justify-start py-2 px-3 mb-1 text-left rounded transition-colors ${
                   selectedClientId === client.client_id 
-                    ? 'bg-gray-100 text-gray-900' 
+                    ? 'bg-primary-50 text-primary-800 border-l-4 border-primary-600' 
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
                 onClick={() => setSelectedClientId(client.client_id)}

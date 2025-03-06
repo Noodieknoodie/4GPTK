@@ -22,6 +22,21 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
+    "/contacts": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/contacts.js"
+    ],
+    "/contracts": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/contracts.js"
+    ],
+    "/export": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/export.js"
+    ],
     "/payments": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
